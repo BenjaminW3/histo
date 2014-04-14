@@ -1,0 +1,19 @@
+﻿#histogram, #myImg {
+  border: 1px solid #000;
+  cursor: pointer;
+  float: left;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+#myImg.thumb {
+  max-width: 300px;
+  max-height: 400px;
+}
+
+#histogram.thumb {
+  max-width: 300px;
+  max-height: 200px;
+}
+
+#runtime { clear: both }
