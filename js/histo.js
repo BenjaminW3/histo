@@ -5,7 +5,16 @@ window.addEventListener('load', function ()
 {
 	var histCanvas = document.getElementById('histogram');		//!< The HTML histogram canvas element.
 	var histCtx = histCanvas.getContext('2d');					//!< The context of the histogram.
-	var discreetWidth = Math.round(histCanvas.width / 255);
+	var uiAxisPaddingTopPx = 30;								//!< The padding of the x axis from the top.
+	var uiAxisPaddingLeftPx = 40;								//!< The padding of the x axis from the bottom.
+	var uiAxisPaddingBottomPx = 30;								//!< The padding of the y axis from the left.
+	var uiAxisPaddingRightPx = 10;								//!< The padding of the x axis from the right.
+	var uiHistTopPx = uiAxisPaddingTopPx;
+	var uiHistBottomPx = histCanvas.height - uiAxisPaddingBottomPx;
+	var uiHistHeightPx = uiHistBottomPx - uiHistTopPx;
+	var uiHistLeftPx = uiAxisPaddingLeftPx;
+	var uiHistRightPx = histCanvas.width - uiAxisPaddingRightPx;
+	var uiHistWidthPx = uiHistRightPx - uiHistLeftPx;
 	
 	var histType = document.getElementById('histType');			//!< The HTML histogram type selection element.
 	//var plotStyle = document.getElementById('plotStyle');
@@ -92,6 +101,9 @@ window.addEventListener('load', function ()
 		// Clear the canvas.
 		histCtx.clearRect(0, 0, histCanvas.width, histCanvas.height);
 
+		// Draw the axes.
+		drawHistAxis(uiMaxCountAllChannels);
+		
 		if (bFill && aauiChannelValueCounts.length > 1) 
 		{
 			histCtx.globalCompositeOperation = 'lighter';
@@ -106,6 +118,53 @@ window.addEventListener('load', function ()
 		if (bFill && aauiChannelValueCounts.length > 1) 
 		{
 			histCtx.globalCompositeOperation = 'source-over';
+		}
+	};
+	//-----------------------------------------------------------------------------
+	//! Draws the histogram axes.
+	//-----------------------------------------------------------------------------
+	var drawHistAxis = function(uiMaxCountAllChannels) 
+	{
+		histCtx.lineWidth = 2;
+		histCtx.fillStyle = '#333';
+		histCtx.strokeStyle = '#333';
+		histCtx.font = 'italic 10pt sans-serif';
+		histCtx.textAlign = "center";
+		
+		// Render the axes lines.
+		histCtx.beginPath();
+		histCtx.moveTo(uiHistLeftPx, uiHistTopPx);
+		histCtx.lineTo(uiHistLeftPx, uiHistBottomPx);
+		histCtx.lineTo(uiHistRightPx, uiHistBottomPx);
+		histCtx.stroke();
+		
+		// Draw some x-axis values.
+		var dataX = [
+			0,
+			50,
+			100,
+			150,
+			200,
+			255,
+		];
+		histCtx.textAlign = "center";
+		for(var i = 0; i < dataX.length; i++)
+		{
+			histCtx.fillText(dataX[i], uiHistLeftPx + Math.round((dataX[i]/256) * uiHistWidthPx), uiHistBottomPx + 15);
+		}
+		
+		// Draw x-axis name.
+		histCtx.fillText("g", uiHistLeftPx + (uiHistWidthPx*0.5), uiHistBottomPx + 25);
+		
+		// Draw y-axis header.
+		histCtx.fillText("h(g)", uiHistLeftPx, uiHistTopPx - 15);
+		
+		// Draw some y-axis values.
+		histCtx.textAlign = "end";
+		for(var i = 0; i < 5; i++)
+		{
+			var uiYAxisValue = Math.round(i * (uiMaxCountAllChannels/(5-1)));
+			histCtx.fillText(uiYAxisValue, uiHistLeftPx - 5, uiHistBottomPx - Math.round(i * (uiHistHeightPx/(5-1))) + 5);	// +5 for centering because position is bottom of text.
 		}
 	};
 	//-----------------------------------------------------------------------------
@@ -142,18 +201,20 @@ window.addEventListener('load', function ()
 		if (sStyle === 'continuous') 
 		{
 			histCtx.beginPath();
-			histCtx.moveTo(0, histCanvas.height);
+			histCtx.moveTo(uiHistLeftPx, uiHistBottomPx);
 		}
 
-		for (var x, y, i = 0; i <= 255; i++) 
+		for (var x, y, i = 0; i < 256; i++) 
 		{
 			if (!(i in auiValueCounts)) 
 			{
 				continue;
 			}
 
-			y = Math.round((auiValueCounts[i]/uiMaxCountAllChannels)*histCanvas.height);
-			x = Math.round((i/255)*histCanvas.width);
+			uiValueWidth = Math.ceil(uiHistWidthPx/256);
+			uiValueHeight = Math.round((auiValueCounts[i]/uiMaxCountAllChannels) * uiHistHeightPx);
+			uiValueX = uiHistLeftPx + Math.round((i/256) * uiHistWidthPx);
+			uiValueY = uiHistTopPx + uiHistHeightPx - uiValueHeight;
 
 			if (sStyle === 'continuous') 
 			{
@@ -163,18 +224,18 @@ window.addEventListener('load', function ()
 			{
 				if (bFill) 
 				{
-					histCtx.fillRect(x, histCanvas.height - y, discreetWidth, y);
+					histCtx.fillRect(uiValueX, uiValueY, uiValueWidth, uiValueHeight);
 				}
 				else 
 				{
-					histCtx.fillRect(x, histCanvas.height - y, discreetWidth, 2);
+					histCtx.fillRect(uiValueX, uiValueY, uiValueWidth, 2);
 				}
 			}
 		}
 
 		if (sStyle === 'continuous') 
 		{
-			histCtx.lineTo(x, histCanvas.height);
+			histCtx.lineTo(x, uiHistBottomPx);
 			if (plotFill.checked) 
 			{
 				histCtx.fill();
