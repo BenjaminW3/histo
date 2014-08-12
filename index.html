@@ -6,72 +6,98 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 
-		<link rel="stylesheet" href="css/default.css" />
+		<link type="text/css" rel="stylesheet" href="css/histo.css" />
+		<link type="text/css" rel="stylesheet" href="css/tabs.css" />
 
-		<!--<script type="text/javascript" src="external/jquery-ui-1.10.4/jquery-1.10.2.js"></script>
-		<script type="text/javascript" src="external/jquery-ui-1.10.4/ui/jquery-ui.js"></script>-->
-		<script type="text/javascript" src="js/script.js"></script>
+		<script type="text/javascript" src="js/histo.js"></script>
+		<script type="text/javascript" src="js/tabs.js"></script>
 	</head>
 	
 	<body>
-		<h1>Histogramm</h1>
+		<div id="wrapper">
+		<h1>Histogramme & Punktoperatoren </h1>
+		
+			<div id="tabContainer">
+				<div id="tabs">
+					<ul>
+						<li id="tabHeader_1">Histogramme</li>
+						<li id="tabHeader_2">Kumulative Histogramme</li>
+						<li id="tabHeader_3">Punktoperatoren</li>
+					</ul>
+				</div>
+				<div id="tabscontent">
+					<div class="tabpage" id="tabpage_1">
+						<h2>Histogramme</h2>
+						<p>
+						Ein Histogramm zeigt die Helligkeitsverteilung eines Bildes in Form eines Balkendiagramms an.
+						Auf der horizontalen Achse befinden sich die Farb-/Helligkeitswerte. Die Höhe eines Balkens gibt an, wie häufig dieser Farb-/Helligkeitswert im Bild vorkommt.
+						Im einfachsten Falle eines Graustufenbildes spiegelt es die Anzahl von Pixeln der Farben Schwarz (am linken Rand) bis Weiß (am rechten Rand) wieder.
+						</p>
+						<p>
+						Anhand eines Histogramms kann man die Farbverteilung und somit die korrekte Belichtung (Unter-/Überbelichtung), den Kontrast und andere visuelle Attribute des Ausgangsbildes abschätzen.
+						</p>
+					
+						<p>
+							<label>Image: 
+								<select id="imgSelector">
+									<option value="img/mushroom_kingdom.jpg">Mushroom Kingdom</option>
+									<option value="img/ambiental-living-room.jpg">Ambiental living room</option>
+									<option value="img/love_bites.jpg">Love bites</option>
+								</select>
+							</label>
+						</p>
 
-		<p>
-			<label>Image: 
-				<select id="imgSelector">
-					<option value="img/mushroom_kingdom.jpg">Mushroom Kingdom</option>
-					<option value="img/ambiental-living-room.jpg">Ambiental living room</option>
-					<option value="img/love_bites.jpg">Love bites</option>
-				</select>
-			</label>
-		</p>
+						<p><img class="thumb" id="myImg" src="img/mushroom_kingdom.jpg" alt="Mushroom Kingdom"></p>
 
-		<p><img class="thumb" id="myImg" src="img/mushroom_kingdom.jpg" alt="Mushroom Kingdom"></p>
+						<p><canvas class="thumb" id="histogram" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
 
-		<p><canvas class="thumb" id="histogram" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
+						<p id="runtime">Ausgangsbild und dazugehöriges Histogramm</p>
 
-		<p id="runtime">Plot runtime...</p>
+						<p>
+							<label>Histogram for: 
+								<select id="histType">
+									<option value="val">Value (brightness)</option>
+									<option value="rgb">RGB</option>
+									<option value="red">Red</option>
+									<option value="green">Green</option>
+									<option value="blue">Blue</option>
+								</select>
+							</label>
+						</p>
 
-		<p>
-			<label>Histogram for: 
-				<select id="histType">
-					<option value="rgb">RGB</option>
-					<option value="red">Red</option>
-					<option value="green">Green</option>
-					<option value="blue">Blue</option>
-					<option value="hue">Hue</option>
-					<option value="sat">Saturation</option>
-					<option value="val">Value (brightness)</option>
-					<option value="cmyk">CMYK</option>
-					<option value="cyan">Cyan</option>
-					<option value="magenta">Magenta</option>
-					<option value="yellow">Yellow</option>
-					<option value="kelvin">Kelvin (Black)</option>
-				</select>
-			</label>
-		</p>
+						<!--
+						<p>
+							<label>Plot style: 
+								<select id="plotStyle">
+									<option value="continuous">Continuous</option>
+									<option value="discreet">Discreet</option>
+								</select>
+							</label>
+						</p>
 
-		<p><label>Count every <input id="accuracy" type="number" min="1" max="50" value="1"> pixels</label></p>
-
-		<p>
-			<label>Plot style: 
-				<select id="plotStyle">
-					<option value="continuous">Continuous</option>
-					<option value="discreet">Discreet</option>
-				</select>
-			</label>
-		</p>
-
-		<p><label>Plot fill <input id="plotFill" type="checkbox"></label></p>
-
-		<p>
-			<label>Plot colors: 
-				<select id="plotColors">
-					<option value="none">None</option>
-					<option value="flat">Flat colors</option>
-					<option value="gradient">Gradients</option>
-				</select>
-			</label>
-		</p>
+						<p><label>Plot fill <input id="plotFill" type="checkbox"></label></p>-->
+						
+					</div>
+					<div class="tabpage" id="tabpage_2">
+						<h2>Page 2</h2>
+						<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. 
+						  Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. </p>
+						<p>Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus 
+						lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. </p>
+						<p> Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, 
+						accumsan porttitor, facilisis luctus, metus. </p>
+					</div>
+					<div class="tabpage" id="tabpage_3">
+						<h2>Page 3</h2>
+						<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. </p>
+						<p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris 
+						placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, 
+						elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui.</p>
+						<p>Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam 
+						erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus. </p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
