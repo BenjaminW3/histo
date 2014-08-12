@@ -7,13 +7,13 @@
 }
 
 #myImg.thumb {
-  max-width: 300px;
+  max-width: 420px;
   max-height: 400px;
 }
 
 #histogram.thumb {
-  max-width: 300px;
-  max-height: 200px;
+  max-width: 420px;
+  max-height: 400px;
 }
 
-#runtime { clear: both }
+#histTypeP { clear: both }
