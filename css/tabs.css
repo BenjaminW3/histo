@@ -51,6 +51,8 @@ h2{
 }
 
 #tabs > ul > li{
+	font-size: 1.2em;
+	font-weight: bold;
 	margin:0 2px 0 0;
 	padding:7px 10px;
 	display:block;

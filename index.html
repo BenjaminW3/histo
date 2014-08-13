@@ -28,15 +28,28 @@
 				</div>
 				<div id="tabscontent">
 					<div class="tabpage" id="tabpage_1">
-						<h2>Histogramme</h2>
+						<h3>Allgemein</h3>
 						<p>
-						Ein Histogramm im Bereich der Bildverarbeitung zeigt die Tonwertverteilung eines Bildes in Form eines (diskreten) Balkendiagramms an. Es wird deshalb auch Tonwertkurve genannt.
-						Auf der horizontalen Achse befinden sich die Farb-/Helligkeitswerte. Die Höhe eines Balkens gibt an, wie häufig dieser Farb-/Helligkeitswert im Bild vorkommt.
+						Ein Histogramm im Bereich der Bildverarbeitung zeigt die statistische Häufigkeit der Tonwerte eines Bildes in Form eines (diskreten) Balkendiagramms an. Es wird deshalb auch Tonwertkurve genannt.
+						Auf der horizontalen Achse befinden sich die Tonwerte (Farb-/Helligkeitswerte). Die Höhe eines Balkens gibt an, wie häufig dieser Tonwert im Bild vorkommt.
 						Im einfachsten Falle eines Graustufenbildes spiegelt es die Anzahl von Pixeln der Farben Schwarz (am linken Rand) bis Weiß (am rechten Rand) wieder.
 						</p>
-						<p>Die Anzahl der Pixel mit dem Grauwert <i>g</i> wird dabei durch die Funktion <i>h(g)</i> beschrieben</p>
-						<p>Die Helligkeitswerte liegen dabei meist im Intervall [0, 255], da man mit 8 Bit pro Kanal genau 2^8=256 verschiedene Farbwerte abbilden kann.</p>
-						<p>Anhand eines Histogramms kann man die Farbverteilung und somit die korrekte Belichtung (Unter-/Überbelichtung), den Kontrast und andere visuelle Attribute des Ausgangsbildes abschätzen.</p>
+						<p>Die Anzahl der Pixel mit dem Tonwert <i>g</i> wird dabei durch die Funktion <i>h(g)</i> beschrieben
+						Die Tonwerte liegen dabei meist im Intervall <i>[0, 255]</i> vor, da mit 8 Bit pro Kanal genau <i>2^8=256</i> verschiedene Werte abgebildet werden können.</p>
+						<p>Anhand eines Histogramms kann man die Tonwertverteilung und somit die korrekte Belichtung (Unter-/Überbelichtung), den Kontrast und andere visuelle Attribute des Ausgangsbildes abschätzen.</p>
+						<br/>
+						<h3>Farbbilder</h3>
+						<p>Auch für Farbbilder lassen sich Histogramme erstellen. Eine Möglichkeit besteht darin, für jeden Kanal ein einzelnes Histogramm zu erstellen. Diese können optional auch in ein Histogramm überblendet werden.
+						Auch für RGB Farbbilder lässt sich eine Pixelhelligkeit berechnen. Durch die Farbraumtransformation von RGB nach YCbCr erhält man die Pixelhelligkeit Y, welche im CIE-Normvalenzsystem vorliegt.
+						Die berechnungsvorschrift lautet dann: <i>Y = 0.299 * R + 0.587 * G + 0.114 * B</i>.</p>
+						<br/>
+						<h3>Histogrammerstellung</h3>
+						<p>Zur Histogrammerstellung müssen die Tonwerte zuerst in Klassen unterteilt werden. 
+						Standardmäßig besitzt jeder Tonwert seine eigene Klasse.
+						Nun muss über alle Pixel im Bild iteriert und deren Klasse bestimmt werden um schlussendlich die absoluten Klassenhäufigkeiten zu erhalten.
+						Abschießend wird für jede Klasse ein Balken in der Höhe der Häufigkeit gezeichnet.</p>
+						<br/>
+						<p>Hier können für eigene Bilder als auch verschiedene Testbilder Histogramme für die Helligkeit, kombinierte und einzelne RGB-Kanäle generiert werden:</p>
 						<br/>
 						<p>
 							<label>Bild: 
@@ -53,6 +66,7 @@
 								</select>
 							</label>
 						</p>
+						<br/>
 
 						<p><img class="thumb" id="myImg" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom"></p>
 
@@ -61,7 +75,7 @@
 						<p id="histTypeP">
 							<label>Histogramm-Typ: 
 								<select id="histType">
-									<option value="val">Helligkeit</option>
+									<option value="brightness">Helligkeit</option>
 									<option value="rgb">RGB</option>
 									<option value="red">Rot</option>
 									<option value="green">Grün</option>
@@ -84,16 +98,9 @@
 						
 					</div>
 					<div class="tabpage" id="tabpage_2">
-						<h2>Page 2</h2>
-						<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. 
-						  Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. </p>
-						<p>Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus 
-						lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. </p>
-						<p> Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, 
-						accumsan porttitor, facilisis luctus, metus. </p>
+						<p>H(g)'=h(g)</p>
 					</div>
 					<div class="tabpage" id="tabpage_3">
-						<h2>Page 3</h2>
 						<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. </p>
 						<p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris 
 						placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, 

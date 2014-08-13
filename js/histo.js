@@ -28,6 +28,13 @@ window.addEventListener('load', function ()
 	var imgData = null;											//!< The image data of the currently loaded image retrieved from the imgCanvas/imgCtx.
 
 	//-----------------------------------------------------------------------------
+	//! \return The luminance Y calculated from the RGB values.
+	//-----------------------------------------------------------------------------
+	var calcYFromRgb = function(R, G, B)
+	{
+		return Math.round(0.299 * R + 0.587 * G + 0.114 * B);
+	}
+	//-----------------------------------------------------------------------------
 	//! Draws the whole histogram.
 	//! \param sType The type of the channel used for coloring.
 	//! \param sStyle Either 'discreet' or 'continuous'.
@@ -52,9 +59,9 @@ window.addEventListener('load', function ()
 		for (var i = 0, n = imgData.length; i < n; i+= uiPixelStepWidth) 
 		{
 			var val;
-			if (sType === 'val') 
+			if (sType === 'brightness') 
 			{
-				val = [Math.max(imgData[i], imgData[i+1], imgData[i+2])];
+				val = [calcYFromRgb(imgData[i], imgData[i+1], imgData[i+2])];
 			}
 			else if (sType === 'rgb') 
 			{
@@ -191,10 +198,10 @@ window.addEventListener('load', function ()
 
 		// Select the color for the histogram channel.
 		var colors = {
-			'red':   '#f00',
-			'green': '#0f0',
-			'blue':  '#00f',
-			'val':   '#000'
+			'red':   		'#f00',
+			'green': 		'#0f0',
+			'blue':  		'#00f',
+			'brightness':   '#000'
 		};
 		histCtx[ctxStyle] = colors[sType];
 
@@ -294,7 +301,7 @@ window.addEventListener('load', function ()
 		// Plot defaults
 		plotStyle.value = 'continuous';
 		plotFill.checked = true;
-		histType.value = 'val';
+		histType.value = 'brightness';
 	};
 	initHistogram();*/
 	imgLoaded();
