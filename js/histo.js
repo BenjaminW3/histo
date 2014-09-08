@@ -5,16 +5,16 @@ window.addEventListener('load', function ()
 {
 	var histCanvas = document.getElementById('histogram');		//!< The HTML histogram canvas element.
 	var histCtx = histCanvas.getContext('2d');					//!< The context of the histogram.
-	var uiAxisPaddingTopPx = 30;								//!< The padding of the x axis from the top.
-	var uiAxisPaddingLeftPx = 40;								//!< The padding of the x axis from the bottom.
-	var uiAxisPaddingBottomPx = 30;								//!< The padding of the y axis from the left.
-	var uiAxisPaddingRightPx = 10;								//!< The padding of the x axis from the right.
-	var uiHistTopPx = uiAxisPaddingTopPx;
-	var uiHistBottomPx = histCanvas.height - uiAxisPaddingBottomPx;
-	var uiHistHeightPx = uiHistBottomPx - uiHistTopPx;
-	var uiHistLeftPx = uiAxisPaddingLeftPx;
-	var uiHistRightPx = histCanvas.width - uiAxisPaddingRightPx;
-	var uiHistWidthPx = uiHistRightPx - uiHistLeftPx;
+	var uiHistPaddingTopPx = 30;								//!< The padding from the top.
+	var uiHistPaddingLeftPx = 40;								//!< The padding of the x axis from the bottom.
+	var uiHistPaddingBottomPx = 30;								//!< The padding of the y axis from the left.
+	var uiHistPaddingRightPx = 10;								//!< The padding from the right.
+	var uiHistTopPx = uiHistPaddingTopPx;						//!< The distance of the top of the histogram from the top of the canvas.
+	var uiHistBottomPx = histCanvas.height - uiHistPaddingBottomPx;//!< The distance of the bottom of the histogram from the top of the canvas.
+	var uiHistHeightPx = uiHistBottomPx - uiHistTopPx;			//!< The height of the histogram on the canvas.
+	var uiHistLeftPx = uiHistPaddingLeftPx;						//!< The distance of the left of the histogram from the left of the canvas.
+	var uiHistRightPx = histCanvas.width - uiHistPaddingRightPx;//!< The distance of the right of the histogram from the left of the canvas.
+	var uiHistWidthPx = uiHistRightPx - uiHistLeftPx;			//!< The width of the histogram on the canvas.
 	
 	var histType = document.getElementById('histType');			//!< The HTML histogram type selection element.
 	//var plotStyle = document.getElementById('plotStyle');
