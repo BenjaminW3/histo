@@ -101,7 +101,7 @@ Histogramm.prototype.recalcHistData = function() {
         var val;
         if (this.histType === 'brightness')
         {
-            val = [calcYFromRgb(this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2])];
+            val = [Utils.calcYFromRgb(this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2])];
         }
         else if (this.histType === 'rgb')
         {
