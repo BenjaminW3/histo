@@ -5,14 +5,7 @@ var thumbClick = function(ev)
 {
 	ev.preventDefault();
 	
-	if (this.className === 'thumb')
-	{
-		this.className = '';
-	}
-	else 
-	{
-		this.className = 'thumb';
-	}
+	this.classList.toggle('thumb');
 };
 
 //-----------------------------------------------------------------------------

@@ -3,11 +3,11 @@
 //-----------------------------------------------------------------------------
 window.addEventListener('load', function ()
 {
-    var sourceImgElement = document.getElementById('myImg');					//!< The HTML source image element.
-    var sourceImgSelectorElement = document.getElementById('imgSelector');		//!< The HTML source image selection element.
+    var sourceImgElement = document.getElementById('tab1SourceImage');					//!< The HTML source image element.
+    var sourceImgSelectorElement = document.getElementById('tab1SourceImgSelect');		//!< The HTML source image selection element.
 	
-    var histCanvasElement = document.getElementById('histogram');				//!< The HTML canvas element for the histogram.
-    var histTypeElement = document.getElementById('histType');					//!< The HTML histogram type selection element.
+    var histCanvasElement = document.getElementById('tab1HistogramTargetCanvas');		//!< The HTML canvas element for the histogram.
+    var histTypeElement = document.getElementById('tab1HistTypeSelect');				//!< The HTML histogram type selection element.
 	//var plotStyle = document.getElementById('plotStyle');
 	//var plotFill = document.getElementById('plotFill');
 
@@ -15,10 +15,10 @@ window.addEventListener('load', function ()
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
-		sourceImgElement.className = '';
+		sourceImgElement.classList.remove('thumb');
         hist.setSourceImageElement(sourceImgElement);
 		// Reset the thumb class.
-		sourceImgElement.className = 'thumb';
+		sourceImgElement.classList.add('thumb');
 		
         updateHist();
     };

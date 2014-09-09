@@ -11,6 +11,7 @@
 
 		<script type="text/javascript" src="js/histo.js"></script>
 		<script type="text/javascript" src="js/tabs.js"></script>
+		<script type="text/javascript" src="js/tab1Histo.js"></script>
 		<script type="text/javascript" src="js/thumbImage.js"></script>
 	</head>
 	
@@ -53,7 +54,7 @@
 						<br/>
 						<p>
 							<label>Bild: 
-								<select id="imgSelector">
+								<select id="tab1SourceImgSelect">
 									<option value="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg">Yosemite</option>
 									<option value="img/thermal-hot-spring_w725_h544.jpg">Thermalquelle</option>
 									<option value="img/snow-wallpapers_w725_h544.jpg">Schneelandschaft</option>
@@ -68,13 +69,13 @@
 						</p>
 						<br/>
 
-						<p><img class="thumb" id="myImg" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom"></p>
+						<p><img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom"></p>
 
-						<p><canvas class="thumb" id="histogram" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
+						<p><canvas class="thumb image" id="tab1HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
 
 						<p id="histTypeP">
 							<label>Histogramm-Typ: 
-								<select id="histType">
+								<select id="tab1HistTypeSelect">
 									<option value="brightness">Helligkeit</option>
 									<option value="rgb">RGB</option>
 									<option value="red">Rot</option>

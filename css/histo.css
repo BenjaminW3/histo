@@ -1,4 +1,4 @@
-﻿#histogram, #myImg {
+﻿.image {
   border: 1px solid #000;
   cursor: pointer;
   float: left;
@@ -6,12 +6,7 @@
   margin-bottom: 15px;
 }
 
-#myImg.thumb {
-  max-width: 420px;
-  max-height: 400px;
-}
-
-#histogram.thumb {
+.thumb {
   max-width: 420px;
   max-height: 400px;
 }
