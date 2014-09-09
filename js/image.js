@@ -86,25 +86,9 @@ Image.prototype.getChannelCount = function(_channelNo) {
 }
 
 /**
- * Load Data from the given image. Calculate channelvaluecount and maxCount for all channels
+ *  Calculate channelvaluecount and maxCount for all channels
  */
-Image.prototype.loadFromSource = function(_sourceImageElement) {
-    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
-    sourceImgTempCanvas.width = _sourceImageElement.width;
-    sourceImgTempCanvas.height = _sourceImageElement.height;
-    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
-
-    // Draw the image data onto the invisible image context.
-    sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
-
-
-    this.width = _sourceImageElement.width;
-    this.height = _sourceImageElement.height;
-    // Get the image data from the invisible image canvas context.
-    // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
-    // Add --allow-file-access-from-files to chrome startup to circumvent this.
-    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
-
+Image.prototype.reload = function() {
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
     var x = 0;
     var y = 0;
@@ -133,4 +117,26 @@ Image.prototype.loadFromSource = function(_sourceImageElement) {
             x++;
         }
     }
+}
+/**
+ * Load Data from the given image.
+ */
+Image.prototype.loadFromSource = function(_sourceImageElement) {
+    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
+    sourceImgTempCanvas.width = _sourceImageElement.width;
+    sourceImgTempCanvas.height = _sourceImageElement.height;
+    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+
+    // Draw the image data onto the invisible image context.
+    sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
+
+
+    this.width = _sourceImageElement.width;
+    this.height = _sourceImageElement.height;
+    // Get the image data from the invisible image canvas context.
+    // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
+    // Add --allow-file-access-from-files to chrome startup to circumvent this.
+    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
+
+    this.reload();
 };

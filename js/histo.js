@@ -2,23 +2,17 @@
  * Constructor.
  */
 function Histogramm(_sourceImageElement, targetCanvasElement, _context, _histTypeElement) {
-	// The settings.
+    // The settings.
     this.histTypeElement = _histTypeElement;					//!< The HTML histogram type selection element.
     this.histType = this.histTypeElement.value;
 
-	// The source data.
-    this.sourceImgData = null;									//!< The source image as ARGB data.
-	
-	// The target data.
+    // The target data.
     this.targetCanvasElement = null;							//!< The target histogram HTML canvas element.
     this.targetContext = null;									//!< The target context of the histogram.
-	
-	// The histogram data.
-    this.aauiChannelValueCounts = [[]];							//!< An array of arrays holding the counts for each channel. By default there is only one channel.
-    this.uiMaxCountAllChannels = 0;								//!< The maximum number of occurrences of a value over all channels.
 
-	this.setSourceImageElement(_sourceImageElement);
-    this.setTargetCanvasElementElement(targetCanvasElement, _context);
+    this.image = new Image();
+    this.image.loadFromSource(_sourceImageElement);
+    this.setTargetCanvasElement(targetCanvasElement, _context);
 }
 
 /**
@@ -51,7 +45,7 @@ Histogramm.prototype.setHistogrammPadding = function(top, left, bottom, right) {
  * @param _targetCanvasElement String id of the target canvas in the document
  * @param _context String context of the canvas (default = 2d)
  */
-Histogramm.prototype.setTargetCanvasElementElement = function(_targetCanvasElement, _context) {
+Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _context) {
 	this.targetCanvasElement = _targetCanvasElement;
     if(typeof(_context)==='undefined') _context = '2d';
     this.targetContext = this.targetCanvasElement.getContext(_context);
@@ -63,83 +57,10 @@ Histogramm.prototype.setTargetCanvasElementElement = function(_targetCanvasEleme
  * Resets the internal image data from the data of the given image.
  */
 Histogramm.prototype.setSourceImageElement = function(_sourceImageElement) {
-    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
-	sourceImgTempCanvas.width = _sourceImageElement.width;
-	sourceImgTempCanvas.height = _sourceImageElement.height;
-    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
-	
-	// Draw the image data onto the invisible image context.
-	sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
-
-	// Get the image data from the invisible image canvas context.
-	// CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
-	// Add --allow-file-access-from-files to chrome startup to circumvent this.
-    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
+    this.image.loadFromSource(_sourceImageElement);
 };
 
 
-
-/**
- * Recalculates the histogram data.
- */
-Histogramm.prototype.recalcHistData = function() {
-	this.aauiChannelValueCounts = [[]];
-    this.uiMaxCountAllChannels = 0;
-    this.histType = this.histTypeElement.value;
-
-    // For RGB there are 3 channels.
-    if (this.histType === 'rgb')
-    {
-        this.aauiChannelValueCounts = [[], [], []];
-    }
-
-    var uiPixelStepWidth = 4; // 4 because the image data is always RGBA.
-
-    // Loop over all pixels.
-    for (var i = 0, n = this.sourceImgData.length; i < n; i+= uiPixelStepWidth)
-    {
-        var val;
-        if (this.histType === 'brightness')
-        {
-            val = [Utils.calcYFromRgb(this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2])];
-        }
-        else if (this.histType === 'rgb')
-        {
-            val = [this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2]];
-        }
-        else if (this.histType === 'red')
-        {
-            val = [this.sourceImgData[i]];
-        }
-        else if (this.histType === 'green')
-        {
-            val = [this.sourceImgData[i+1]];
-        }
-        else if (this.histType === 'blue')
-        {
-            val = [this.sourceImgData[i+2]];
-        }
-
-        for (var y = 0, m = val.length; y < m; y++)
-        {
-            // Accumulate the number of occurrences of the values.
-            if (val[y] in this.aauiChannelValueCounts[y])
-            {
-                this.aauiChannelValueCounts[y][val[y]]++;
-            }
-            else
-            {
-                this.aauiChannelValueCounts[y][val[y]] = 1;
-            }
-
-            // Get the maximum number of occurrences of a value to adjust the amplitude.
-            if (this.aauiChannelValueCounts[y][val[y]] > this.uiMaxCountAllChannels)
-            {
-                this.uiMaxCountAllChannels = this.aauiChannelValueCounts[y][val[y]];
-            }
-        }
-    }
-}
 
 /**
  * Draws the histogram axes.
@@ -197,6 +118,8 @@ Histogramm.prototype.drawHistAxis = function() {
  * @param bFill If the diagram should be filled or only dots.
  */
 Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, bFill) {
+
+    console.log(sType);
     var ctxStyle;
 
     if (bFill || sStyle === 'discreet')
@@ -233,7 +156,7 @@ Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, b
 
         //console.log ("#i = " + auiValueCounts[i])
         var uiValueWidth = Math.ceil(this.uiHistWidthPx/256);
-        var uiValueHeight = Math.round((auiValueCounts[i]/this.uiMaxCountAllChannels) * this.uiHistHeightPx);
+        var uiValueHeight = Math.round((auiValueCounts[i]/this.image.getMaxCountAllChannels()) * this.uiHistHeightPx);
         var uiValueX = this.uiHistLeftPx + Math.round((i/256) * this.uiHistWidthPx);
         var uiValueY = this.uiHistTopPx + this.uiHistHeightPx - uiValueHeight;
 
@@ -259,7 +182,7 @@ Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, b
         this.targetContext.lineTo(x, this.uiHistBottomPx);
         if (plotFill.checked)
         {
-            histCtx.fill();
+            this.targetContext.fill();
         }
 
         this.targetContext.stroke();
@@ -273,41 +196,48 @@ Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, b
  * @param bFill If the diagram should be filled or only dots.
  */
 Histogramm.prototype.drawHist = function(sStyle, bFill) {
+    console.log("into");
 	// Recalculate the histogram data.
-	this.recalcHistData();
-	
-    var asChannelTypes = [this.histType];		//!< The types of the channels. By default there is only one channel with the given type.
-
-    // For RGB there are 3 channels.
-    if (this.histType === 'rgb')
-    {
-        asChannelTypes = ['red', 'green', 'blue'];
-    }
-
-    if (this.uiMaxCountAllChannels === 0)
-    {
+    if (this.image.getMaxCountAllChannels() == 0) {
         return;
     }
 
+    this.histType = this.histTypeElement.value;
+    var asChannelTypes = [this.histType];		//!< The types of the channels. By default there is only one channel with the given type.
     // Clear the canvas.
     this.targetContext.clearRect(0, 0, this.targetCanvasElement.width, this.targetCanvasElement.height);
 
     // Draw the axes.
     this.drawHistAxis();
 
-    if (bFill && this.aauiChannelValueCounts.length > 1)
+    if (bFill /*&& this.aauiChannelValueCounts.length > 1*/)
     {
         this.targetContext.globalCompositeOperation = 'lighter';
     }
 
-    // Draw the channels into the histogram.
-    for (var i = 0, n = this.aauiChannelValueCounts.length; i < n; i++)
-    {
-        //console.log("channel type "+ asChannelTypes[i] + " channelValueCount " + this.aauiChannelValueCounts[i]);
-        this.drawHistChannel(asChannelTypes[i], this.aauiChannelValueCounts[i], sStyle, bFill);
+    // For RGB there are 3 channels.
+    if (this.histType === 'rgb') {
+        asChannelTypes = ['red', 'green', 'blue'];
+        for (var i = 0; i < 3; i++) {
+            //console.log("channel type "+ asChannelTypes[i] + " channelValueCount " + this.aauiChannelValueCounts[i]);
+            this.drawHistChannel(asChannelTypes[i], this.image.getChannelCount(i+1), sStyle, bFill);
+        }
+    }else {
+        var i = 0;
+        if(this.histType === 'brightness') {
+            i = 0;
+        }else if(this.histType === 'red') {
+            i = 1;
+        }else if(this.histType === 'green') {
+            i = 2;
+        }else if(this.histType === 'blue') {
+            i = 3;
+        }
+        console.log("index = " + i);
+        this.drawHistChannel(asChannelTypes[0], this.image.getChannelCount(i), sStyle, bFill);
     }
 
-    if (bFill && this.aauiChannelValueCounts.length > 1)
+    if (bFill/* && this.aauiChannelValueCounts.length > 1*/)
     {
         this.targetContext.globalCompositeOperation = 'source-over';
     }
