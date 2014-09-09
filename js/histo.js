@@ -77,16 +77,7 @@ Histogramm.prototype.setSourceImageElement = function(_sourceImageElement) {
     this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
 };
 
-/**
- * return The luminance Y calculated from the RGB values.
- * @param R float red
- * @param G float green
- * @param B float blue
- * @returns luminance
- */
-Histogramm.prototype.calcYFromRgb = function(R, G, B) {
-    return Math.round(0.299 * R + 0.587 * G + 0.114 * B);
-};
+
 
 /**
  * Recalculates the histogram data.
@@ -110,7 +101,7 @@ Histogramm.prototype.recalcHistData = function() {
         var val;
         if (this.histType === 'brightness')
         {
-            val = [this.calcYFromRgb(this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2])];
+            val = [calcYFromRgb(this.sourceImgData[i], this.sourceImgData[i+1], this.sourceImgData[i+2])];
         }
         else if (this.histType === 'rgb')
         {
