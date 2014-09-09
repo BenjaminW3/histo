@@ -10,7 +10,7 @@
 		<link type="text/css" rel="stylesheet" href="css/tabs.css" />
 
 		<script type="text/javascript" src="js/utils.js"></script>
-        <script type="text/javascript" src="js/image.js"></script>
+		<script type="text/javascript" src="js/image.js"></script>
 		<script type="text/javascript" src="js/histo.js"></script>
 		<script type="text/javascript" src="js/tabs.js"></script>
 		<script type="text/javascript" src="js/tab1Histo.js"></script>
@@ -72,9 +72,10 @@
 						</p>
 						<br/>
 
-						<p><img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom"></p>
-
-						<p><canvas class="thumb image" id="tab1HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
+						<p>
+							<img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom">
+							<canvas class="thumb image" id="tab1HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+						</p>
 
 						<p class="clear_both">
 							<label>Histogramm-Typ: 
@@ -89,22 +90,21 @@
 						</p>
 
 						<!--
-						<p>
-							<label>Plot style: 
-								<select id="plotStyle">
-									<option value="continuous">Continuous</option>
-									<option value="discreet">Discreet</option>
-								</select>
-							</label>
-						</p>
-
 						<p><label>Plot fill <input id="plotFill" type="checkbox"></label></p>-->
 						
 					</div>
 					<div class="tabpage" id="tabpage_2">
 						<h3>Allgemein</h3>
-						<p><i>H(g)'=h(g)</i></p>
-	
+						<p>Das kumulative Histogramm stellt eine monoton steigende Folge von Werten im Bereich [0,K] dar, wobei K der Anzahl der Pixel im Bild entspricht.
+						</p>
+						<p>
+						Dieses Histogramm wird berechnet, indem jedem Grauwert g die Summe aller Häufigkeiten H der Grauwerte 0 bis g zugeordnet wird:
+						</p>
+						<p><img src="img/cumHistoSum.png" alt="kumulatives Histogramm Summe" height="54"></p>
+						<p>
+						Sind alle Tonwerte gleich Häufig vorhanden, so ergibt sich eine Gerade.
+						</p>
+						
 						<br/>
 						<p>
 							<label>Bild: 
@@ -123,9 +123,13 @@
 						</p>
 						<br/>
 
-						<p><img class="thumb image" id="tab2SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom"></p>
-
-						<p><canvas class="thumb image" id="tab2HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas></p>
+						<p>
+							<img class="thumb image" id="tab2SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Mushroom Kingdom">
+						</p>
+						<p class="clear_both">
+							<canvas class="thumb image" id="tab2HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+							<canvas class="thumb image" id="tab2CumulativeHistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+						</p>
 
 						<p class="clear_both">
 							<label>Histogramm-Typ: 
@@ -143,11 +147,15 @@
 						<p id="pointOperatorType">
                              <label>Punktoperator:
                                  <select id="tab3PointOperatorSelect">
-                                     <option value="negative">Negativtransformation</option>
-                                     <option value="potency">Potenztransformation</option>
+                                     <option value="negative">Negativtransformation (Invertierung)</option>
+                                     <option value="potency">Potenztransformation (Gammakorrektur)</option>
                                      <option value="logarithm">Logarithmustransformation</option>
                                      <option value="exponential">Exponentialtransformation</option>
-                                     <option value="shift">HISTOGRAMMVERSCHIEBUNG?</option>
+                                     <option value="shift">Histogrammverschiebung (Helligkeitskorrektur)</option>
+                                     <option value="shift">Histogrammbegrenzung+Spreizung (Kontrastkorrektur)</option>
+                                     <option value="shift">Histogrammequalisierung</option>
+                                     <option value="shift">Histogrammhyperbolisation</option>
+                                     <option value="threshhold">Schwellwertoperation</option>
                                  </select>
                              </label>
                          </p>

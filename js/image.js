@@ -1,10 +1,13 @@
+/**
+ * Constructor.
+ */
 function PixelData(_r,_g,_b,_a) {
     this.r = _r;
     this.g = _g;
     this.b = _b;
     if(_a == undefined) _a = 255;
     this.a = _a;
-    this.l = Math.round(0.299 * _r + 0.587 * _g + 0.114 * _b); //luminance
+    this.l = Utils.calcYFromRgb(_r, _g, _b); //luminance
 }
 
 PixelData.prototype.luminance = function() {
@@ -27,20 +30,23 @@ PixelData.prototype.alpha = function() {
     this.a;
 };
 
-PixelData.prototype.rgb = function() {
+PixelData.prototype.yrgba = function() {
     return {"luminance": this.l, "red": this.r, "green": this.g, "blue": this.b, "alpha": this.a};
 };
 
-
-function Image() {
-    this.channelValue = [[]];
-    this.channelValueCount = [[],[],[],[]];
+/**
+ * Constructor.
+ */
+function Image(_sourceImageElement) {
+    this.channelValue = [[]];					//!< Two dimensional array with PixelData.
+    this.channelHistogram = [[],[],[],[]];
+    this.channelHistogramMax = [0,0,0,0];
     this.width = 0;
     this.height = 0;
     this.sourceImgData = null;
-    this.maxCountAllChannels = 0;
+	
+	this.loadFromSource(_sourceImageElement);
 }
-
 
 /**
  *
@@ -51,7 +57,7 @@ function Image() {
 Image.prototype.getPixelData = function(_x, _y) {
     if(_y < this.channelValue.length) {
         if(_x < this.channelValue[_y].length) {
-            return this.channelValue[_y][_x].rgb();
+            return this.channelValue[_y][_x].yrgba();
         }
     }
     return null;
@@ -65,8 +71,12 @@ Image.prototype.getHeight = function() {
     return this.height;
 }
 
-Image.prototype.getMaxCountAllChannels = function() {
-    return this.maxCountAllChannels;
+Image.prototype.getNumPixels = function() {
+    return this.width * this.height;
+}
+
+Image.prototype.getChannelHistogramMax = function(_channelNo) {
+    return this.channelHistogramMax[_channelNo];
 }
 
 Image.prototype.getImageData = function() {
@@ -74,13 +84,13 @@ Image.prototype.getImageData = function() {
 }
 
 /**
- * Returns the channelcount array for histogramm
+ * Returns the channelcount array for histogram
  * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
  * @returns array of the channel or null if the channel number is invalid
  */
-Image.prototype.getChannelCount = function(_channelNo) {
+Image.prototype.getChannelHistogram = function(_channelNo) {
     if((_channelNo >= 0) && (_channelNo < 4)) {
-        return this.channelValueCount[_channelNo];
+        return this.channelHistogram[_channelNo];
     }
     return null;
 }
@@ -89,6 +99,9 @@ Image.prototype.getChannelCount = function(_channelNo) {
  *  Calculate channelvaluecount and maxCount for all channels
  */
 Image.prototype.reload = function() {
+	this.channelHistogram = [[],[],[],[]];
+	this.channelHistogramMax = [0,0,0,0];
+
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
     var x = 0;
     var y = 0;
@@ -99,13 +112,13 @@ Image.prototype.reload = function() {
         this.channelValue[y].push(pixel);
 
         for(var color = 0; color < 4; color++) {
-            if(value[color] in this.channelValueCount[color]) {
-                this.channelValueCount[color][value[color]]++;
+            if(value[color] in this.channelHistogram[color]) {
+                this.channelHistogram[color][value[color]]++;
             }else {
-                this.channelValueCount[color][value[color]] = 1;
+                this.channelHistogram[color][value[color]] = 1;
             }
-            if(this.channelValueCount[color][value[color]] > this.maxCountAllChannels) {
-                this.maxCountAllChannels = this.channelValueCount[color][value[color]];
+            if(this.channelHistogram[color][value[color]] > this.channelHistogramMax[color]) {
+                this.channelHistogramMax[color] = this.channelHistogram[color][value[color]];
             }
         }
 
@@ -130,9 +143,9 @@ Image.prototype.loadFromSource = function(_sourceImageElement) {
     // Draw the image data onto the invisible image context.
     sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
 
-
     this.width = _sourceImageElement.width;
     this.height = _sourceImageElement.height;
+	
     // Get the image data from the invisible image canvas context.
     // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
     // Add --allow-file-access-from-files to chrome startup to circumvent this.

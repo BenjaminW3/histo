@@ -8,10 +8,10 @@ window.addEventListener('load', function ()
 	
     var histCanvasElement = document.getElementById('tab1HistogramTargetCanvas');		//!< The HTML canvas element for the histogram.
     var histTypeElement = document.getElementById('tab1HistTypeSelect');				//!< The HTML histogram type selection element.
-	//var plotStyle = document.getElementById('plotStyle');
 	//var plotFill = document.getElementById('plotFill');
 
-    var hist = new Histogramm(sourceImgElement, histCanvasElement, '2d', histTypeElement);
+    var image = new Image(sourceImgElement);
+    var hist = new Histogramm(image, histCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
@@ -20,7 +20,8 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-        hist.setSourceImageElement(sourceImgElement);
+		image.loadFromSource(sourceImgElement);
+        hist.setSourceImage(image);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {
@@ -30,7 +31,7 @@ window.addEventListener('load', function ()
         updateHist();
     };
     var updateHist = function() {
-        hist.drawHist('discreet', true/*plotStyle.value, plotFill.checked*/);
+        hist.drawHist(true/*plotFill.checked*/, false);
     };
 
 	//-----------------------------------------------------------------------------
@@ -48,16 +49,7 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
 
-	//plotStyle.addEventListener('change', updateHist, false);
 	//plotFill.addEventListener('change', updateHist, false);
 
-	/*var initHistogram = function () 
-	{
-		// Plot defaults
-		plotStyle.value = 'continuous';
-		plotFill.checked = true;
-		histType.value = 'brightness';
-	};
-	initHistogram();*/
-	reloadAndUpdateHist();
+	updateHist();
 }, false);

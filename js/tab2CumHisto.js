@@ -3,13 +3,16 @@
 //-----------------------------------------------------------------------------
 window.addEventListener('load', function ()
 {
-    var sourceImgElement = document.getElementById('tab2SourceImage');					//!< The HTML source image element.
-    var sourceImgSelectorElement = document.getElementById('tab2SourceImgSelect');		//!< The HTML source image selection element.
+    var sourceImgElement = document.getElementById('tab2SourceImage');							//!< The HTML source image element.
+    var sourceImgSelectorElement = document.getElementById('tab2SourceImgSelect');				//!< The HTML source image selection element.
 	
-    var histCanvasElement = document.getElementById('tab2HistogramTargetCanvas');		//!< The HTML canvas element for the histogram.
-    var histTypeElement = document.getElementById('tab2HistTypeSelect');				//!< The HTML histogram type selection element.
+    var histCanvasElement = document.getElementById('tab2HistogramTargetCanvas');				//!< The HTML canvas element for the histogram.
+    var cumHistCanvasElement = document.getElementById('tab2CumulativeHistogramTargetCanvas');	//!< The HTML canvas element for the histogram.
+    var histTypeElement = document.getElementById('tab2HistTypeSelect');						//!< The HTML histogram type selection element.
 
-    var hist = new Histogramm(sourceImgElement, histCanvasElement, '2d', histTypeElement);
+    var image = new Image(sourceImgElement);
+    var hist = new Histogramm(image, histCanvasElement, '2d', histTypeElement);
+    var cumHist = new Histogramm(image, cumHistCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
@@ -18,7 +21,9 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-        hist.setSourceImageElement(sourceImgElement);
+		image.loadFromSource(sourceImgElement);
+        hist.setSourceImage(image);
+        cumHist.setSourceImage(image);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {
@@ -28,7 +33,8 @@ window.addEventListener('load', function ()
         updateHist();
     };
     var updateHist = function() {
-        hist.drawHist('discreet', true);
+        hist.drawHist(true, false);
+        cumHist.drawHist(true, true);
     };
 
 	//-----------------------------------------------------------------------------
@@ -46,5 +52,5 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
 
-	reloadAndUpdateHist();
+	updateHist();
 }, false);

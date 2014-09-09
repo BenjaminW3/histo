@@ -1,7 +1,7 @@
 ﻿/**
  * Constructor.
  */
-function Histogramm(_sourceImageElement, targetCanvasElement, _context, _histTypeElement) {
+function Histogramm(_image, targetCanvasElement, _context, _histTypeElement) {
     // The settings.
     this.histTypeElement = _histTypeElement;					//!< The HTML histogram type selection element.
     this.histType = this.histTypeElement.value;
@@ -10,8 +10,7 @@ function Histogramm(_sourceImageElement, targetCanvasElement, _context, _histTyp
     this.targetCanvasElement = null;							//!< The target histogram HTML canvas element.
     this.targetContext = null;									//!< The target context of the histogram.
 
-    this.image = new Image();
-    this.image.loadFromSource(_sourceImageElement);
+	this.setSourceImage(_image);
     this.setTargetCanvasElement(targetCanvasElement, _context);
 }
 
@@ -24,7 +23,7 @@ function Histogramm(_sourceImageElement, targetCanvasElement, _context, _histTyp
  */
 Histogramm.prototype.setHistogrammPadding = function(top, left, bottom, right) {
     if(typeof(top)==='undefined') top = 30;
-    if(typeof(left)==='undefined') left = 40;
+    if(typeof(left)==='undefined') left = 50;
     if(typeof(bottom)==='undefined') bottom = 30;
     if(typeof(right)==='undefined') right = 10;
 
@@ -50,22 +49,20 @@ Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _co
     if(typeof(_context)==='undefined') _context = '2d';
     this.targetContext = this.targetCanvasElement.getContext(_context);
 	// Set the histogram render sizes depending on the target canvas size.
-    this.setHistogrammPadding(30,40,30,10);	
+    this.setHistogrammPadding(30,50,30,10);	
 };
 
 /**
- * Resets the internal image data from the data of the given image.
+ * Sets the internal image.
  */
-Histogramm.prototype.setSourceImageElement = function(_sourceImageElement) {
-    this.image.loadFromSource(_sourceImageElement);
+Histogramm.prototype.setSourceImage = function(_image) {
+    this.image = _image;
 };
-
-
 
 /**
  * Draws the histogram axes.
  */
-Histogramm.prototype.drawHistAxis = function() {
+Histogramm.prototype.drawHistAxis = function(uiMaxValY) {
     this.targetContext.lineWidth = 2;
     this.targetContext.fillStyle = '#333';
     this.targetContext.strokeStyle = '#333';
@@ -104,7 +101,7 @@ Histogramm.prototype.drawHistAxis = function() {
     this.targetContext.textAlign = "end";
     for(var i = 0; i < 5; i++)
     {
-        var uiYAxisValue = Math.round(i * (this.uiMaxCountAllChannels/(5-1)));
+        var uiYAxisValue = Math.round(i * (uiMaxValY/(5-1)));
         this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx - 5, this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(5-1))) + 5);	// +5 for centering because position is bottom of text.
     }
 };
@@ -112,17 +109,15 @@ Histogramm.prototype.drawHistAxis = function() {
 
 /**
  * Draws a channel of the histogram.
- * @param sType The type of the channel used for coloring.
+ * @param _color The color the channel is drawn.
  * @param auiValueCounts An Array of occurance counts of color values.
- * @param sStyle Either 'discreet' or 'continuous'.
+ * @param uiValueCountMax The maximum vertical value.
  * @param bFill If the diagram should be filled or only dots.
+ * @param bCumulative If the channel should be drawn cumulative.
  */
-Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, bFill) {
-
-    console.log(sType);
+Histogramm.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill, bCumulative) {
     var ctxStyle;
-
-    if (bFill || sStyle === 'discreet')
+    if (bFill)
     {
         ctxStyle = 'fillStyle';
         this.targetContext.strokeStyle = '#000';
@@ -131,97 +126,95 @@ Histogramm.prototype.drawHistChannel = function(sType, auiValueCounts, sStyle, b
     {
         ctxStyle = 'strokeStyle';
     }
+	
+    this.targetContext[ctxStyle] = _color;
 
-    // Select the color for the histogram channel.
-    var colors = {
-        'red':   		'#f00',
-        'green': 		'#0f0',
-        'blue':  		'#00f',
-        'brightness':   '#000'
-    };
-    this.targetContext[ctxStyle] = colors[sType];
-
-    if (sStyle === 'continuous')
-    {
-        this.targetContext.beginPath();
-        this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx);
-    }
-
+	var uiCurrentValue = 0;
+	
     for (var x, y, i = 0; i < 256; i++)
     {
-        if (!(i in auiValueCounts))
-        {
-            continue;
-        }
-
+		if(bCumulative) {
+			if (!(i in auiValueCounts)) {
+				uiCurrentValue += 0;
+			}
+			else {
+				uiCurrentValue += auiValueCounts[i];
+			}
+		}
+		else {
+			if (!(i in auiValueCounts)) {
+				continue;
+			}
+			else {
+				uiCurrentValue = auiValueCounts[i];
+			}
+		}
+		
         //console.log ("#i = " + auiValueCounts[i])
         var uiValueWidth = Math.ceil(this.uiHistWidthPx/256);
-        var uiValueHeight = Math.round((auiValueCounts[i]/this.image.getMaxCountAllChannels()) * this.uiHistHeightPx);
+        var uiValueHeight = Math.round((uiCurrentValue/uiValueCountMax) * this.uiHistHeightPx);
         var uiValueX = this.uiHistLeftPx + Math.round((i/256) * this.uiHistWidthPx);
         var uiValueY = this.uiHistTopPx + this.uiHistHeightPx - uiValueHeight;
 
-        if (sStyle === 'continuous')
+        if (bFill)
         {
-            this.targetContext.lineTo(x, this.targetCanvasElement.height - y);
+            this.targetContext.fillRect(uiValueX, uiValueY, uiValueWidth, uiValueHeight);
         }
-        else if (sStyle === 'discreet')
+        else
         {
-            if (bFill)
-            {
-                this.targetContext.fillRect(uiValueX, uiValueY, uiValueWidth, uiValueHeight);
-            }
-            else
-            {
-                this.targetContext.fillRect(uiValueX, uiValueY, uiValueWidth, 2);
-            }
+            this.targetContext.fillRect(uiValueX, uiValueY, uiValueWidth, 2);
         }
-    }
-
-    if (sStyle === 'continuous')
-    {
-        this.targetContext.lineTo(x, this.uiHistBottomPx);
-        if (plotFill.checked)
-        {
-            this.targetContext.fill();
-        }
-
-        this.targetContext.stroke();
-        this.targetContext.closePath();
     }
 };
 
 /**
  * Draws the whole histogram.
- * @param sStyle Either 'discreet' or 'continuous'.
  * @param bFill If the diagram should be filled or only dots.
+ * @param bCumulative If the channel should be drawn cumulative.
  */
-Histogramm.prototype.drawHist = function(sStyle, bFill) {
-    console.log("into");
+Histogramm.prototype.drawHist = function(bFill, bCumulative) {
+    //console.log("into");
 	// Recalculate the histogram data.
-    if (this.image.getMaxCountAllChannels() == 0) {
+    if (this.image.getChannelHistogramMax() == 0) {
         return;
     }
 
     this.histType = this.histTypeElement.value;
-    var asChannelTypes = [this.histType];		//!< The types of the channels. By default there is only one channel with the given type.
+	
     // Clear the canvas.
     this.targetContext.clearRect(0, 0, this.targetCanvasElement.width, this.targetCanvasElement.height);
 
-    // Draw the axes.
-    this.drawHistAxis();
-
-    if (bFill /*&& this.aauiChannelValueCounts.length > 1*/)
-    {
-        this.targetContext.globalCompositeOperation = 'lighter';
-    }
-
+    // Select the color for the histogram channel.
+    var colors = {
+        0: '#000',
+        1: '#f00',
+        2: '#0f0',
+        3: '#00f'
+    };
+	
     // For RGB there are 3 channels.
     if (this.histType === 'rgb') {
-        asChannelTypes = ['red', 'green', 'blue'];
-        for (var i = 0; i < 3; i++) {
-            //console.log("channel type "+ asChannelTypes[i] + " channelValueCount " + this.aauiChannelValueCounts[i]);
-            this.drawHistChannel(asChannelTypes[i], this.image.getChannelCount(i+1), sStyle, bFill);
+		// The maximum y value is the maximum over all channels.
+		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : Math.max(this.image.getChannelHistogramMax(1), this.image.getChannelHistogramMax(2), this.image.getChannelHistogramMax(3));
+		
+		// Draw the axes.
+		this.drawHistAxis(uiMaxCount);
+	
+		if (bFill)
+		{
+			this.targetContext.globalCompositeOperation = 'lighter';
+		}
+		
+		// Draw the channels.
+        for (var i = 1; i < 4; i++) {
+            //console.log("channel type "+ asChannelTypes[i] + " channelHistogram " + this.aauiChannelValueCounts[i]);
+            this.drawHistChannel(colors[i], this.image.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
         }
+
+		if (bFill)
+		{
+			this.targetContext.globalCompositeOperation = 'source-over';
+		}
     }else {
         var i = 0;
         if(this.histType === 'brightness') {
@@ -233,12 +226,15 @@ Histogramm.prototype.drawHist = function(sStyle, bFill) {
         }else if(this.histType === 'blue') {
             i = 3;
         }
-        console.log("index = " + i);
-        this.drawHistChannel(asChannelTypes[0], this.image.getChannelCount(i), sStyle, bFill);
-    }
-
-    if (bFill/* && this.aauiChannelValueCounts.length > 1*/)
-    {
-        this.targetContext.globalCompositeOperation = 'source-over';
+		
+		// The maximum y value is the maximum over all channels.
+		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : this.image.getChannelHistogramMax(i);
+		
+		// Draw the axes.
+		this.drawHistAxis(uiMaxCount);
+		
+		// Draw the channel.
+        //console.log("index = " + i);
+        this.drawHistChannel(colors[i], this.image.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
     }
 };
