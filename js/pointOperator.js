@@ -1,16 +1,26 @@
 
 
 function PointOperator(_originalId, _manipulateId) {
-    var img = document.getElementById(_originalId);
-    var imgCtx = img.getContext('2d');
-    this.origImgData = imgCtx.getImageData(0, 0, img.width, img.height);
-
     var transformedCanvas = document.getElementById(_manipulateId);
     var transformedCtx = transformedCanvas.getContext('2d');
     transformedCanvas.width = img.width;
     transformedCanvas.height = img.height;
     this.transformedData = transformedCtx.getImageData(0,0,transformedCanvas.width, transformedCanvas.height);
+
+    this.sourceImgData = null;
 }
+
+/**
+ * Set set intern image data
+ */
+PointOperator.prototype.setSourceImageElement = function(_sourceImageElement) {
+    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
+    sourceImgTempCanvas.width = _sourceImageElement.width;
+    sourceImgTempCanvas.height = _sourceImageElement.height;
+    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+    sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
+    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
+};
 
 
 PointOperator.prototype.updateTransformedCanvas = function () {
