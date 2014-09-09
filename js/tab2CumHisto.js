@@ -3,13 +3,11 @@
 //-----------------------------------------------------------------------------
 window.addEventListener('load', function ()
 {
-    var sourceImgElement = document.getElementById('tab1SourceImage');					//!< The HTML source image element.
-    var sourceImgSelectorElement = document.getElementById('tab1SourceImgSelect');		//!< The HTML source image selection element.
+    var sourceImgElement = document.getElementById('tab2SourceImage');					//!< The HTML source image element.
+    var sourceImgSelectorElement = document.getElementById('tab2SourceImgSelect');		//!< The HTML source image selection element.
 	
-    var histCanvasElement = document.getElementById('tab1HistogramTargetCanvas');		//!< The HTML canvas element for the histogram.
-    var histTypeElement = document.getElementById('tab1HistTypeSelect');				//!< The HTML histogram type selection element.
-	//var plotStyle = document.getElementById('plotStyle');
-	//var plotFill = document.getElementById('plotFill');
+    var histCanvasElement = document.getElementById('tab2HistogramTargetCanvas');		//!< The HTML canvas element for the histogram.
+    var histTypeElement = document.getElementById('tab2HistTypeSelect');				//!< The HTML histogram type selection element.
 
     var hist = new Histogramm(sourceImgElement, histCanvasElement, '2d', histTypeElement);
 
@@ -30,7 +28,7 @@ window.addEventListener('load', function ()
         updateHist();
     };
     var updateHist = function() {
-        hist.drawHist('discreet', true/*plotStyle.value, plotFill.checked*/);
+        hist.drawHist('discreet', true);
     };
 
 	//-----------------------------------------------------------------------------
@@ -48,16 +46,5 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
 
-	//plotStyle.addEventListener('change', updateHist, false);
-	//plotFill.addEventListener('change', updateHist, false);
-
-	/*var initHistogram = function () 
-	{
-		// Plot defaults
-		plotStyle.value = 'continuous';
-		plotFill.checked = true;
-		histType.value = 'brightness';
-	};
-	initHistogram();*/
 	reloadAndUpdateHist();
 }, false);

@@ -11,4 +11,6 @@
   max-height: 400px;
 }
 
-#histTypeP { clear: both }
+.clear_both { 
+  clear: both 
+}
