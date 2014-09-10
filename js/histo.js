@@ -62,12 +62,12 @@ Histogramm.prototype.setSourceImage = function(_image) {
 /**
  * Draws the histogram axes.
  */
-Histogramm.prototype.drawHistAxis = function(uiMaxValY) {
+Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.lineWidth = 2;
     this.targetContext.fillStyle = '#333';
     this.targetContext.strokeStyle = '#333';
     this.targetContext.font = 'italic 10pt sans-serif';
-    this.targetContext.textAlign = "center";
+    this.targetContext.textAlign = 'center';
 
     // Render the axes lines.
     this.targetContext.beginPath();
@@ -85,7 +85,7 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY) {
         200,
         255
     ];
-    this.targetContext.textAlign = "center";
+    this.targetContext.textAlign = 'center';
     for(var i = 0; i < dataX.length; i++)
     {
         this.targetContext.fillText(dataX[i], this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx), this.uiHistBottomPx + 15);
@@ -95,7 +95,7 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY) {
     this.targetContext.fillText("g", this.uiHistLeftPx + (this.uiHistWidthPx*0.5), this.uiHistBottomPx + 25);
 
     // Draw y-axis header.
-    this.targetContext.fillText("h(g)", this.uiHistLeftPx, this.uiHistTopPx - 15);
+    this.targetContext.fillText((bCumulative===true) ? "H(g)" : "h(g)", this.uiHistLeftPx, this.uiHistTopPx - 15);
 
     // Draw some y-axis values.
     this.targetContext.textAlign = "end";
@@ -198,7 +198,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
 		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : Math.max(this.image.getChannelHistogramMax(1), this.image.getChannelHistogramMax(2), this.image.getChannelHistogramMax(3));
 		
 		// Draw the axes.
-		this.drawHistAxis(uiMaxCount);
+		this.drawHistAxis(uiMaxCount, bCumulative);
 	
 		if (bFill)
 		{
@@ -231,7 +231,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
 		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : this.image.getChannelHistogramMax(i);
 		
 		// Draw the axes.
-		this.drawHistAxis(uiMaxCount);
+		this.drawHistAxis(uiMaxCount, bCumulative);
 		
 		// Draw the channel.
         //console.log("index = " + i);
