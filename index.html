@@ -28,6 +28,7 @@
 						<li id="tabHeader_1">Histogramme</li>
 						<li id="tabHeader_2">Kumulative Histogramme</li>
 						<li id="tabHeader_3">Punktoperatoren</li>
+						<li id="tabHeader_4">Punktoperatoren-Test</li>
 					</ul>
 				</div>
 				<div id="tabscontent">
@@ -68,10 +69,10 @@
 									<option value="img/northern-lights-scenic-aurora-borealis_w725_h483.jpg">Nordlichter (unterbelichtet - mit Absicht)</option>
 									<option value="img/snow-wallpapers_w725_h544.png">Schneelandschaft (geringe Dynamik)</option>
 									<option value="img/800px-C-130J_formation_low-level.jpg">C-130J (geringer Kontrast)</option>
-									<option value="user_upload">Datei öffnen...</option>
+									<option value="user_upload" id="tab1SourceImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
-								
-								<input type="file"  id="tab1SourceImgInput" style="visibility:hidden">
+								<label id="tab1SourceImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
+								<input type="file" id="tab1SourceImgInput" style="visibility:hidden">
 							</label>
 						</p>
 						<br/>
@@ -99,7 +100,8 @@
 					</div>
 					<div class="tabpage" id="tabpage_2">
 						<h3>Allgemein</h3>
-						<p>Das kumulative Histogramm stellt eine monoton steigende Folge von Werten im Bereich [0,K] dar, wobei K der Anzahl der Pixel im Bild entspricht.
+						<p>
+						Das kumulative Histogramm stellt eine monoton steigende Folge von Werten im Bereich [0,K] dar, wobei K der Anzahl der Pixel im Bild entspricht.
 						</p>
 						<p>
 						Dieses Histogramm wird berechnet, indem jedem Grauwert g die Summe aller Häufigkeiten H der Grauwerte 0 bis g zugeordnet wird:
@@ -123,9 +125,9 @@
 									<option value="img/northern-lights-scenic-aurora-borealis_w725_h483.jpg">Nordlichter (unterbelichtet - mit Absicht)</option>
 									<option value="img/snow-wallpapers_w725_h544.png">Schneelandschaft (geringe Dynamik)</option>
 									<option value="img/800px-C-130J_formation_low-level.jpg">C-130J (geringer Kontrast)</option>
-									<option value="user_upload">Datei öffnen...</option>
+									<option value="user_upload" id="tab2SourceImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
-								
+								<label id="tab2SourceImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
 								<input type="file"  id="tab2SourceImgInput" style="visibility:hidden">
 							</label>
 						</p>
@@ -152,6 +154,12 @@
 						</p>
 					</div>
 					<div class="tabpage" id="tabpage_3">
+						<h3>Allgemein</h3>
+						<p>
+						Punktoperatoren...
+						</p>
+					</div>
+					<div class="tabpage" id="tabpage_4">
 						<p id="pointOperatorType">
                              <label>Punktoperator:
                                  <select id="tab3PointOperatorSelect">

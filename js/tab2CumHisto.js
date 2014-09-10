@@ -5,7 +5,9 @@ window.addEventListener('load', function ()
 {
     var sourceImgElement = document.getElementById('tab2SourceImage');							//!< The HTML source image element.
     var sourceImgSelectElement = document.getElementById('tab2SourceImgSelect');				//!< The HTML source image selection element.
-    var sourceImgInputElement = document.getElementById('tab2SourceImgInput');			//!< The HTML source image file input element.
+    var sourceImgSelectOptionUserUploadElement = document.getElementById('tab2SourceImgSelectOptionUserUpload');//!< The HTML source image user upload option element.
+    var sourceImgInputElement = document.getElementById('tab2SourceImgInput');					//!< The HTML source image file input element.
+    var sourceImgLabelElement = document.getElementById('tab2SourceImgLabel');					//!< The HTML source image label element.
 	
     var histCanvasElement = document.getElementById('tab2HistogramTargetCanvas');				//!< The HTML canvas element for the histogram.
     var cumHistCanvasElement = document.getElementById('tab2CumulativeHistogramTargetCanvas');	//!< The HTML canvas element for the histogram.
@@ -49,24 +51,24 @@ window.addEventListener('load', function ()
 	sourceImgSelectElement.addEventListener('change', function () {
 		if(this.value==='user_upload')
 		{
-			if(Utils.supportsFileReader()) {
-				// Enable the file input and the drag and drop fields.
-				sourceImgInputElement.style.visibility = 'visible';
-				sourceImgElement.classList.add('drag_drop_area');
-				if(Utils.supportsDragAndDrop()) {
-					sourceImgElement.ondragover = function () { sourceImgElement.classList.add('drag_drop'); return false; };
-					sourceImgElement.ondragend = function () { sourceImgElement.classList.remove('drag_drop'); return false; };
-					sourceImgElement.ondrop = function (e) {
-						sourceImgElement.classList.remove('drag_drop');
-						e.preventDefault();
-						uploadFile(e.dataTransfer.files[0]);
-					}
+			// Enable the file input and the drag and drop fields.
+			sourceImgInputElement.style.visibility = 'visible';
+			sourceImgElement.classList.add('drag_drop_area');
+			if(Utils.supportsDragAndDrop()) {
+				sourceImgLabelElement.style.visibility = 'visible';
+				sourceImgElement.ondragover = function () { sourceImgElement.classList.add('drag_drop'); return false; };
+				sourceImgElement.ondragend = function () { sourceImgElement.classList.remove('drag_drop'); return false; };
+				sourceImgElement.ondrop = function (e) {
+					sourceImgElement.classList.remove('drag_drop');
+					e.preventDefault();
+					Utils.uploadImageFile(sourceImgElement, e.dataTransfer.files[0]);
 				}
 			}
 		}
 		else{
 			// Disable the file input and the drag and drop fields.
 			sourceImgInputElement.style.visibility = 'hidden';
+			sourceImgLabelElement.style.visibility = 'hidden';
 			sourceImgElement.classList.remove('drag_drop_area');
 			
 			// Directly set the new image.
@@ -84,5 +86,11 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
 
+	// Disable upload if not supported.
+	if(!Utils.supportsFileReader()) {
+		sourceImgSelectOptionUserUploadElement.disabled = true;
+		sourceImgSelectOptionUserUploadElement.label += ' (not supoorted)';
+	}
+	
 	updateHist();
 }, false);
