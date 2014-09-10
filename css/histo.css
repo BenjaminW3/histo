@@ -2,13 +2,18 @@
   border: 1px solid #000;
   cursor: pointer;
   float: left;
-  margin-right: 15px;
-  margin-bottom: 15px;
 }
 
 .thumb {
-  max-width: 400px;
-  max-height: 400px;
+  max-width: 420px;
+  max-height: 420px;
+}
+
+.figure {
+  display: inline-block;
+}
+.caption {
+  clear: both;
 }
 
 .drag_drop_area { 
@@ -19,5 +24,5 @@
 }
 
 .clear_both { 
-  clear: both 
+  clear: both;
 }

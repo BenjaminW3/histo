@@ -23,9 +23,9 @@ function Histogramm(_image, targetCanvasElement, _context, _histTypeElement) {
  */
 Histogramm.prototype.setHistogrammPadding = function(top, left, bottom, right) {
     if(typeof(top)==='undefined') top = 30;
-    if(typeof(left)==='undefined') left = 50;
+    if(typeof(left)==='undefined') left = 70;
     if(typeof(bottom)==='undefined') bottom = 30;
-    if(typeof(right)==='undefined') right = 10;
+    if(typeof(right)==='undefined') right = 20;
 
     this.uiHistPaddingTopPx = top;														//!< The padding from the top.
     this.uiHistPaddingLeftPx = left;													//!< The padding of the x axis from the bottom.
@@ -49,7 +49,7 @@ Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _co
     if(typeof(_context)==='undefined') _context = '2d';
     this.targetContext = this.targetCanvasElement.getContext(_context);
 	// Set the histogram render sizes depending on the target canvas size.
-    this.setHistogrammPadding(30,50,30,10);	
+    this.setHistogrammPadding(30,70,30,20);	
 };
 
 /**
@@ -63,10 +63,10 @@ Histogramm.prototype.setSourceImage = function(_image) {
  * Draws the histogram axes.
  */
 Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
-    this.targetContext.lineWidth = 2;
+    this.targetContext.lineWidth = 1;
     this.targetContext.fillStyle = '#333';
     this.targetContext.strokeStyle = '#333';
-    this.targetContext.font = 'italic 10pt sans-serif';
+    this.targetContext.font = 'italic 14pt sans-serif';
     this.targetContext.textAlign = 'center';
 
     // Render the axes lines.
@@ -88,7 +88,7 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.textAlign = 'center';
     for(var i = 0; i < dataX.length; i++)
     {
-        this.targetContext.fillText(dataX[i], this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx), this.uiHistBottomPx + 15);
+        this.targetContext.fillText(dataX[i], this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx), this.uiHistBottomPx + 18);
     }
 
     // Draw x-axis name.

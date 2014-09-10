@@ -76,12 +76,17 @@
 								<input type="file" id="tab1SourceImgInput" style="visibility:hidden">
 							</label>
 						</p>
-						<br/>
 
-						<p>
-							<img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite">
-							<canvas class="thumb image" id="tab1HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
-						</p>
+						<div class="container">
+							<div class="figure">
+								<img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite">
+								<div class="caption">Ausgangsbild</div>
+							</div>
+							<div class="figure">
+								<canvas class="thumb image" id="tab1HistogramTargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<div class="caption">Histogramm</div>
+							</div>
+						</div>
 
 						<p class="clear_both">
 							<label>Histogramm-Typ: 
@@ -109,7 +114,7 @@
 						</p>
 						<p><img src="img/cumHistoSum.png" alt="kumulatives Histogramm Summe" height="54"></p>
 						<p>
-						Sind alle Tonwerte gleich Häufig vorhanden, so ergibt sich eine Gerade.
+						Sind alle Tonwerte gleich Häufig vorhanden, so ergibt sich eine monoton steigende Gerade.
 						</p>
 						
 						<br/>
@@ -132,19 +137,28 @@
 									<option value="user_upload" id="tab2SourceImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
 								<label id="tab2SourceImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
-								<input type="file"  id="tab2SourceImgInput" style="visibility:hidden">
+								<input type="file" id="tab2SourceImgInput" style="visibility:hidden">
 							</label>
 						</p>
-						<br/>
+						
+						<div class="container">
+							<div class="figure">
+								<img class="thumb image" id="tab2SourceImage" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle">
+								<div class="caption">Ausgangsbild</div>
+							</div>
+						</div>
 
-						<p>
-							<img class="thumb image" id="tab2SourceImage" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle">
-						</p>
-						<p class="clear_both">
-							<canvas class="thumb image" id="tab2HistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
-							<canvas class="thumb image" id="tab2CumulativeHistogramTargetCanvas" width="640" height="480">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
-						</p>
-
+						<div class="container clear_both">
+							<div class="figure">
+								<canvas class="thumb image" id="tab2HistogramTargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<div class="caption">Histogramm</div>
+							</div>
+							<div class="figure">
+								<canvas class="thumb image" id="tab2CumulativeHistogramTargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<div class="caption">Kumulatives Histogramm</div>
+							</div>
+						</div>
+						
 						<p class="clear_both">
 							<label>Histogramm-Typ: 
 								<select id="tab2HistTypeSelect">
