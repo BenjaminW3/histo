@@ -4,13 +4,14 @@
 window.addEventListener('load', function ()
 {
     var sourceImgElement = document.getElementById('tab2SourceImage');							//!< The HTML source image element.
-    var sourceImgSelectorElement = document.getElementById('tab2SourceImgSelect');				//!< The HTML source image selection element.
+    var sourceImgSelectElement = document.getElementById('tab2SourceImgSelect');				//!< The HTML source image selection element.
+    var sourceImgInputElement = document.getElementById('tab2SourceImgInput');			//!< The HTML source image file input element.
 	
     var histCanvasElement = document.getElementById('tab2HistogramTargetCanvas');				//!< The HTML canvas element for the histogram.
     var cumHistCanvasElement = document.getElementById('tab2CumulativeHistogramTargetCanvas');	//!< The HTML canvas element for the histogram.
     var histTypeElement = document.getElementById('tab2HistTypeSelect');						//!< The HTML histogram type selection element.
 
-    var image = new Image(sourceImgElement);
+    var image = new ImageData(sourceImgElement);
     var hist = new Histogramm(image, histCanvasElement, '2d', histTypeElement);
     var cumHist = new Histogramm(image, cumHistCanvasElement, '2d', histTypeElement);
 
@@ -45,7 +46,38 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a change of the source image selection.
 	//-----------------------------------------------------------------------------
-	sourceImgSelectorElement.addEventListener('change', function () {sourceImgElement.src = this.value;}, false);
+	sourceImgSelectElement.addEventListener('change', function () {
+		if(this.value==='user_upload')
+		{
+			if(Utils.supportsFileReader()) {
+				// Enable the file input and the drag and drop fields.
+				sourceImgInputElement.style.visibility = 'visible';
+				sourceImgElement.classList.add('drag_drop_area');
+				if(Utils.supportsDragAndDrop()) {
+					sourceImgElement.ondragover = function () { sourceImgElement.classList.add('drag_drop'); return false; };
+					sourceImgElement.ondragend = function () { sourceImgElement.classList.remove('drag_drop'); return false; };
+					sourceImgElement.ondrop = function (e) {
+						sourceImgElement.classList.remove('drag_drop');
+						e.preventDefault();
+						uploadFile(e.dataTransfer.files[0]);
+					}
+				}
+			}
+		}
+		else{
+			// Disable the file input and the drag and drop fields.
+			sourceImgInputElement.style.visibility = 'hidden';
+			sourceImgElement.classList.remove('drag_drop_area');
+			
+			// Directly set the new image.
+			sourceImgElement.src = this.value;
+		}
+	}, false);
+
+	//-----------------------------------------------------------------------------
+	//! Callback method which reacts on a changed source image file from the input field.
+	//-----------------------------------------------------------------------------
+	sourceImgInputElement.addEventListener('change', function () {Utils.uploadImageFile(sourceImgElement, this.files[0]);}, false);
 	
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.

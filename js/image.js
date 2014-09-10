@@ -37,7 +37,7 @@ PixelData.prototype.yrgba = function() {
 /**
  * Constructor.
  */
-function Image(_sourceImageElement) {
+function ImageData(_sourceImageElement) {
     this.channelValue = [[]];					//!< Two dimensional array with PixelData.
     this.channelHistogram = [[],[],[],[]];
     this.channelHistogramMax = [0,0,0,0];
@@ -54,7 +54,7 @@ function Image(_sourceImageElement) {
  * @param _y height coordinate
  * @returns object {luminance, red, green, blue, alpha} or null if its out of range
  */
-Image.prototype.getPixelData = function(_x, _y) {
+ImageData.prototype.getPixelData = function(_x, _y) {
     if(_y < this.channelValue.length) {
         if(_x < this.channelValue[_y].length) {
             return this.channelValue[_y][_x].yrgba();
@@ -63,23 +63,23 @@ Image.prototype.getPixelData = function(_x, _y) {
     return null;
 };
 
-Image.prototype.getWidth = function() {
+ImageData.prototype.getWidth = function() {
     return this.width;
 }
 
-Image.prototype.getHeight = function() {
+ImageData.prototype.getHeight = function() {
     return this.height;
 }
 
-Image.prototype.getNumPixels = function() {
+ImageData.prototype.getNumPixels = function() {
     return this.width * this.height;
 }
 
-Image.prototype.getChannelHistogramMax = function(_channelNo) {
+ImageData.prototype.getChannelHistogramMax = function(_channelNo) {
     return this.channelHistogramMax[_channelNo];
 }
 
-Image.prototype.getImageData = function() {
+ImageData.prototype.getImageData = function() {
     return this.sourceImgData;
 }
 
@@ -88,7 +88,7 @@ Image.prototype.getImageData = function() {
  * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
  * @returns array of the channel or null if the channel number is invalid
  */
-Image.prototype.getChannelHistogram = function(_channelNo) {
+ImageData.prototype.getChannelHistogram = function(_channelNo) {
     if((_channelNo >= 0) && (_channelNo < 4)) {
         return this.channelHistogram[_channelNo];
     }
@@ -98,7 +98,7 @@ Image.prototype.getChannelHistogram = function(_channelNo) {
 /**
  *  Calculate channelvaluecount and maxCount for all channels
  */
-Image.prototype.reload = function() {
+ImageData.prototype.reload = function() {
 	this.channelHistogram = [[],[],[],[]];
 	this.channelHistogramMax = [0,0,0,0];
 
@@ -134,7 +134,7 @@ Image.prototype.reload = function() {
 /**
  * Load Data from the given image.
  */
-Image.prototype.loadFromSource = function(_sourceImageElement) {
+ImageData.prototype.loadFromSource = function(_sourceImageElement) {
     var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
     sourceImgTempCanvas.width = _sourceImageElement.width;
     sourceImgTempCanvas.height = _sourceImageElement.height;

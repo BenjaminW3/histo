@@ -7,8 +7,15 @@
 }
 
 .thumb {
-  max-width: 420px;
+  max-width: 400px;
   max-height: 400px;
+}
+
+.drag_drop_area { 
+  border: 10px dashed #ccc;
+}
+.drag_drop {
+  border: 10px dashed #0c0; 
 }
 
 .clear_both { 
