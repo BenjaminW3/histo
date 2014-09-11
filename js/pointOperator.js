@@ -8,7 +8,8 @@ function PointOperator() {
  * Transform the given image data.
  */
 PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
-	transformImageData(_extendedImageData.getImageData());
+	this.transformImageData(_extendedImageData.getImageData());
+	_extendedImageData.recalculateImageDataDependencies();
 };
 
 /**

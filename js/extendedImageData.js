@@ -37,15 +37,13 @@ PixelData.prototype.yrgba = function() {
 /**
  * Constructor.
  */
-function ExtendedImageData(_sourceImageElement) {
+function ExtendedImageData() {
     this.channelValue = [[]];					//!< Two dimensional array with PixelData.
     this.channelHistogram = [[],[],[],[]];
     this.channelHistogramMax = [0,0,0,0];
     this.width = 0;
     this.height = 0;
     this.sourceImgData = null;
-	
-	this.loadFromSource(_sourceImageElement);
 }
 
 /**
@@ -98,7 +96,7 @@ ExtendedImageData.prototype.getChannelHistogram = function(_channelNo) {
 /**
  *  Calculate channelvaluecount and maxCount for all channels
  */
-ExtendedImageData.prototype.reload = function() {
+ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 	this.channelHistogram = [[],[],[],[]];
 	this.channelHistogramMax = [0,0,0,0];
 
@@ -134,7 +132,7 @@ ExtendedImageData.prototype.reload = function() {
 /**
  * Load Data from the given image.
  */
-ExtendedImageData.prototype.loadFromSource = function(_sourceImageElement) {
+ExtendedImageData.prototype.loadFromImageElement = function(_sourceImageElement) {
     var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
     sourceImgTempCanvas.width = _sourceImageElement.width;
     sourceImgTempCanvas.height = _sourceImageElement.height;
@@ -143,10 +141,18 @@ ExtendedImageData.prototype.loadFromSource = function(_sourceImageElement) {
     // Draw the image data onto the invisible image context.
     sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
 	
+	this.loadFromCanvasElement(sourceImgTempCanvas);
+};
+/**
+ * Load Data from the given image.
+ */
+ExtendedImageData.prototype.loadFromCanvasElement = function(_sourceImageCanvas) {
+    var sourceImgCanvasContext = _sourceImageCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+	
     // Get the image data from the invisible image canvas context.
     // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
     // Add --allow-file-access-from-files to chrome startup to circumvent this.
-    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height);
+    this.sourceImgData = sourceImgCanvasContext.getImageData(0, 0, _sourceImageCanvas.width, _sourceImageCanvas.height);
 
-    this.reload();
+    this.recalculateImageDataDependencies();
 };

@@ -13,7 +13,8 @@ window.addEventListener('load', function ()
     var histTypeElement = document.getElementById('tab1HistTypeSelect');						//!< The HTML histogram type selection element.
 	//var plotFill = document.getElementById('plotFill');
 
-    var extendedImageData = new ExtendedImageData(sourceImgElement);
+    var extendedImageData = new ExtendedImageData();
+	extendedImageData.loadFromImageElement(sourceImgElement);
     var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
@@ -23,7 +24,7 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-		extendedImageData.loadFromSource(sourceImgElement);
+		extendedImageData.loadFromImageElement(sourceImgElement);
         hist.setSourceExtendedImageData(extendedImageData);
 		
 		// Reset the thumb class.

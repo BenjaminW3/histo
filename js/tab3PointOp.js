@@ -11,9 +11,11 @@ window.addEventListener('load', function ()
     var targetCanvasElement = document.getElementById('tab3TargetCanvas');						//!< The HTML canvas element for the target image.
     var targetCanvasCtx = targetCanvasElement.getContext('2d');									//!< The HTML canvas element context for the target image.
 
-    var extendedImageData = new ExtendedImageData(sourceImgElement);
+    var extendedImageData = new ExtendedImageData();
+	extendedImageData.loadFromImageElement(sourceImgElement);
     var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
     var pointOp = new PointOperatorInverse();
+    /*var extendedTargetImageData = new ExtendedImageData();*/
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
@@ -22,7 +24,7 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-		extendedImageData.loadFromSource(sourceImgElement);
+		extendedImageData.loadFromImageElement(sourceImgElement);
         hist.setSourceExtendedImageData(extendedImageData);
 		
 		// Reset the thumb class.
@@ -36,23 +38,34 @@ window.addEventListener('load', function ()
         hist.drawHist(true, false);
         hist.drawTransformationCurve(pointOp);
 		
-		// Clear the class before retrieving the size because the thumb class limits the size.
-		var bClassListContainsThumb = sourceImgElement.classList.contains('thumb');
-		if(bClassListContainsThumb) {
-			sourceImgElement.classList.remove('thumb');
-		}
+		// Copy the source image to the target canvas.
+			// Clear the class before retrieving the size because the thumb class limits the size.
+			var bClassListContainsThumb = sourceImgElement.classList.contains('thumb');
+			if(bClassListContainsThumb) {
+				sourceImgElement.classList.remove('thumb');
+			}
+			
+			// Draw the transformed image data onto the target canvas.
+			targetCanvasElement.width = sourceImgElement.width;
+			targetCanvasElement.height = sourceImgElement.height;
+			targetCanvasCtx.putImageData(extendedImageData.getImageData(), 0,0);
+			
+			// Reset the thumb class.
+			if(bClassListContainsThumb) {
+				sourceImgElement.classList.add('thumb');
+			}
+		
+		// This version is more costly because it calculates the histogram data twice.
+		/*// Load the extended image data from the canvas. 
+		extendedTargetImageData.loadFromCanvasElement(targetCanvasElement);
+		
+		// Transform the data.
+		pointOp.transformExtendedImageData(extendedTargetImageData);
 		
 		// Draw the transformed image data onto the target canvas.
-		targetCanvasElement.width = sourceImgElement.width;
-		targetCanvasElement.height = sourceImgElement.height;
-		targetCanvasCtx.putImageData(extendedImageData.getImageData(), 0,0);
+		targetCanvasCtx.putImageData(extendedTargetImageData.getImageData(), 0,0);*/
 		
 		var transformData = targetCanvasCtx.getImageData(0, 0, sourceImgElement.width, sourceImgElement.height);
-		
-		// Reset the thumb class.
-		if(bClassListContainsThumb) {
-			sourceImgElement.classList.add('thumb');
-		}
 		
 		// Transform the data.
 		pointOp.transformImageData(transformData);

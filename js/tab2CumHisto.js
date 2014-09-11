@@ -13,7 +13,8 @@ window.addEventListener('load', function ()
     var cumHistCanvasElement = document.getElementById('tab2CumulativeHistogramTargetCanvas');	//!< The HTML canvas element for the histogram.
     var histTypeElement = document.getElementById('tab2HistTypeSelect');						//!< The HTML histogram type selection element.
 
-    var extendedImageData = new ExtendedImageData(sourceImgElement);
+    var extendedImageData = new ExtendedImageData();
+	extendedImageData.loadFromImageElement(sourceImgElement);
     var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
     var cumHist = new HistogrammRenderer(extendedImageData, cumHistCanvasElement, '2d', histTypeElement);
 
@@ -24,7 +25,7 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-		extendedImageData.loadFromSource(sourceImgElement);
+		extendedImageData.loadFromImageElement(sourceImgElement);
         hist.setSourceExtendedImageData(extendedImageData);
         cumHist.setSourceExtendedImageData(extendedImageData);
 		
