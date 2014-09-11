@@ -1,20 +1,20 @@
 //-----------------------------------------------------------------------------
 //! On a click on one of the tabs.
 //-----------------------------------------------------------------------------
-function displayPage()
+function displayTab(tabElement)
 {
 	// Get the ID of the old active tab.
-	var uiCurrentId = this.parentNode.getAttribute("data-uiCurrentId");
+	var uiCurrentId = tabElement.parentNode.getAttribute("data-uiCurrentId");
 	// Remove class activetabheader and hide old tab.
 	document.getElementById("tabHeader_" + uiCurrentId).removeAttribute("class");
 	document.getElementById("tabpage_" + uiCurrentId).style.display="none";
 
 	// Get the ID of the new active tab.
-	var ident = this.id.split("_")[1];
+	var ident = tabElement.id.split("_")[1];
 	// Set current tab class to activetabheader and show its contents.
-	this.setAttribute("class", "tabActiveHeader");
+	tabElement.setAttribute("class", "tabActiveHeader");
 	document.getElementById("tabpage_" + ident).style.display = "block";
-	this.parentNode.setAttribute("data-uiCurrentId", ident);
+	tabElement.parentNode.setAttribute("data-uiCurrentId", ident);
 };
 
 //-----------------------------------------------------------------------------
@@ -36,18 +36,13 @@ window.addEventListener('load', function()
 	// Set current tab class to activetabheader.
 	currentTab.setAttribute("class", "tabActiveHeader");
 
-	// Hide the tabs contents we don't need.
-	var tabcon = document.getElementById("tabscontent");
-	var pages = tabcon.querySelectorAll(".tabpage");
-	for (var i = 1; i < pages.length; i++)
-	{
-		pages.item(i).style.display = "none";
-	};
-
 	// Adds click event to the tabs.
 	var tabs = container.querySelectorAll("#tabs > ul > li");
 	for (var i = 0; i < tabs.length; i++)
 	{
-		tabs[i].onclick = displayPage;
+		tabs[i].addEventListener('click', displayTab.bind(undefined, tabs[i]), false);
 	}
+	
+	// Show the initial tab.
+	displayTab(currentTab);
 }, false);

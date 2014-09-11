@@ -1,7 +1,7 @@
 ﻿/**
  * Constructor.
  */
-function Histogramm(_image, targetCanvasElement, _context, _histTypeElement) {
+function Histogramm(_imageData, targetCanvasElement, _context, _histTypeElement) {
     // The settings.
     this.histTypeElement = _histTypeElement;					//!< The HTML histogram type selection element.
     this.histType = this.histTypeElement.value;
@@ -10,7 +10,7 @@ function Histogramm(_image, targetCanvasElement, _context, _histTypeElement) {
     this.targetCanvasElement = null;							//!< The target histogram HTML canvas element.
     this.targetContext = null;									//!< The target context of the histogram.
 
-	this.setSourceImage(_image);
+	this.setSourceImageData(_imageData);
     this.setTargetCanvasElement(targetCanvasElement, _context);
 }
 
@@ -53,10 +53,10 @@ Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _co
 };
 
 /**
- * Sets the internal image.
+ * Sets the imageData.
  */
-Histogramm.prototype.setSourceImage = function(_image) {
-    this.image = _image;
+Histogramm.prototype.setSourceImageData = function(_imageData) {
+    this.imageData = _imageData;
 };
 
 /**
@@ -175,7 +175,7 @@ Histogramm.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueC
 Histogramm.prototype.drawHist = function(bFill, bCumulative) {
     //console.log("into");
 	// Recalculate the histogram data.
-    if (this.image.getChannelHistogramMax() == 0) {
+    if (this.imageData.getChannelHistogramMax() == 0) {
         return;
     }
 
@@ -195,7 +195,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
     // For RGB there are 3 channels.
     if (this.histType === 'rgb') {
 		// The maximum y value is the maximum over all channels.
-		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : Math.max(this.image.getChannelHistogramMax(1), this.image.getChannelHistogramMax(2), this.image.getChannelHistogramMax(3));
+		var uiMaxCount = (bCumulative===true) ? this.imageData.getNumPixels() : Math.max(this.imageData.getChannelHistogramMax(1), this.imageData.getChannelHistogramMax(2), this.imageData.getChannelHistogramMax(3));
 		
 		// Draw the axes.
 		this.drawHistAxis(uiMaxCount, bCumulative);
@@ -208,7 +208,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
 		// Draw the channels.
         for (var i = 1; i < 4; i++) {
             //console.log("channel type "+ asChannelTypes[i] + " channelHistogram " + this.aauiChannelValueCounts[i]);
-            this.drawHistChannel(colors[i], this.image.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+            this.drawHistChannel(colors[i], this.imageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
         }
 
 		if (bFill)
@@ -228,13 +228,13 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
         }
 		
 		// The maximum y value is the maximum over all channels.
-		var uiMaxCount = (bCumulative===true) ? this.image.getNumPixels() : this.image.getChannelHistogramMax(i);
+		var uiMaxCount = (bCumulative===true) ? this.imageData.getNumPixels() : this.imageData.getChannelHistogramMax(i);
 		
 		// Draw the axes.
 		this.drawHistAxis(uiMaxCount, bCumulative);
 		
 		// Draw the channel.
         //console.log("index = " + i);
-        this.drawHistChannel(colors[i], this.image.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+        this.drawHistChannel(colors[i], this.imageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
     }
 };

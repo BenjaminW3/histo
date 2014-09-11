@@ -34,14 +34,13 @@
 				<div id="tabscontent">
 					<div class="tabpage" id="tabpage_1">
 						<h3>Allgemein</h3>
-						<p>
-						Ein Histogramm im Bereich der Bildverarbeitung zeigt die statistische Häufigkeit der Tonwerte eines Bildes in Form eines (diskreten) Balkendiagramms an. Es wird deshalb auch Tonwertkurve genannt.
+						<p>Ein Histogramm im Bereich der Bildverarbeitung zeigt die statistische Häufigkeit der Tonwerte eines Bildes in Form eines (diskreten) Balkendiagramms an. Es wird deshalb auch Tonwertkurve genannt.
 						Auf der horizontalen Achse befinden sich die Tonwerte (Farb-/Helligkeitswerte). Die Höhe eines Balkens gibt an, wie häufig dieser Tonwert im Bild vorkommt.
-						Im einfachsten Falle eines Graustufenbildes spiegelt es die Anzahl von Pixeln der Farben Schwarz (am linken Rand) bis Weiß (am rechten Rand) wieder.
-						</p>
+						Im einfachsten Falle eines Graustufenbildes spiegelt es die Anzahl von Pixeln der Farben Schwarz (am linken Rand) bis Weiß (am rechten Rand) wieder.</p>
 						<p>Die Anzahl der Pixel mit dem Tonwert <i>g</i> wird durch die Funktion <i>h(g)</i> beschrieben.
 						Die Tonwerte liegen dabei meist im Intervall <i>[0, 255]</i> vor, da mit 8 Bit pro Kanal genau <i>2^8=256</i> verschiedene Werte abgebildet werden können.</p>
-						<p>Anhand eines Histogramms kann man die Tonwertverteilung und somit die korrekte Belichtung (Unter-/Überbelichtung), den Kontrast und andere visuelle Attribute des Ausgangsbildes abschätzen.</p>
+						<p>Anhand eines Histogramms kann man die Tonwertverteilung und somit die korrekte Belichtung (Unter-/Überbelichtung), den Kontrast und andere visuelle Attribute des Ausgangsbildes abschätzen.
+						Es gibt keine Möglichkeit das Originalbild aus einem Histogramm zu rekonstruieren, da jede unterschiedliche Anordnung von Pixelwerten genau das selbe Histogram aufweist.</p>
 						<br/>
 						<h3>Farbbilder</h3>
 						<p>Auch für Farbbilder lassen sich Histogramme erstellen. Eine Möglichkeit besteht darin, für jeden Kanal ein einzelnes Histogramm zu erstellen. Diese können optional auch in ein Histogramm überblendet werden.
@@ -70,6 +69,9 @@
 									<option value="img/northern-lights-scenic-aurora-borealis_w725_h483.jpg">Nordlichter (unterbelichtet - mit Absicht)</option>
 									<option value="img/snow-wallpapers_w725_h544.png">Schneelandschaft (geringe Dynamik)</option>
 									<option value="img/800px-C-130J_formation_low-level.jpg">C-130J (geringer Kontrast)</option>
+									<option value="img/Farbverlauf.jpg">Farbverlauf (Gleichverteilung)</option>
+									<option value="img/noise2d.png">Rauschen (Graustufen, Normalverteilung)</option>
+									<option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
 									<option value="user_upload" id="tab1SourceImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
 								<label id="tab1SourceImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
@@ -106,17 +108,10 @@
 					</div>
 					<div class="tabpage" id="tabpage_2">
 						<h3>Allgemein</h3>
-						<p>
-						Das kumulative Histogramm stellt eine monoton steigende Folge von Werten im Bereich [0,K] dar, wobei K der Anzahl der Pixel im Bild entspricht.
-						</p>
-						<p>
-						Dieses Histogramm wird berechnet, indem jedem Grauwert g die Summe aller Häufigkeiten H der Grauwerte 0 bis g zugeordnet wird:
-						</p>
+						<p>Das kumulative Histogramm stellt eine monoton steigende Folge von Werten im Bereich <i>[0,K]</i> dar, wobei <i>K</i> der Anzahl der Pixel im Bild entspricht.</p>
+						<p>Dieses Histogramm wird berechnet, indem jedem Grauwert g die Summe aller Häufigkeiten H der Grauwerte 0 bis g zugeordnet wird:</p>
 						<p><img src="img/cumHistoSum.png" alt="kumulatives Histogramm Summe" height="54"></p>
-						<p>
-						Sind alle Tonwerte gleich Häufig vorhanden, so ergibt sich eine monoton steigende Gerade.
-						</p>
-						
+						<p>Sind alle Tonwerte gleich Häufig vorhanden, so ergibt sich eine monoton steigende Gerade.</p>
 						<br/>
 						<h3>Beispiele</h3>
 						<p>Hier können für eigene Bilder als auch verschiedene Testbilder Histogramme und die dazugehörigen kumulativen Histogramme für die Helligkeit, kombinierte und einzelne RGB-Kanäle generiert werden:</p>
@@ -134,6 +129,9 @@
 									<option value="img/northern-lights-scenic-aurora-borealis_w725_h483.jpg">Nordlichter (unterbelichtet - mit Absicht)</option>
 									<option value="img/snow-wallpapers_w725_h544.png">Schneelandschaft (geringe Dynamik)</option>
 									<option value="img/800px-C-130J_formation_low-level.jpg">C-130J (geringer Kontrast)</option>
+									<option value="img/Farbverlauf.jpg">Farbverlauf (Gleichverteilung)</option>
+									<option value="img/noise2d.png">Rauschen (Graustufen, Normalverteilung)</option>
+									<option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
 									<option value="user_upload" id="tab2SourceImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
 								<label id="tab2SourceImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
@@ -173,9 +171,22 @@
 					</div>
 					<div class="tabpage" id="tabpage_3">
 						<h3>Allgemein</h3>
-						<p>
-						Punktoperatoren...
-						</p>
+						<p>Als Punktoperatoren bezeichnet man Bildverarbeitungsoperationen, welche sich dadurch auszeichnen, dass ein neuer Farb- oder Grauwert eines Pixels allein in Abhängigkeit von seinem eigenen bisherigen Farb- oder Grauwert und seiner eigenen bisherigen Position im Bild berechnet wird, ohne sich dabei um seine Nachbarschaft zu kümmern.</p>
+						<p>Sie können dazu genutzt werden, um den Bildkontrast zu verstärken oder Belichtungsfehler bei der Bildaufnahme auszugleichen.</p>
+						<p>Neben den Punktoperatoren, die jedes Pixel eines Bildes einzeln transformieren, gibt es in der digitalen Bildverarbeitung mit den lokalen Operatoren und den globalen Operatoren zwei weitere Klassen von Bildverarbeitungsoperationen.Lokale Operatoren berechnen einen neuen Farb- oder Grauwert eines Pixels immer auf Basis einer Nachbarschaft oder einer örtlich begrenzten Region um das Pixel. Hier seien als Beispiele Rangordnungsoperatoren oder morphologische Operatoren genannt. Globale Operatoren betrachten für die Transformation eines jeden Pixels immer das gesamte Bild, was beispielsweise bei der Fourier-Transformation der Fall ist.</p>
+						<br/>
+						<h3>Definition</h3>
+						<p>Ein Punktoperator <i>T</i> ordnet einem Eingabebild <i>f</i> durch Transformation der Farbwerte der einzelnen Pixel ein Ergebnisbild <i>f*</i> zu. Der Farbwert <i>f(x,y)</i> eines Pixels <i>(x,y)</i> wird dabei nur in Abhängigkeit vom Farbwert selbst und eventuell von der Position des Pixels im Bild modifiziert. Ist die Transformation von der Position des Pixels im Bild abhängig, so heißt sie inhomogen:</p>
+						<p><img src="img/pointOpF0.png" alt="Definition eines inhomogenen Punktoperators" height="25"></p>
+						<p>Ist die Transformation, welche unabhängig von der Position des Pixels im Bild ist wird als homogen bezeichnet:</p>
+						<p><img src="img/pointOpF1.png" alt="Definition eines homogenen Punktoperators" height="23"></p>
+						<p>Im Allgemeinen sind Punktoperatoren nicht umkehrbar.</p>
+						<br/>
+						<h3>Anwendung</h3>
+						<p>Bei Verwendung von diskreten Farbwerten ( <i>[0,n]</i>) kann eine homogene Transformation durch das Nachschlagen in einer Look-up-Tabelle der Größe <i>n</i> implementiert werden.
+						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren muss die Transformation auf jedem Pixel einzeln durchgeführt werden.</p>
+						<br/>
+						<h3>Transformationskennlinie</h3>
 					</div>
 					<div class="tabpage" id="tabpage_4">
 						<p id="pointOperatorType">

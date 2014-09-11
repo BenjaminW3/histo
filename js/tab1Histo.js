@@ -24,7 +24,7 @@ window.addEventListener('load', function ()
 		}
 		
 		image.loadFromSource(sourceImgElement);
-        hist.setSourceImage(image);
+        hist.setSourceImageData(image);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {
