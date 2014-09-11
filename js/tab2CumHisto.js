@@ -13,9 +13,9 @@ window.addEventListener('load', function ()
     var cumHistCanvasElement = document.getElementById('tab2CumulativeHistogramTargetCanvas');	//!< The HTML canvas element for the histogram.
     var histTypeElement = document.getElementById('tab2HistTypeSelect');						//!< The HTML histogram type selection element.
 
-    var image = new ImageData(sourceImgElement);
-    var hist = new Histogramm(image, histCanvasElement, '2d', histTypeElement);
-    var cumHist = new Histogramm(image, cumHistCanvasElement, '2d', histTypeElement);
+    var extendedImageData = new ExtendedImageData(sourceImgElement);
+    var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
+    var cumHist = new HistogrammRenderer(extendedImageData, cumHistCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
@@ -24,9 +24,9 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-		image.loadFromSource(sourceImgElement);
-        hist.setSourceImageData(image);
-        cumHist.setSourceImageData(image);
+		extendedImageData.loadFromSource(sourceImgElement);
+        hist.setSourceExtendedImageData(extendedImageData);
+        cumHist.setSourceExtendedImageData(extendedImageData);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {

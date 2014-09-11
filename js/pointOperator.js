@@ -1,43 +1,72 @@
-
-
-function PointOperator(_originalId, _manipulateId) {
-    var transformedCanvas = document.getElementById(_manipulateId);
-    var transformedCtx = transformedCanvas.getContext('2d');
-    transformedCanvas.width = img.width;
-    transformedCanvas.height = img.height;
-    this.transformedData = transformedCtx.getImageData(0,0,transformedCanvas.width, transformedCanvas.height);
-
-    this.sourceImgData = null;
+/**
+ * Constructor.
+ */
+function PointOperator() {
 }
 
 /**
- * Set set intern image data
+ * Transform the given image data.
  */
-PointOperator.prototype.setSourceImageElement = function(_sourceImageElement) {
-    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
-    sourceImgTempCanvas.width = _sourceImageElement.width;
-    sourceImgTempCanvas.height = _sourceImageElement.height;
-    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
-    sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
-    this.sourceImgData = sourceImgTempCtx.getImageData(0, 0, _sourceImageElement.width, _sourceImageElement.height).data;
-};
-
-
-PointOperator.prototype.updateTransformedCanvas = function () {
-    transformedCtx.putImageData(transformedData,0,0);
+PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
+	transformImageData(_extendedImageData.getImageData());
 };
 
 /**
- * inverts the original img
- * @param int _G default= 255
+ * Transform the given image data.
  */
-PointOperator.prototype.inverse = function (_G) {
-    _G = typeof _G !== 'undefined' ? _G : 255;
-    var data = origData.data;
-    for(var i=0; i<data.length; i+=4) {
-        this.transformedData.data[i] = _G - data[i];
+PointOperator.prototype.transformImageData = function (_imageData) {
+    var pixelStepWidth = 4; // 4 because the image data is always RGBA.
+    for (var i = 0, n = _imageData.data.length; i < n; i+= pixelStepWidth) {
+		var transformedPixel = this.transformPixel(_imageData.data[i], _imageData.data[i+1], _imageData.data[i+2]);
+		_imageData.data[i] = transformedPixel[0];
+		_imageData.data[i+1] = transformedPixel[1];
+		_imageData.data[i+2] = transformedPixel[2];
+		//_imageData.data[i+3] = _imageData.data[i+3];	// Do not change alpha value!
     }
-    this.updateTransformedCanvas();
 };
+
+/**
+ * Abstract method.
+ */
+PointOperator.prototype.transformPixel = function (_r, _g, _b) {
+    alert('This is the abstract base class method. This has to be implemented by derieved classes!');
+};
+
+
+
+/**
+ * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
+ */
+Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
+	if ( parentClassOrObject.constructor == Function ) 
+	{ 
+		//Normal Inheritance 
+		this.prototype = new parentClassOrObject;
+		this.prototype.constructor = this;
+		this.prototype.parent = parentClassOrObject.prototype;
+	} 
+	else 
+	{ 
+		//Pure Virtual Inheritance 
+		this.prototype = parentClassOrObject;
+		this.prototype.constructor = this;
+		this.prototype.parent = parentClassOrObject;
+	} 
+	return this;
+}
+
+
+
+/**
+ * Inverse color transformation.
+ */
+function PointOperatorInverse(){
+}
+
+PointOperatorInverse.inheritsFrom( PointOperator );
+
+PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
+	return [255-_r, 255-_g, 255-_b];
+}
 
 

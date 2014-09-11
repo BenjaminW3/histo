@@ -13,8 +13,8 @@ window.addEventListener('load', function ()
     var histTypeElement = document.getElementById('tab1HistTypeSelect');						//!< The HTML histogram type selection element.
 	//var plotFill = document.getElementById('plotFill');
 
-    var image = new ImageData(sourceImgElement);
-    var hist = new Histogramm(image, histCanvasElement, '2d', histTypeElement);
+    var extendedImageData = new ExtendedImageData(sourceImgElement);
+    var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
@@ -23,8 +23,8 @@ window.addEventListener('load', function ()
 			sourceImgElement.classList.remove('thumb');
 		}
 		
-		image.loadFromSource(sourceImgElement);
-        hist.setSourceImageData(image);
+		extendedImageData.loadFromSource(sourceImgElement);
+        hist.setSourceExtendedImageData(extendedImageData);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {

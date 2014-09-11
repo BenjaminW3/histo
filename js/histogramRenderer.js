@@ -1,7 +1,7 @@
 ﻿/**
  * Constructor.
  */
-function Histogramm(_imageData, targetCanvasElement, _context, _histTypeElement) {
+function HistogrammRenderer(_extendedImageData, targetCanvasElement, _context, _histTypeElement) {
     // The settings.
     this.histTypeElement = _histTypeElement;					//!< The HTML histogram type selection element.
     this.histType = this.histTypeElement.value;
@@ -10,7 +10,7 @@ function Histogramm(_imageData, targetCanvasElement, _context, _histTypeElement)
     this.targetCanvasElement = null;							//!< The target histogram HTML canvas element.
     this.targetContext = null;									//!< The target context of the histogram.
 
-	this.setSourceImageData(_imageData);
+	this.setSourceExtendedImageData(_extendedImageData);
     this.setTargetCanvasElement(targetCanvasElement, _context);
 }
 
@@ -21,7 +21,7 @@ function Histogramm(_imageData, targetCanvasElement, _context, _histTypeElement)
  * @param bottom
  * @param right
  */
-Histogramm.prototype.setHistogrammPadding = function(top, left, bottom, right) {
+HistogrammRenderer.prototype.setHistogrammPadding = function(top, left, bottom, right) {
     if(typeof(top)==='undefined') top = 30;
     if(typeof(left)==='undefined') left = 70;
     if(typeof(bottom)==='undefined') bottom = 30;
@@ -44,7 +44,7 @@ Histogramm.prototype.setHistogrammPadding = function(top, left, bottom, right) {
  * @param _targetCanvasElement String id of the target canvas in the document
  * @param _context String context of the canvas (default = 2d)
  */
-Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _context) {
+HistogrammRenderer.prototype.setTargetCanvasElement = function(_targetCanvasElement, _context) {
 	this.targetCanvasElement = _targetCanvasElement;
     if(typeof(_context)==='undefined') _context = '2d';
     this.targetContext = this.targetCanvasElement.getContext(_context);
@@ -53,16 +53,23 @@ Histogramm.prototype.setTargetCanvasElement = function(_targetCanvasElement, _co
 };
 
 /**
- * Sets the imageData.
+ * Sets the extendedImageData.
  */
-Histogramm.prototype.setSourceImageData = function(_imageData) {
-    this.imageData = _imageData;
+HistogrammRenderer.prototype.setSourceExtendedImageData = function(_extendedImageData) {
+    this.extendedImageData = _extendedImageData;
 };
+
+/**
+ * Draws a transformation.
+ */
+HistogrammRenderer.prototype.drawTransformationCurve = function(PointOperator) {
+	// TODO: implement
+}
 
 /**
  * Draws the histogram axes.
  */
-Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
+HistogrammRenderer.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.lineWidth = 1;
     this.targetContext.fillStyle = '#333';
     this.targetContext.strokeStyle = '#333';
@@ -88,7 +95,12 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.textAlign = 'center';
     for(var i = 0; i < dataX.length; i++)
     {
-        this.targetContext.fillText(dataX[i], this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx), this.uiHistBottomPx + 18);
+		var xPosPx = this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx);
+		this.targetContext.beginPath();
+		this.targetContext.moveTo(xPosPx, this.uiHistBottomPx+3);
+		this.targetContext.lineTo(xPosPx, this.uiHistBottomPx);
+		this.targetContext.stroke();
+        this.targetContext.fillText(dataX[i], xPosPx, this.uiHistBottomPx + 18);
     }
 
     // Draw x-axis name.
@@ -101,8 +113,13 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.textAlign = "end";
     for(var i = 0; i < 5; i++)
     {
+		var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(5-1)));
+		this.targetContext.beginPath();
+		this.targetContext.moveTo(this.uiHistLeftPx, yPosPx);
+		this.targetContext.lineTo(this.uiHistLeftPx-3, yPosPx);
+		this.targetContext.stroke();
         var uiYAxisValue = Math.round(i * (uiMaxValY/(5-1)));
-        this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx - 5, this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(5-1))) + 5);	// +5 for centering because position is bottom of text.
+        this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx - 5, yPosPx + 5);	// +5 for centering because position is bottom of text.
     }
 };
 
@@ -115,7 +132,7 @@ Histogramm.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
  * @param bFill If the diagram should be filled or only dots.
  * @param bCumulative If the channel should be drawn cumulative.
  */
-Histogramm.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill, bCumulative) {
+HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill, bCumulative) {
     var ctxStyle;
     if (bFill)
     {
@@ -172,10 +189,10 @@ Histogramm.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueC
  * @param bFill If the diagram should be filled or only dots.
  * @param bCumulative If the channel should be drawn cumulative.
  */
-Histogramm.prototype.drawHist = function(bFill, bCumulative) {
+HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
     //console.log("into");
 	// Recalculate the histogram data.
-    if (this.imageData.getChannelHistogramMax() == 0) {
+    if (this.extendedImageData.getChannelHistogramMax() == 0) {
         return;
     }
 
@@ -195,7 +212,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
     // For RGB there are 3 channels.
     if (this.histType === 'rgb') {
 		// The maximum y value is the maximum over all channels.
-		var uiMaxCount = (bCumulative===true) ? this.imageData.getNumPixels() : Math.max(this.imageData.getChannelHistogramMax(1), this.imageData.getChannelHistogramMax(2), this.imageData.getChannelHistogramMax(3));
+		var uiMaxCount = (bCumulative===true) ? this.extendedImageData.getNumPixels() : Math.max(this.extendedImageData.getChannelHistogramMax(1), this.extendedImageData.getChannelHistogramMax(2), this.extendedImageData.getChannelHistogramMax(3));
 		
 		// Draw the axes.
 		this.drawHistAxis(uiMaxCount, bCumulative);
@@ -208,7 +225,7 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
 		// Draw the channels.
         for (var i = 1; i < 4; i++) {
             //console.log("channel type "+ asChannelTypes[i] + " channelHistogram " + this.aauiChannelValueCounts[i]);
-            this.drawHistChannel(colors[i], this.imageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+            this.drawHistChannel(colors[i], this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
         }
 
 		if (bFill)
@@ -228,13 +245,13 @@ Histogramm.prototype.drawHist = function(bFill, bCumulative) {
         }
 		
 		// The maximum y value is the maximum over all channels.
-		var uiMaxCount = (bCumulative===true) ? this.imageData.getNumPixels() : this.imageData.getChannelHistogramMax(i);
+		var uiMaxCount = (bCumulative===true) ? this.extendedImageData.getNumPixels() : this.extendedImageData.getChannelHistogramMax(i);
 		
 		// Draw the axes.
 		this.drawHistAxis(uiMaxCount, bCumulative);
 		
 		// Draw the channel.
         //console.log("index = " + i);
-        this.drawHistChannel(colors[i], this.imageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+        this.drawHistChannel(colors[i], this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
     }
 };

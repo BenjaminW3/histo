@@ -10,12 +10,15 @@
 		<link type="text/css" rel="stylesheet" href="css/tabs.css" />
 
 		<script type="text/javascript" src="js/utils.js"></script>
-		<script type="text/javascript" src="js/image.js"></script>
-		<script type="text/javascript" src="js/histo.js"></script>
 		<script type="text/javascript" src="js/tabs.js"></script>
+		<script type="text/javascript" src="js/thumbImage.js"></script>
+		<script type="text/javascript" src="js/extendedImageData.js"></script>
+		<script type="text/javascript" src="js/histogramRenderer.js"></script>
+		<script type="text/javascript" src="js/pointOperator.js"></script>
 		<script type="text/javascript" src="js/tab1Histo.js"></script>
 		<script type="text/javascript" src="js/tab2CumHisto.js"></script>
-		<script type="text/javascript" src="js/thumbImage.js"></script>
+		<script type="text/javascript" src="js/tab3PointOp.js"></script>
+		<script type="text/javascript" src="js/tab4SamplePointOps.js"></script>
 	</head>
 	
 	<body>
@@ -28,7 +31,7 @@
 						<li id="tabHeader_1">Histogramme</li>
 						<li id="tabHeader_2">Kumulative Histogramme</li>
 						<li id="tabHeader_3">Punktoperatoren</li>
-						<li id="tabHeader_4">Punktoperatoren-Test</li>
+						<li id="tabHeader_4">Beispieloperatoren</li>
 					</ul>
 				</div>
 				<div id="tabscontent">
@@ -79,9 +82,9 @@
 							</label>
 						</p>
 
-						<div class="container">
+						<div>
 							<div class="figure">
-								<img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite">
+								<img class="thumb image" id="tab1SourceImage" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite" />
 								<div class="caption">Ausgangsbild</div>
 							</div>
 							<div class="figure">
@@ -139,14 +142,14 @@
 							</label>
 						</p>
 						
-						<div class="container">
+						<div>
 							<div class="figure">
-								<img class="thumb image" id="tab2SourceImage" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle">
+								<img class="thumb image" id="tab2SourceImage" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle" />
 								<div class="caption">Ausgangsbild</div>
 							</div>
 						</div>
 
-						<div class="container clear_both">
+						<div class="clear_both">
 							<div class="figure">
 								<canvas class="thumb image" id="tab2HistogramTargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
 								<div class="caption">Histogramm</div>
@@ -178,7 +181,7 @@
 						<h3>Definition</h3>
 						<p>Ein Punktoperator <i>T</i> ordnet einem Eingabebild <i>f</i> durch Transformation der Farbwerte der einzelnen Pixel ein Ergebnisbild <i>f*</i> zu. Der Farbwert <i>f(x,y)</i> eines Pixels <i>(x,y)</i> wird dabei nur in Abhängigkeit vom Farbwert selbst und eventuell von der Position des Pixels im Bild modifiziert. Ist die Transformation von der Position des Pixels im Bild abhängig, so heißt sie inhomogen:</p>
 						<p><img src="img/pointOpF0.png" alt="Definition eines inhomogenen Punktoperators" height="25"></p>
-						<p>Ist die Transformation, welche unabhängig von der Position des Pixels im Bild ist wird als homogen bezeichnet:</p>
+						<p>Ist die Transformation unabhängig von der Position des Pixels im Bild, wird sie als homogen bezeichnet:</p>
 						<p><img src="img/pointOpF1.png" alt="Definition eines homogenen Punktoperators" height="23"></p>
 						<p>Im Allgemeinen sind Punktoperatoren nicht umkehrbar.</p>
 						<br/>
@@ -187,6 +190,40 @@
 						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren muss die Transformation auf jedem Pixel einzeln durchgeführt werden.</p>
 						<br/>
 						<h3>Transformationskennlinie</h3>
+						<p>Homogene Punktoperatoren können durch eine Transformationskennline (Gradationskurve) beschrieben werden. 
+						Sie zeigt, welche Farbwerte des Ausgangsbildes zu welchen Farbwerten im Ergebnisbild transformiert werden.
+						Wertebereich als auch Definitionsbereich sind somit die Farbwerte des Bildes.
+						Zum besseren Verständnis des Abbildungsverhaltens eines Punktoperators können Histogram und Transformationskennlinie überlagert werden.</p>
+						<br/>
+						
+						<div>
+							<div class="figure">
+								<img class="thumb image" id="tab3SourceImage" src="img/800px-C-130J_formation_low-level.jpg" alt="C-130J (geringer Kontrast)" />
+								<div class="caption">Ausgangsbild</div>
+							</div>
+							<div class="figure">
+								<canvas class="thumb image" id="tab3HistogramTargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<div class="caption">Histogramm mit Transformationskennlinie</div>
+							</div>
+						</div>
+						<div class="container clear_both">
+							<div class="figure">
+								<canvas class="thumb image" id="tab3TargetCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<div class="caption">Transformiertes Bild</div>
+							</div>
+						</div>
+						
+						<p class="clear_both">
+							<label>Histogramm-Typ: 
+								<select id="tab3HistTypeSelect">
+									<option value="brightness">Helligkeit</option>
+									<option value="rgb">RGB</option>
+									<option value="red">Rot</option>
+									<option value="green">Grün</option>
+									<option value="blue">Blau</option>
+								</select>
+							</label>
+						</p>
 					</div>
 					<div class="tabpage" id="tabpage_4">
 						<p id="pointOperatorType">
@@ -197,9 +234,11 @@
                                      <option value="logarithm">Logarithmustransformation</option>
                                      <option value="exponential">Exponentialtransformation</option>
                                      <option value="shift">Histogrammverschiebung (Helligkeitskorrektur)</option>
-                                     <option value="shift">Histogrammbegrenzung+Spreizung (Kontrastkorrektur)</option>
-                                     <option value="shift">Histogrammequalisierung</option>
-                                     <option value="shift">Histogrammhyperbolisation</option>
+                                     <option value="limit">Histogrammbegrenzung</option>
+                                     <option value="spread">Histogrammspreizung/-stauchung + Begrenzung (Kontrastkorrektur)</option>
+                                     <option value="equal">Histogrammequalisierung</option>
+                                     <option value="hyperbol">Histogrammhyperbolisation</option>
+                                     <option value="quant">Quantisierung</option>
                                      <option value="threshhold">Schwellwertoperation</option>
                                  </select>
                              </label>
