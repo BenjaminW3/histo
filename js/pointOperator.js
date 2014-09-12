@@ -24,7 +24,7 @@ function PointOperatorParameter(_sName, _sDescription, _inputAttributes) {
 PointOperatorParameter.prototype.value = function() {
     return this.inputElement.value;
 };
-PointOperatorParameter.prototype.addToElement = function(_parentElement) {
+PointOperatorParameter.prototype.addInputElementToElement = function(_parentElement) {
 	_parentElement.appendChild(this.labelElement);
 };
 
@@ -32,13 +32,22 @@ PointOperatorParameter.prototype.addToElement = function(_parentElement) {
  * Constructor.
  */
 function PointOperator() {
-	this.sDescription = 'No description available!';
-	this.sFormulaHtml = 'No formula available!';	//!< This could be a html image element text ("<img src='...sdfsfg...'>") or just plain text.
+	this.sDescription = 'No description available!';	//!< The desription of the point operator.
+	this.sFormulaHtml = 'No formula available!';		//!< This could be a html image element text ("<img src='...sdfsfg...'>") or just plain text.
 	this.sParameters = { 
 		/*'unnamed' : new PointOperatorParameter('not available', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
-	};
+	};													//!< The parameters of the point operator.
 }
 
+/**
+ * Adds all the parameter input elements to the given element.
+ */
+PointOperator.prototype.addPropertyInputElementsToElement = function (_parentElement) {
+	for(var param in this.sParameters)
+	{
+		param.addInputElementToElement(_parentElement);
+	}
+};
 /**
  * Transform the given image data.
  */
