@@ -3,75 +3,83 @@
 //-----------------------------------------------------------------------------
 window.addEventListener('load', function ()
 {
-    var sourceImgElement = document.getElementById('tab3SourceImage');							//!< The HTML source image element.
+    var srcImgElement = document.getElementById('SrcImg');										//!< The HTML source image element.
 	
-    var histCanvasElement = document.getElementById('tab3HistogramTargetCanvas');				//!< The HTML canvas element for the histogram.
+    var srcImgHistCanvasElement = document.getElementById('SrcImgHistCanvas');					//!< The HTML canvas element for the histogram.
+	
     var histTypeElement = document.getElementById('tab3HistTypeSelect');						//!< The HTML histogram type selection element.
 	
-    var targetCanvasElement = document.getElementById('tab3TargetCanvas');						//!< The HTML canvas element for the target image.
-    var targetCanvasCtx = targetCanvasElement.getContext('2d');									//!< The HTML canvas element context for the target image.
+    var transformedImgCanvasElement = document.getElementById('tab3TransformedImgCanvas');		//!< The HTML canvas element for the transformed image.
+    var transformedImgCanvasCtx = transformedImgCanvasElement.getContext('2d');					//!< The HTML canvas context for the transformed image.
+    var transformedImgHistCanvasElement = document.getElementById('tab3TransformedImgHistCanvas');	//!< The HTML canvas element for the transformed image histogram.
+    //var targetCanvasCtx = transformedImgHistCanvasElement.getContext('2d');									//!< The HTML canvas context for the transformed image histogram.
 
-    var extendedImageData = new ExtendedImageData();
-	extendedImageData.loadFromImageElement(sourceImgElement);
-    var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
+    var srcImgExtendedImageData = new ExtendedImageData();
+    var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
     var pointOp = new PointOperatorInverse();
-    /*var extendedTargetImageData = new ExtendedImageData();*/
+    var transformedImgExtendedImageData = new ExtendedImageData();
+    var transformedImgHistRenderer = new HistogrammRenderer(transformedImgExtendedImageData, transformedImgHistCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
-		var bClassListContainsThumb = sourceImgElement.classList.contains('thumb');
+		var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 		if(bClassListContainsThumb) {
-			sourceImgElement.classList.remove('thumb');
+			srcImgElement.classList.remove('thumb');
 		}
 		
-		extendedImageData.loadFromImageElement(sourceImgElement);
-        hist.setSourceExtendedImageData(extendedImageData);
+		srcImgExtendedImageData.loadFromImageElement(srcImgElement);
+        srcImgHistRenderer.setSourceExtendedImageData(srcImgExtendedImageData);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {
-			sourceImgElement.classList.add('thumb');
+			srcImgElement.classList.add('thumb');
 		}
 		
         updateHist();
     };
     var updateHist = function() {
-        hist.drawHist(true, false);
-        hist.drawTransformationCurve(pointOp);
+        srcImgHistRenderer.drawHist(true, false);
+        srcImgHistRenderer.drawTransformationCurve(pointOp);
 		
 		// Copy the source image to the target canvas.
 			// Clear the class before retrieving the size because the thumb class limits the size.
-			var bClassListContainsThumb = sourceImgElement.classList.contains('thumb');
+			var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 			if(bClassListContainsThumb) {
-				sourceImgElement.classList.remove('thumb');
+				srcImgElement.classList.remove('thumb');
 			}
 			
 			// Draw the transformed image data onto the target canvas.
-			targetCanvasElement.width = sourceImgElement.width;
-			targetCanvasElement.height = sourceImgElement.height;
-			targetCanvasCtx.putImageData(extendedImageData.getImageData(), 0,0);
+			transformedImgCanvasElement.width = srcImgElement.width;
+			transformedImgCanvasElement.height = srcImgElement.height;
+			transformedImgCanvasCtx.putImageData(srcImgExtendedImageData.getImageData(), 0,0);
 			
 			// Reset the thumb class.
 			if(bClassListContainsThumb) {
-				sourceImgElement.classList.add('thumb');
+				srcImgElement.classList.add('thumb');
 			}
 		
 		// This version is more costly because it calculates the histogram data twice.
 		/*// Load the extended image data from the canvas. 
-		extendedTargetImageData.loadFromCanvasElement(targetCanvasElement);
+		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
 		
 		// Transform the data.
-		pointOp.transformExtendedImageData(extendedTargetImageData);
+		pointOp.transformExtendedImageData(transformedImgExtendedImageData);
 		
 		// Draw the transformed image data onto the target canvas.
-		targetCanvasCtx.putImageData(extendedTargetImageData.getImageData(), 0,0);*/
+		transformedImgCanvasCtx.putImageData(transformedImgExtendedImageData.getImageData(), 0,0);*/
 		
-		var transformData = targetCanvasCtx.getImageData(0, 0, sourceImgElement.width, sourceImgElement.height);
+		var transformData = transformedImgCanvasCtx.getImageData(0, 0, srcImgElement.width, srcImgElement.height);
 		
 		// Transform the data.
 		pointOp.transformImageData(transformData);
 		
 		// Draw the transformed image data onto the target canvas.
-		targetCanvasCtx.putImageData(transformData, 0,0);
+		transformedImgCanvasCtx.putImageData(transformData, 0,0);
+		
+		// Load the extended image data from the canvas.
+		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
+		
+        transformedImgHistRenderer.drawHist(true, false);
     };
 
 	//-----------------------------------------------------------------------------
@@ -82,7 +90,7 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.
 	//-----------------------------------------------------------------------------
-	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
+	srcImgElement.addEventListener('load', reloadAndUpdateHist, false);
 
-	updateHist();
+	reloadAndUpdateHist();
 }, false);

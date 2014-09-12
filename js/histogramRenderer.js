@@ -1,7 +1,7 @@
 ﻿/**
  * Constructor.
  */
-function HistogrammRenderer(_extendedImageData, targetCanvasElement, _context, _histTypeElement) {
+function HistogrammRenderer(_extendedImageData, _targetCanvasElement, _context, _histTypeElement) {
     // The settings.
     this.histTypeElement = _histTypeElement;					//!< The HTML histogram type selection element.
     this.histType = this.histTypeElement.value;
@@ -11,7 +11,7 @@ function HistogrammRenderer(_extendedImageData, targetCanvasElement, _context, _
     this.targetContext = null;									//!< The target context of the histogram.
 
 	this.setSourceExtendedImageData(_extendedImageData);
-    this.setTargetCanvasElement(targetCanvasElement, _context);
+    this.setTargetCanvasElement(_targetCanvasElement, _context);
 }
 
 /**
@@ -62,8 +62,36 @@ HistogrammRenderer.prototype.setSourceExtendedImageData = function(_extendedImag
 /**
  * Draws a transformation.
  */
-HistogrammRenderer.prototype.drawTransformationCurve = function(PointOperator) {
-	// TODO: implement
+HistogrammRenderer.prototype.drawTransformationCurve = function(_pointOperator) {
+    this.targetContext.lineWidth = 1;
+    this.targetContext.fillStyle = '#A00';
+    this.targetContext.strokeStyle = '#A00';
+    this.targetContext.font = 'italic 14pt sans-serif';
+
+    // Draw some y-axis values.
+    this.targetContext.textAlign = "start";
+	var uiSteps = 5;
+    for(var i = 1; i < uiSteps; i++)
+    {
+		var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(uiSteps-1)));
+		this.targetContext.beginPath();
+		this.targetContext.moveTo(this.uiHistLeftPx, yPosPx);
+		this.targetContext.lineTo(this.uiHistLeftPx+3, yPosPx);
+		this.targetContext.stroke();
+        var uiYAxisValue = Math.round(i * ((255)/(uiSteps-1)));
+        this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx + 5, yPosPx + 5);	// +5 for centering because position is bottom of text.
+    }
+	
+	this.targetContext.beginPath();
+	this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(0,0,0)[0])/255) * this.uiHistHeightPx));
+	for (var i = 1; i < 256; i++)
+    {
+		_pointOperator.transformPixel(0,0,0);
+        var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
+        var uiValueY = this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(i,i,i)[0])/255) * this.uiHistHeightPx);
+		this.targetContext.lineTo(uiValueX, uiValueY);
+	}
+	this.targetContext.stroke();
 }
 
 /**
@@ -95,7 +123,7 @@ HistogrammRenderer.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
     this.targetContext.textAlign = 'center';
     for(var i = 0; i < dataX.length; i++)
     {
-		var xPosPx = this.uiHistLeftPx + Math.round((dataX[i]/256) * this.uiHistWidthPx);
+		var xPosPx = this.uiHistLeftPx + Math.round((dataX[i]/255) * this.uiHistWidthPx);
 		this.targetContext.beginPath();
 		this.targetContext.moveTo(xPosPx, this.uiHistBottomPx+3);
 		this.targetContext.lineTo(xPosPx, this.uiHistBottomPx);
@@ -111,14 +139,15 @@ HistogrammRenderer.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
 
     // Draw some y-axis values.
     this.targetContext.textAlign = "end";
-    for(var i = 0; i < 5; i++)
+	var uiSteps = 5;
+    for(var i = 0; i < uiSteps; i++)
     {
-		var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(5-1)));
+		var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(uiSteps-1)));
 		this.targetContext.beginPath();
 		this.targetContext.moveTo(this.uiHistLeftPx, yPosPx);
 		this.targetContext.lineTo(this.uiHistLeftPx-3, yPosPx);
 		this.targetContext.stroke();
-        var uiYAxisValue = Math.round(i * (uiMaxValY/(5-1)));
+        var uiYAxisValue = Math.round(i * (uiMaxValY/(uiSteps-1)));
         this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx - 5, yPosPx + 5);	// +5 for centering because position is bottom of text.
     }
 };
@@ -148,7 +177,9 @@ HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, 
 
 	var uiCurrentValue = 0;
 	
-    for (var x, y, i = 0; i < 256; i++)
+    var uiValueWidth = Math.ceil(this.uiHistWidthPx/256);
+		
+    for (var i = 0; i < 256; i++)
     {
 		if(bCumulative) {
 			if (!(i in auiValueCounts)) {
@@ -168,9 +199,8 @@ HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, 
 		}
 		
         //console.log ("#i = " + auiValueCounts[i])
-        var uiValueWidth = Math.ceil(this.uiHistWidthPx/256);
         var uiValueHeight = Math.round((uiCurrentValue/uiValueCountMax) * this.uiHistHeightPx);
-        var uiValueX = this.uiHistLeftPx + Math.round((i/256) * this.uiHistWidthPx);
+        var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
         var uiValueY = this.uiHistTopPx + this.uiHistHeightPx - uiValueHeight;
 
         if (bFill)

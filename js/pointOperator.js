@@ -1,7 +1,42 @@
 /**
  * Constructor.
  */
+function PointOperatorParameter(_sName, _sDescription, _inputAttributes) {
+    this.sName = _sName;
+    this.sDescription = _sDescription;
+	
+	// Create the surrounding label element.
+    this.labelElement = document.createElement('label');
+	this.labelElement.innerHTML += this.sName + ': ';
+	
+	// Create the input element.
+    this.inputElement = document.createElement('input');
+	for(var attribute in _inputAttributes)
+	{
+		this.inputElement.setAttribute(attribute, _inputAttributes[attribute]);
+	}
+	// Add the input element to the label.
+	this.inputElement.appendChild(this.inputElement);
+	
+	// Add the description.
+	this.labelElement.innerHTML += ' ' + this.sDescription;
+}
+PointOperatorParameter.prototype.value = function() {
+    return this.inputElement.value;
+};
+PointOperatorParameter.prototype.addToElement = function(_parentElement) {
+	_parentElement.appendChild(this.labelElement);
+};
+
+/**
+ * Constructor.
+ */
 function PointOperator() {
+	this.sDescription = 'No description available!';
+	this.sFormulaHtml = 'No formula available!';	//!< This could be a html image element text ("<img src='...sdfsfg...'>") or just plain text.
+	this.sParameters = { 
+		/*'unnamed' : new PointOperatorParameter('not available', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
+	};
 }
 
 /**
@@ -62,6 +97,9 @@ Function.prototype.inheritsFrom = function( parentClassOrObject ){
  * Inverse color transformation.
  */
 function PointOperatorInverse(){
+	this.sDescription = 'TODO';
+	this.sFormulaHtml = 'TODO';
+	this.sParameters = {};
 }
 
 PointOperatorInverse.inheritsFrom( PointOperator );

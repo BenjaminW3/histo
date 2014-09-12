@@ -3,39 +3,38 @@
 //-----------------------------------------------------------------------------
 window.addEventListener('load', function ()
 {
-    var sourceImgElement = document.getElementById('tab1SourceImage');							//!< The HTML source image element.
-    var sourceImgSelectElement = document.getElementById('tab1SourceImgSelect');				//!< The HTML source image selection element.
-    var sourceImgSelectOptionUserUploadElement = document.getElementById('tab1SourceImgSelectOptionUserUpload');//!< The HTML source image user upload option element.
-    var sourceImgInputElement = document.getElementById('tab1SourceImgInput');					//!< The HTML source image file input element.
-    var sourceImgLabelElement = document.getElementById('tab1SourceImgLabel');					//!< The HTML source image label element.
+    var srcImgElement = document.getElementById('tab1SrcImg');									//!< The HTML source image element.
+    var srcImgSelectElement = document.getElementById('tab1SrcImgSelect');						//!< The HTML source image selection element.
+    var srcImgSelectOptionUserUploadElement = document.getElementById('tab1SrcImgSelectOptionUserUpload');//!< The HTML source image user upload option element.
+    var srcImgInputElement = document.getElementById('tab1SrcImgInput');						//!< The HTML source image file input element.
+    var srcImgLabelElement = document.getElementById('tab1SrcImgLabel');						//!< The HTML source image label element.
 	
-    var histCanvasElement = document.getElementById('tab1HistogramTargetCanvas');				//!< The HTML canvas element for the histogram.
+    var srcImgHistCanvasElement = document.getElementById('tab1SrcImgHistCanvas');				//!< The HTML canvas element for the histogram.
     var histTypeElement = document.getElementById('tab1HistTypeSelect');						//!< The HTML histogram type selection element.
 	//var plotFill = document.getElementById('plotFill');
 
-    var extendedImageData = new ExtendedImageData();
-	extendedImageData.loadFromImageElement(sourceImgElement);
-    var hist = new HistogrammRenderer(extendedImageData, histCanvasElement, '2d', histTypeElement);
+    var srcImgExtendedImageData = new ExtendedImageData();
+    var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
 
     var reloadAndUpdateHist = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
-		var bClassListContainsThumb = sourceImgElement.classList.contains('thumb');
+		var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 		if(bClassListContainsThumb) {
-			sourceImgElement.classList.remove('thumb');
+			srcImgElement.classList.remove('thumb');
 		}
 		
-		extendedImageData.loadFromImageElement(sourceImgElement);
-        hist.setSourceExtendedImageData(extendedImageData);
+		srcImgExtendedImageData.loadFromImageElement(srcImgElement);
+        srcImgHistRenderer.setSourceExtendedImageData(srcImgExtendedImageData);
 		
 		// Reset the thumb class.
 		if(bClassListContainsThumb) {
-			sourceImgElement.classList.add('thumb');
+			srcImgElement.classList.add('thumb');
 		}
 		
         updateHist();
     };
     var updateHist = function() {
-        hist.drawHist(true/*plotFill.checked*/, false);
+        srcImgHistRenderer.drawHist(true/*plotFill.checked*/, false);
     };
 
 	//-----------------------------------------------------------------------------
@@ -46,51 +45,51 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a change of the source image selection.
 	//-----------------------------------------------------------------------------
-	sourceImgSelectElement.addEventListener('change', function () {
+	srcImgSelectElement.addEventListener('change', function () {
 		if(this.value==='user_upload')
 		{
 			// Enable the file input and the drag and drop fields.
-			sourceImgInputElement.style.visibility = 'visible';
-			sourceImgElement.classList.add('drag_drop_area');
+			srcImgInputElement.style.visibility = 'visible';
+			srcImgElement.classList.add('drag_drop_area');
 			if(Utils.supportsDragAndDrop()) {
-				sourceImgLabelElement.style.visibility = 'visible';
-				sourceImgElement.ondragover = function () { sourceImgElement.classList.add('drag_drop'); return false; };
-				sourceImgElement.ondragend = function () { sourceImgElement.classList.remove('drag_drop'); return false; };
-				sourceImgElement.ondrop = function (e) {
-					sourceImgElement.classList.remove('drag_drop');
+				srcImgLabelElement.style.visibility = 'visible';
+				srcImgElement.ondragover = function () { srcImgElement.classList.add('drag_drop'); return false; };
+				srcImgElement.ondragend = function () { srcImgElement.classList.remove('drag_drop'); return false; };
+				srcImgElement.ondrop = function (e) {
+					srcImgElement.classList.remove('drag_drop');
 					e.preventDefault();
-					Utils.uploadImageFile(sourceImgElement, e.dataTransfer.files[0]);
+					Utils.uploadImageFile(srcImgElement, e.dataTransfer.files[0]);
 				}
 			}
 		}
 		else{
 			// Disable the file input and the drag and drop fields.
-			sourceImgInputElement.style.visibility = 'hidden';
-			sourceImgLabelElement.style.visibility = 'hidden';
-			sourceImgElement.classList.remove('drag_drop_area');
+			srcImgInputElement.style.visibility = 'hidden';
+			srcImgLabelElement.style.visibility = 'hidden';
+			srcImgElement.classList.remove('drag_drop_area');
 			
 			// Directly set the new image.
-			sourceImgElement.src = this.value;
+			srcImgElement.src = this.value;
 		}
 	}, false);
 
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image file from the input field.
 	//-----------------------------------------------------------------------------
-	sourceImgInputElement.addEventListener('change', function () {Utils.uploadImageFile(sourceImgElement, this.files[0]);}, false);
+	srcImgInputElement.addEventListener('change', function () {Utils.uploadImageFile(srcImgElement, this.files[0]);}, false);
 	
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.
 	//-----------------------------------------------------------------------------
-	sourceImgElement.addEventListener('load', reloadAndUpdateHist, false);
+	srcImgElement.addEventListener('load', reloadAndUpdateHist, false);
 			
 	//plotFill.addEventListener('change', updateHist, false);
 
 	// Disable upload if not supported.
 	if(!Utils.supportsFileReader()) {
-		sourceImgSelectOptionUserUploadElement.disabled = true;
-		sourceImgSelectOptionUserUploadElement.label += ' (not supoorted)';
+		srcImgSelectOptionUserUploadElement.disabled = true;
+		srcImgSelectOptionUserUploadElement.label += ' (not supoorted)';
 	}
 	
-	updateHist();
+	reloadAndUpdateHist();
 }, false);

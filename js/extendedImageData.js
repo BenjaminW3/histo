@@ -43,7 +43,7 @@ function ExtendedImageData() {
     this.channelHistogramMax = [0,0,0,0];
     this.width = 0;
     this.height = 0;
-    this.sourceImgData = null;
+    this.srcImgData = null;
 }
 
 /**
@@ -62,15 +62,15 @@ ExtendedImageData.prototype.getPixelData = function(_x, _y) {
 };
 
 ExtendedImageData.prototype.getWidth = function() {
-    return this.sourceImgData.width;
+    return this.srcImgData.width;
 }
 
 ExtendedImageData.prototype.getHeight = function() {
-    return this.sourceImgData.height;
+    return this.srcImgData.height;
 }
 
 ExtendedImageData.prototype.getNumPixels = function() {
-    return this.sourceImgData.width * this.sourceImgData.height;
+    return this.srcImgData.width * this.srcImgData.height;
 }
 
 ExtendedImageData.prototype.getChannelHistogramMax = function(_channelNo) {
@@ -78,7 +78,7 @@ ExtendedImageData.prototype.getChannelHistogramMax = function(_channelNo) {
 }
 
 ExtendedImageData.prototype.getImageData = function() {
-    return this.sourceImgData;
+    return this.srcImgData;
 }
 
 /**
@@ -104,8 +104,8 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     var x = 0;
     var y = 0;
     this.channelValue.push([]);
-    for (var i = 0, n = this.sourceImgData.data.length; i < n; i+= pixelStepWidth) {
-        var pixel = new PixelData(this.sourceImgData.data[i], this.sourceImgData.data[i+1], this.sourceImgData.data[i+2], this.sourceImgData.data[i+3]);
+    for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
+        var pixel = new PixelData(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], this.srcImgData.data[i+3]);
         var value = [pixel.luminance(), pixel.red(), pixel.green(), pixel.blue()];
         this.channelValue[y].push(pixel);
 
@@ -132,27 +132,27 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 /**
  * Load Data from the given image.
  */
-ExtendedImageData.prototype.loadFromImageElement = function(_sourceImageElement) {
-    var sourceImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
-    sourceImgTempCanvas.width = _sourceImageElement.width;
-    sourceImgTempCanvas.height = _sourceImageElement.height;
-    var sourceImgTempCtx = sourceImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+ExtendedImageData.prototype.loadFromImageElement = function(_srcImgElement) {
+    var srcImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
+    srcImgTempCanvas.width = _srcImgElement.width;
+    srcImgTempCanvas.height = _srcImgElement.height;
+    var srcImgTempCtx = srcImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
 
     // Draw the image data onto the invisible image context.
-    sourceImgTempCtx.drawImage(_sourceImageElement, 0, 0);
+    srcImgTempCtx.drawImage(_srcImgElement, 0, 0);
 	
-	this.loadFromCanvasElement(sourceImgTempCanvas);
+	this.loadFromCanvasElement(srcImgTempCanvas);
 };
 /**
  * Load Data from the given image.
  */
-ExtendedImageData.prototype.loadFromCanvasElement = function(_sourceImageCanvas) {
-    var sourceImgCanvasContext = _sourceImageCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+ExtendedImageData.prototype.loadFromCanvasElement = function(_srcImgCanvas) {
+    var srcImgCanvasContext = _srcImgCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
 	
     // Get the image data from the invisible image canvas context.
     // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
     // Add --allow-file-access-from-files to chrome startup to circumvent this.
-    this.sourceImgData = sourceImgCanvasContext.getImageData(0, 0, _sourceImageCanvas.width, _sourceImageCanvas.height);
+    this.srcImgData = srcImgCanvasContext.getImageData(0, 0, _srcImgCanvas.width, _srcImgCanvas.height);
 
     this.recalculateImageDataDependencies();
 };
