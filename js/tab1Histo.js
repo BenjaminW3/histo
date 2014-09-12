@@ -88,7 +88,7 @@ window.addEventListener('load', function ()
 	// Disable upload if not supported.
 	if(!Utils.supportsFileReader()) {
 		srcImgSelectOptionUserUploadElement.disabled = true;
-		srcImgSelectOptionUserUploadElement.label += ' (not supoorted)';
+		srcImgSelectOptionUserUploadElement.label += ' (not supported)';
 	}
 	
 	reloadAndUpdateHist();
