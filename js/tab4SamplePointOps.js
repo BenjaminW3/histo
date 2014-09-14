@@ -120,7 +120,7 @@ window.addEventListener('load', function ()
     //-----------------------------------------------------------------------------
     var OnPointOperatorChanged = function() {
         if(this.value == 'negative') {
-            pointOperator =  new PointOperatorInverse();
+            pointOperator = new PointOperatorInverse();
         }else if(this.value == 'potency') {
             pointOperator = new PointOperatorPotency();
         }else if(this.value == 'logarithm') {
@@ -146,7 +146,7 @@ window.addEventListener('load', function ()
 		// TODO: clean settings div!
 		
 		// FIXME: Add new settings to div.
-		//pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
+		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
 		
 		RecalcTransformedImg();
     };
@@ -183,7 +183,6 @@ window.addEventListener('load', function ()
 
             // Directly set the new image.
             srcImgElement.src = this.value;
-            targetImgElement.src = this.value;
         }
     }, false);
 
