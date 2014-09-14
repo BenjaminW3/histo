@@ -1,0 +1,56 @@
+
+.pointOperatorHorizontalblock {
+    width:100%;
+    display: block;
+    position:relative;
+}
+
+
+
+.pointOperatorSelectionBlock {
+    display: inline-block;
+    width:50%;
+}
+
+
+.pointOperatorDescription {
+    display: inline-block;
+    width:40%;
+    position: absolute;
+    left: 50%;
+}
+
+.pointOperatorSettings {
+    /*display: none;*/
+    border: 1px dashed #333;
+    padding: 3px;
+    width: 92%;
+}
+
+.pointOperatorResult {
+    width:100%;
+    display: block;
+    position:relative;
+}
+
+.pointOperatorSource {
+    display: inline-block;
+    width:37%;
+}
+
+.pointOperatorTarget {
+    display: inline-block;
+    width:42%;
+    position: relative;
+}
+
+.pointOperatorFormula {
+    display: inline-block;
+    width:20%;
+    position: relative;
+}
+
+.pointOperatorThumb {
+    max-width: 350px;
+    max-height: 300px;
+}
