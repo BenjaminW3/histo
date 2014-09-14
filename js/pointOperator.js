@@ -104,14 +104,15 @@ function PointOperatorPotency(){
                         'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
-PointOperatorInverse.inheritsFrom( PointOperator );
+PointOperatorPotency.inheritsFrom( PointOperator );
 
-PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
-    var exp = this.sParameters.getAttribute("e").value;
+PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
+    var exp = this.sParameters.getAttribute('e').value();
+    console.log(exp);
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
 
@@ -122,7 +123,7 @@ function PointOperatorLogarithm(){
     this.sDescription = 'TODO';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
