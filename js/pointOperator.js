@@ -97,20 +97,38 @@ PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
 };
 
 /**
- * Inverse color transformation.
+ * Potency color transformation.
  */
 function PointOperatorPotency(){
     this.sDescription = 'Die Potenztransformation, oder auch Gammakorrektur, ist eine monotone Transformation auf Basis einer Potenzfunktion. ' +
                         'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'exponent' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 255, 'step' : 1})
+        'e' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
 PointOperatorInverse.inheritsFrom( PointOperator );
 
 PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
-    return [255-_r, 255-_g, 255-_b];
+    var exp = this.sParameters.getAttribute("e").value;
+    return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
 
+/**
+ * Logarithm color transformation.
+ */
+function PointOperatorLogarithm(){
+    this.sDescription = 'TODO';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'e' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
+    };
+}
+
+PointOperatorLogarithm.inheritsFrom( PointOperator );
+
+PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
+    var exp = this.sParameters.getAttribute("e").value;
+    return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
+};
