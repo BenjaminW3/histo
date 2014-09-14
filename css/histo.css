@@ -1,29 +1,29 @@
 ﻿.image {
-  border: 1px solid #000;
-  cursor: pointer;
-  float: left;
+	border: 1px solid #000;
+	float: left;
 }
 
 .thumb {
-  max-width: 420px;
-  max-height: 420px;
+	max-width: 420px;
+	max-height: 420px;
+	cursor: pointer;
 }
 
 .figure {
-  display: inline-block;
-  vertical-align: middle;
+	display: inline-block;
+	vertical-align: middle;
 }
 .caption {
-  clear: both;
+	clear: both;
 }
 
 .drag_drop_area { 
-  border: 10px dashed #ccc;
+	border: 10px dashed #ccc;
 }
 .drag_drop {
-  border: 10px dashed #0c0; 
+	border: 10px dashed #0c0; 
 }
 
 .clear_both { 
-  clear: both;
+	clear: both;
 }

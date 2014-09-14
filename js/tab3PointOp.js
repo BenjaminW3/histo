@@ -16,11 +16,14 @@ window.addEventListener('load', function ()
 
     var srcImgExtendedImageData = new ExtendedImageData();
     var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
-    var pointOp = new PointOperatorInverse();
+    var pointOperator = new PointOperatorInverse();
     var transformedImgExtendedImageData = new ExtendedImageData();
     var transformedImgHistRenderer = new HistogrammRenderer(transformedImgExtendedImageData, transformedImgHistCanvasElement, '2d', histTypeElement);
 
-    var reloadAndUpdateHist = function() {
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var OnSrcImgChanged = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
 		var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 		if(bClassListContainsThumb) {
@@ -35,13 +38,15 @@ window.addEventListener('load', function ()
 			srcImgElement.classList.add('thumb');
 		}
 		
-        updateHist();
-    };
-    var updateHist = function() {
-        srcImgHistRenderer.drawHist(true, false);
-        srcImgHistRenderer.drawTransformationCurve(pointOp);
+        RedrawSrcImgHists();
 		
-		// Copy the source image to the target canvas.
+		RecalcTransformedImg();
+	}
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var RecalcTransformedImg = function() {
+		// Resize the transformed image to match the source image size and copy the original data.
 			// Clear the class before retrieving the size because the thumb class limits the size.
 			var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 			if(bClassListContainsThumb) {
@@ -51,6 +56,7 @@ window.addEventListener('load', function ()
 			// Draw the transformed image data onto the target canvas.
 			transformedImgCanvasElement.width = srcImgElement.width;
 			transformedImgCanvasElement.height = srcImgElement.height;
+			
 			transformedImgCanvasCtx.putImageData(srcImgExtendedImageData.getImageData(), 0,0);
 			
 			// Reset the thumb class.
@@ -58,39 +64,53 @@ window.addEventListener('load', function ()
 				srcImgElement.classList.add('thumb');
 			}
 		
-		// This version is more costly because it calculates the histogram data twice.
-		/*// Load the extended image data from the canvas. 
-		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
+		// Get the data of the source image (copied onto the target).
+		var transformData = transformedImgCanvasCtx.getImageData(0, 0, transformedImgCanvasElement.width, transformedImgCanvasElement.height);
 		
 		// Transform the data.
-		pointOp.transformExtendedImageData(transformedImgExtendedImageData);
+		pointOperator.transformImageData(transformData);
 		
-		// Draw the transformed image data onto the target canvas.
-		transformedImgCanvasCtx.putImageData(transformedImgExtendedImageData.getImageData(), 0,0);*/
-		
-		var transformData = transformedImgCanvasCtx.getImageData(0, 0, srcImgElement.width, srcImgElement.height);
-		
-		// Transform the data.
-		pointOp.transformImageData(transformData);
-		
-		// Draw the transformed image data onto the target canvas.
+		// Draw the transformed image data onto the transformed image canvas.
 		transformedImgCanvasCtx.putImageData(transformData, 0,0);
 		
-		// Load the extended image data from the canvas.
+		// Load the extended image data from the transformed image canvas.
 		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
 		
+		// Redraw the transformed image histograms.
+        RedrawTransformedImgHists();
+    };
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var RedrawSrcImgHists = function() {
+		// Render source image histograms.
+        srcImgHistRenderer.drawHist(true, false);
+        srcImgHistRenderer.drawTransformationCurve(pointOperator);
+    };
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var RedrawTransformedImgHists = function() {
+		// Render source image histograms.
         transformedImgHistRenderer.drawHist(true, false);
+    };
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var OnHistTypeChanged = function() {
+		RedrawSrcImgHists();
+		RedrawTransformedImgHists();
     };
 
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed histogram type.
 	//-----------------------------------------------------------------------------
-    histTypeElement.addEventListener('change', updateHist, false);
+    histTypeElement.addEventListener('change', OnHistTypeChanged, false);
 
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.
 	//-----------------------------------------------------------------------------
-	srcImgElement.addEventListener('load', reloadAndUpdateHist, false);
+	srcImgElement.addEventListener('load', OnSrcImgChanged, false);
 
-	reloadAndUpdateHist();
+	OnSrcImgChanged();
 }, false);

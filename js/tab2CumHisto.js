@@ -10,7 +10,7 @@ window.addEventListener('load', function ()
     var srcImgLabelElement = document.getElementById('tab2SrcImgLabel');						//!< The HTML source image label element.
 	
     var srcImgHistCanvasElement = document.getElementById('tab2SrcImgHistCanvas');				//!< The HTML canvas element for the histogram.
-    var srcImgCumHistCanvasElement = document.getElementById('tab2CumulativeSrcImgHistCanvas');	//!< The HTML canvas element for the histogram.
+    var srcImgCumHistCanvasElement = document.getElementById('tab2SrcImgCumHistCanvas');	//!< The HTML canvas element for the histogram.
 	
     var histTypeElement = document.getElementById('tab2HistTypeSelect');						//!< The HTML histogram type selection element.
 
@@ -18,7 +18,10 @@ window.addEventListener('load', function ()
     var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
     var srcImgCumHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgCumHistCanvasElement, '2d', histTypeElement);
 
-    var reloadAndUpdateHist = function() {
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var OnSrcImgChanged = function() {
 		// Clear the class before retrieving the size because the thumb class limits the size.
 		var bClassListContainsThumb = srcImgElement.classList.contains('thumb');
 		if(bClassListContainsThumb) {
@@ -34,17 +37,27 @@ window.addEventListener('load', function ()
 			srcImgElement.classList.add('thumb');
 		}
 		
-        updateHist();
+        RedrawSrcImgHists();
     };
-    var updateHist = function() {
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var RedrawSrcImgHists = function() {
+		// Render source image histograms.
         srcImgHistRenderer.drawHist(true, false);
         srcImgCumHistRenderer.drawHist(true, true);
+    };
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var OnHistTypeChanged = function() {
+        RedrawSrcImgHists();
     };
 
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed histogram type.
 	//-----------------------------------------------------------------------------
-    histTypeElement.addEventListener('change', updateHist, false);
+    histTypeElement.addEventListener('change', OnHistTypeChanged, false);
 
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a change of the source image selection.
@@ -85,7 +98,7 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.
 	//-----------------------------------------------------------------------------
-	srcImgElement.addEventListener('load', reloadAndUpdateHist, false);
+	srcImgElement.addEventListener('load', OnSrcImgChanged, false);
 
 	// Disable upload if not supported.
 	if(!Utils.supportsFileReader()) {
@@ -93,5 +106,5 @@ window.addEventListener('load', function ()
 		srcImgSelectOptionUserUploadElement.label += ' (not supported)';
 	}
 	
-	reloadAndUpdateHist();
+	OnSrcImgChanged();
 }, false);

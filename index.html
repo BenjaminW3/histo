@@ -78,8 +78,21 @@
 									<option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
 									<option value="user_upload" id="tab1SrcImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
-								<label id="tab1SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
-								<input type="file" id="tab1SrcImgInput" style="visibility:hidden">
+								<label id="tab1SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:
+									<input type="file" id="tab1SrcImgInput" style="visibility:hidden">
+								<label/>
+							</label>
+						</p>
+
+						<p>
+							<label>Histogramm-Typ: 
+								<select id="tab1HistTypeSelect">
+									<option value="brightness">Helligkeit</option>
+									<option value="rgb">RGB</option>
+									<option value="red">Rot</option>
+									<option value="green">Grün</option>
+									<option value="blue">Blau</option>
+								</select>
 							</label>
 						</p>
 
@@ -93,18 +106,6 @@
 								<div class="caption">Histogramm</div>
 							</div>
 						</div>
-
-						<p class="clear_both">
-							<label>Histogramm-Typ: 
-								<select id="tab1HistTypeSelect">
-									<option value="brightness">Helligkeit</option>
-									<option value="rgb">RGB</option>
-									<option value="red">Rot</option>
-									<option value="green">Grün</option>
-									<option value="blue">Blau</option>
-								</select>
-							</label>
-						</p>
 
 						<!--
 						<p><label>Plot fill <input id="plotFill" type="checkbox"></label></p>-->
@@ -138,8 +139,21 @@
 									<option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
 									<option value="user_upload" id="tab2SrcImgSelectOptionUserUpload">Datei öffnen...</option>
 								</select>
-								<label id="tab2SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
-								<input type="file" id="tab2SrcImgInput" style="visibility:hidden">
+								<label id="tab2SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:
+									<input type="file" id="tab2SrcImgInput" style="visibility:hidden">
+								<label/>
+							</label>
+						</p>
+						
+						<p>
+							<label>Histogramm-Typ: 
+								<select id="tab2HistTypeSelect">
+									<option value="brightness">Helligkeit</option>
+									<option value="rgb">RGB</option>
+									<option value="red">Rot</option>
+									<option value="green">Grün</option>
+									<option value="blue">Blau</option>
+								</select>
 							</label>
 						</p>
 						
@@ -156,22 +170,10 @@
 								<div class="caption">Histogramm</div>
 							</div>
 							<div class="figure">
-								<canvas class="thumb image" id="tab2CumulativeSrcImgHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+								<canvas class="thumb image" id="tab2SrcImgCumHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
 								<div class="caption">Kumulatives Histogramm</div>
 							</div>
 						</div>
-						
-						<p class="clear_both">
-							<label>Histogramm-Typ: 
-								<select id="tab2HistTypeSelect">
-									<option value="brightness">Helligkeit</option>
-									<option value="rgb">RGB</option>
-									<option value="red">Rot</option>
-									<option value="green">Grün</option>
-									<option value="blue">Blau</option>
-								</select>
-							</label>
-						</p>
 					</div>
 					<div class="tabpage" id="tabpage_3">
 						<h3>Allgemein</h3>
@@ -197,6 +199,17 @@
 						Zum besseren Verständnis des Abbildungsverhaltens eines Punktoperators können Histogram und Transformationskennlinie überlagert werden.</p>
 						<br/>
 						
+						<p>
+							<label>Histogramm-Typ: 
+								<select id="tab3HistTypeSelect">
+									<option value="brightness">Helligkeit</option>
+									<option value="rgb">RGB</option>
+									<option value="red">Rot</option>
+									<option value="green">Grün</option>
+									<option value="blue">Blau</option>
+								</select>
+							</label>
+						</p>
 						<div>
 							<div class="figure">
 								<img class="thumb image" id="SrcImg" src="img/800px-C-130J_formation_low-level.jpg" alt="C-130J (geringer Kontrast)" />
@@ -217,18 +230,6 @@
 								<div class="caption">Histogramm des transformierten Bildes</div>
 							</div>
 						</div>
-						
-						<p class="clear_both">
-							<label>Histogramm-Typ: 
-								<select id="tab3HistTypeSelect">
-									<option value="brightness">Helligkeit</option>
-									<option value="rgb">RGB</option>
-									<option value="red">Rot</option>
-									<option value="green">Grün</option>
-									<option value="blue">Blau</option>
-								</select>
-							</label>
-						</p>
 					</div>
 					<div class="tabpage" id="tabpage_4">
                         <div class="pointOperatorHorizontalblock">
@@ -281,10 +282,22 @@
                                             <option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
                                             <option value="user_upload" id="tab4SrcImgSelectOptionUserUpload">Datei öffnen...</option>
                                         </select>
-                                        <label id="tab4SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:<label/>
-                                            <input type="file" id="tab4SrcImgInput" style="visibility:hidden">
+                                        <label id="tab4SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:
+											<input type="file" id="tab4SrcImgInput" style="visibility:hidden">
+										<label/>
                                     </label>
                                 </p>
+								<p class="clear_both">
+									<label>Histogramm-Typ:
+										<select id="tab4HistTypeSelect">
+											<option value="brightness">Helligkeit</option>
+											<option value="rgb">RGB</option>
+											<option value="red">Rot</option>
+											<option value="green">Grün</option>
+											<option value="blue">Blau</option>
+										</select>
+									</label>
+								</p>
 
                                 <div class="figure">
                                     <img class="pointOperatorThumb image" id="tab4SrcImg" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite" />
@@ -293,18 +306,11 @@
                                 <div class="figure">
                                     <canvas class="pointOperatorThumb image" id="tab4SrcImgHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
                                     <div class="caption">Histogramm</div>
-                                    <p class="clear_both">
-                                        <label>Histogramm-Typ:
-                                            <select id="tab4HistTypeSelect">
-                                                <option value="brightness">Helligkeit</option>
-                                                <option value="rgb">RGB</option>
-                                                <option value="red">Rot</option>
-                                                <option value="green">Grün</option>
-                                                <option value="blue">Blau</option>
-                                            </select>
-                                        </label>
-                                    </p>
                                 </div>
+								<div class="figure">
+									<canvas class="pointOperatorThumb image" id="tab4SrcImgCumHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+									<div class="caption">Kumulatives Histogramm</div>
+								</div>
 
                             </div>
                             <div class="pointOperatorFormula">
@@ -312,13 +318,17 @@
                             </div>
                             <div class="pointOperatorTarget">
                                 <div class="figure">
-                                    <img class="pointOperatorThumb image" id="tab4TrgtImg" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite" />
-                                    <div class="caption">Ergebnisbild</div>
+									<canvas class="pointOperatorThumb image" id="tab4TransformedImgCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+                                    <div class="caption">Transformiertes Bild</div>
                                 </div>
                                 <div class="figure">
-                                    <canvas class="pointOperatorThumb image" id="tab4TrgtImgHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
-                                    <div class="caption">Histogramm</div>
+                                    <canvas class="pointOperatorThumb image" id="tab4TransformedImgHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+                                    <div class="caption">Histogramm des transformierten Bildes</div>
                                 </div>
+								<div class="figure">
+									<canvas class="pointOperatorThumb image" id="tab4TransformedImgCumHistCanvas" width="840" height="630">Your browser does not have support for the html5 canvas element. Please use a modern browser!</canvas>
+									<div class="caption">Kumulatives Histogramm des transformierten Bildes</div>
+								</div>
                             </div>
                         </div>
                     </div>

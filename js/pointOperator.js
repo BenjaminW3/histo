@@ -16,7 +16,7 @@ function PointOperatorParameter(_sName, _sDescription, _inputAttributes) {
 		this.inputElement.setAttribute(attribute, _inputAttributes[attribute]);
 	}
 	// Add the input element to the label.
-	this.inputElement.appendChild(this.inputElement);
+	this.labelElement.appendChild(this.inputElement);
 	
 	// Add the description.
 	this.labelElement.innerHTML += ' ' + this.sDescription;
@@ -45,7 +45,7 @@ function PointOperator() {
 PointOperator.prototype.addPropertyInputElementsToElement = function (_parentElement) {
 	for(var param in this.sParameters)
 	{
-		param.addInputElementToElement(_parentElement);
+		this.sParameters.param.addInputElementToElement(_parentElement);
 	}
 };
 /**
@@ -104,15 +104,14 @@ function PointOperatorPotency(){
                         'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
 PointOperatorPotency.inheritsFrom( PointOperator );
 
 PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
-    var exp = this.sParameters.getAttribute('e').value();
-    console.log(exp);
+    var exp = this.sParameters.e.value();
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
 
@@ -123,13 +122,13 @@ function PointOperatorLogarithm(){
     this.sDescription = 'TODO';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
 PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
-    var exp = this.sParameters.getAttribute("e").value;
+    var exp = this.sParameters.e.value();
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
