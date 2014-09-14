@@ -77,44 +77,40 @@ PointOperator.prototype.transformPixel = function (_r, _g, _b) {
     alert('This is the abstract base class method. This has to be implemented by derieved classes!');
 };
 
-
-
-/**
- * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
- */
-Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
-	if ( parentClassOrObject.constructor == Function ) 
-	{ 
-		//Normal Inheritance 
-		this.prototype = new parentClassOrObject;
-		this.prototype.constructor = this;
-		this.prototype.parent = parentClassOrObject.prototype;
-	} 
-	else 
-	{ 
-		//Pure Virtual Inheritance 
-		this.prototype = parentClassOrObject;
-		this.prototype.constructor = this;
-		this.prototype.parent = parentClassOrObject;
-	} 
-	return this;
-}
-
-
-
 /**
  * Inverse color transformation.
  */
 function PointOperatorInverse(){
-	this.sDescription = 'TODO';
+	this.sDescription = 'Bei der Negativtransformation wird eine Invertierung der Grauwerte eines Grauwertbildes durchgeführt. ' +
+                        'Dies kann zur besseren Wahrnehmung feiner Strukturen führen, da das menschliche Auge feine Unterschiede ' +
+                        'zwischen Grauwerten gut wahrnehmen kann.';
 	this.sFormulaHtml = 'TODO';
-	this.sParameters = {};
+    this.sParameters = {
+
+    };
 }
 
 PointOperatorInverse.inheritsFrom( PointOperator );
 
 PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
 	return [255-_r, 255-_g, 255-_b];
+};
+
+/**
+ * Inverse color transformation.
+ */
+function PointOperatorPotency(){
+    this.sDescription = 'Die Potenztransformation, oder auch Gammakorrektur, ist eine monotone Transformation auf Basis einer Potenzfunktion. ' +
+                        'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'exponent' : new PointOperatorParameter('Exponent', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 255, 'step' : 1})
+    };
 }
 
+PointOperatorInverse.inheritsFrom( PointOperator );
+
+PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
+    return [255-_r, 255-_g, 255-_b];
+};
 
