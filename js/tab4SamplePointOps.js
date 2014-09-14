@@ -101,7 +101,35 @@ window.addEventListener('load', function ()
     }
 
 
+    var executePointOperator = function() {
+        var pointOperator = null;
+        if(this.value == 'negative') {
+            var pointOperator =  PointOperatorInverse();
+        }else if(this.value == 'potency') {
+            var pointOperator = PointOperatorPotency();
+        }else if(this.value == 'logarithm') {
 
+        }else if(this.value == 'exponential') {
+
+        }else if(this.value == 'shift') {
+
+        }else if(this.value == 'limit') {
+
+        }else if(this.value == 'spread') {
+
+        }else if(this.value == 'equal') {
+
+        }else if(this.value == 'hyperbol') {
+
+        }else if(this.value == 'quant') {
+
+        }else if(this.value == 'threshhold') {
+
+        }
+        pointOperator.transformExtendedImageData(srcImgExtendedImageData);
+    };
+    var pointOperator = document.getElementById('tab4PointOperatorSelect');
+    pointOperator.addEventListener('change', executePointOperator,false);
 
     reloadAndUpdateHist();
 }, false);
