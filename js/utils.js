@@ -36,3 +36,24 @@ Utils.uploadImageFile = function (_dstImgElement, file) {
 		alert("Unsupported image file type:" + file);
 	}
 };
+
+/**
+ * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
+ */
+Function.prototype.inheritsFrom = function( parentClassOrObject ){
+    if ( parentClassOrObject.constructor == Function )
+    {
+        //Normal Inheritance
+        this.prototype = new parentClassOrObject;
+        this.prototype.constructor = this;
+        this.prototype.parent = parentClassOrObject.prototype;
+    }
+    else
+    {
+        //Pure Virtual Inheritance
+        this.prototype = parentClassOrObject;
+        this.prototype.constructor = this;
+        this.prototype.parent = parentClassOrObject;
+    }
+    return this;
+};
