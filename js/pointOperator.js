@@ -45,8 +45,7 @@ function PointOperator() {
 PointOperator.prototype.addPropertyInputElementsToElement = function (_parentElement) {
 	for(var param in this.sParameters)
 	{
-		//console.log(param);
-		this.sParameters.param.addInputElementToElement(_parentElement);
+		this.sParameters[param].addInputElementToElement(_parentElement);
 	}
 };
 /**

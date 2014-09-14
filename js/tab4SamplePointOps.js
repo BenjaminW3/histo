@@ -145,7 +145,7 @@ window.addEventListener('load', function ()
 		
 		// TODO: clean settings div!
 		
-		// FIXME: Add new settings to div.
+		// Add current point operators settings to div.
 		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
 		
 		RecalcTransformedImg();
