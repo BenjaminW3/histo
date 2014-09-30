@@ -131,7 +131,7 @@ function PointOperatorLogarithm(){
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
 PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
-    return [255 * (Utils.log2((_r+1)) / Utils.log2((255+1)), 255 * (Utils.log2((_g+1)) / Utils.log2((255+1)), 255 * (Utils.log2((_b+1)) / Utils.log2((255+1))]
+    return [255 * (Utils.log2((_r+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_g+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_b+1)) / Utils.log2((255+1)))];
 };
 
 /**
@@ -199,9 +199,6 @@ function PointOperatorHistoSpread_Compression(){
     this.sParameters = {
 
     };
-    /**
-     * TODO: add constraint gmin < gmax!!!
-     */
 }
 
 PointOperatorHistoSpread_Compression.inheritsFrom( PointOperator );
@@ -253,30 +250,89 @@ PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b){
     var min = this.sParameters.gmin.value();
     var max = this.sParameters.gmax.value();
     return [this.clip(_r, min, max), this.clip(_g, min, max), this.clip(_b, min, max)];
-
 };
 
 
 
 /**
  * Histogram equalization
+ * TODO!!! Need cummulative data: T(g) = [255 * H(g)]   -->H(g) ... kummulativ
  */
 function PointOperatorHistoEqualization(){
     this.sDescription = 'Histogramequalisation ist ein wichtiges Verfahren zur Kontrastverbesserung. Es wird eine Gleichverteilung bei den Werten des Histogrammes berechnet ' +
                         'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt werden kann.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 254, 'step' : 1}),
-        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 200, 'min' : 1, 'max' : 255, 'step' : 1})
+
     };
-    /**
-     * TODO: add constraint gmin < gmax!!!
-     */
 }
 
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
-PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b){
-    var min = this.sParameters.gmin.value();
-    var max = this.sParameters.gmax.value();
-    return [this.clip(_r, min, max), this.clip(_g, min, max), this.clip(_b, min, max)];
+PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
+    return [0,0,0];
+};
+
+/**
+ * Histogram equalization
+ * TODO!!! Need cummulative data: T(g) = [255 * Math.pow(H(g), (1/alpha+1)]   -->H(g) ... kummulativ
+ */
+function PointOperatorHistoHyperbolization(){
+    this.sDescription = 'Die Grauwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'alpha' : new PointOperatorParameter('Alpha (-x/3)', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
+    };
+}
+
+PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
+
+PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
+    /*
+    var tAlpha = 0;
+    if(this.sParameters.alpha.value() == 0) {
+        tAlpha = 1;
+    }else if(this.sParameters.alpha.value() == 1) {
+        tAlpha = 1.5;   //1 / -1/3 + 1 = 1 / (2/3) = 3/2 = 1.5
+    }else if(this.sParameters.alpha.value() == 2) {
+        tAlpha = 3;
+    }
+    return [ (255*Math.pow(H(_r), tAlpha),(255*Math.pow(H(_g), tAlpha),(255*Math.pow(H(_b), tAlpha)];
+    */
+    return [0,0,0];
+};
+
+
+/**
+ * Threshold
+ */
+function PointOperatorThreshold(){
+    this.sDescription = 'Art von Binarisierung. ';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'threshold' : new PointOperatorParameter('Schwellwert', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
+    };
+}
+
+PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
+
+PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
+    var t = this.sParameters.threshold.value();
+    var transR = 0;
+    var transG = 0;
+    var transB = 0;
+    if(_r >= t) {
+        transR = 255;
+    }
+    if(_g >= t) {
+        transG = 255;
+    }
+    if(_b >= t) {
+        transB = 255;
+    }
+    return [transR, transG, transB];
+};
+
+/*
+TODO: QUANTISIERUNG
+ */
