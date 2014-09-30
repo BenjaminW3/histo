@@ -37,6 +37,10 @@ Utils.uploadImageFile = function (_dstImgElement, file) {
 	}
 };
 
+Utils.log2 = function(x) {
+    return Math.log2(x);
+}
+
 /**
  * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
  */
