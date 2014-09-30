@@ -124,26 +124,27 @@ window.addEventListener('load', function ()
         }else if(this.value == 'potency') {
             pointOperator = new PointOperatorPotency();
         }else if(this.value == 'logarithm') {
-
+            pointOperator = new PointOperatorLogarithm();
         }else if(this.value == 'exponential') {
-
+            pointOperator = new PointOperatorExponential();
         }else if(this.value == 'shift') {
-
+            pointOperator = new PointOperatorHistoShift();
         }else if(this.value == 'limit') {
-
+            pointOperator = new PointOperatorHistoLimitation();
         }else if(this.value == 'spread') {
-
+            pointOperator = new PointOperatorHistoSpread_Compression();
         }else if(this.value == 'equal') {
-
+            pointOperator = new PointOperatorHistoEqualization();
         }else if(this.value == 'hyperbol') {
-
+            pointOperator = new PointOperatorHistoHyperbolization();
         }else if(this.value == 'quant') {
 
         }else if(this.value == 'threshhold') {
-
+            pointOperator = new PointOperatorThreshold();
         }
 		
 		// TODO: clean settings div!
+        pointOperatorSettingsElement.innerHTML = '';
 		
 		// Add current point operators settings to div.
 		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
