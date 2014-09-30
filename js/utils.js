@@ -1,7 +1,7 @@
 function Utils() {}
 
 /**
- * return The luminance Y calculated from the RGB values.
+ * The luminance Y calculated from the RGB values.
  * @param R float red
  * @param G float green
  * @param B float blue
@@ -11,14 +11,23 @@ Utils.calcYFromRgb = function(R, G, B) {
     return Math.round(0.299 * R + 0.587 * G + 0.114 * B);
 };
 
+/**
+ * @returns If the browser supports drag and drop.
+ */
 Utils.supportsDragAndDrop = function() {
 	return 'draggable' in document.createElement('span');
 };
 
+/**
+ * @returns If the browser supports reading files from disk.
+ */
 Utils.supportsFileReader = function() {
 	return typeof FileReader != 'undefined';
 };
 
+/**
+ * Reads an image given by the user.
+ */
 Utils.uploadImageFile = function (_dstImgElement, file) {
 	var acceptedTypes = {
 	  'image/png': true,
@@ -37,6 +46,9 @@ Utils.uploadImageFile = function (_dstImgElement, file) {
 	}
 };
 
+/**
+ * Logarithm with base 2.
+ */
 Utils.log2 = function(x) {
     return Math.log2(x);
 }

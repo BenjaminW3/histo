@@ -35,7 +35,7 @@ function PointOperator() {
 	this.sDescription = 'No description available!';	//!< The desription of the point operator.
 	this.sFormulaHtml = 'No formula available!';		//!< This could be a html image element text ("<img src='...sdfsfg...'>") or just plain text.
 	this.sParameters = { 
-		/*'unnamed' : new PointOperatorParameter('not available', {'type' : 'number', 'defaultValue' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
+		/*'unnamed' : new PointOperatorParameter('not available', {'type' : 'number', 'value' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
 	};													//!< The parameters of the point operator.
 }
 
@@ -46,6 +46,7 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
 	for(var param in this.sParameters)
 	{
 		this.sParameters[param].addInputElementToElement(_parentElement);
+		_parentElement.innerHTML += "<br/>";
 	}
 };
 /**
@@ -105,7 +106,7 @@ function PointOperatorPotency(){
                         'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'value' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
@@ -157,10 +158,10 @@ PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b){
  */
 function PointOperatorHistoShift(){
     this.sDescription = 'Mit Hilfe der Histogrammverschiebung kann die Helligkeit eines Bildes reguliert werden.' +
-                        'Alle Grauwerte eines Bildes werden um eine feste Konstante in den hellen oder dunklen Bereich verschoben.';
+                        'Alle Farbwerte eines Bildes werden um eine feste Konstante in den helleren oder dunkleren Bereich verschoben.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'c' : new PointOperatorParameter('Konstante', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 255, 'step' : 1})
+        'c' : new PointOperatorParameter('Konstante', 'BESCHREIBUNG', {'type' : 'number', 'value' : 50, 'min' : 0, 'max' : 255, 'step' : 1})
     };
 }
 
@@ -224,8 +225,8 @@ function PointOperatorHistoLimitation(){
     this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 254, 'step' : 1}),
-        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 200, 'min' : 1, 'max' : 255, 'step' : 1})
+        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'value' : 50, 'min' : 0, 'max' : 254, 'step' : 1}),
+        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'value' : 200, 'min' : 1, 'max' : 255, 'step' : 1})
     };
     /**
      * TODO: add constraint gmin < gmax!!!
@@ -281,7 +282,7 @@ function PointOperatorHistoHyperbolization(){
     this.sDescription = 'Die Grauwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'alpha' : new PointOperatorParameter('Alpha (-x/3)', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
+        'alpha' : new PointOperatorParameter('Alpha (-x/3)', 'BESCHREIBUNG', {'type' : 'number', 'value' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
     };
 }
 
@@ -310,7 +311,7 @@ function PointOperatorThreshold(){
     this.sDescription = 'Art von Binarisierung. ';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'threshold' : new PointOperatorParameter('Schwellwert', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
+        'threshold' : new PointOperatorParameter('Schwellwert', 'BESCHREIBUNG', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
     };
 }
 

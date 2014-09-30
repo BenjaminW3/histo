@@ -17,7 +17,7 @@ window.addEventListener('load', function ()
     var transformedImgCumHistCanvasElement = document.getElementById('tab4TransformedImgCumHistCanvas');
 
     var histTypeElement = document.getElementById('tab4HistTypeSelect');						//!< The HTML histogram type selection element.
-    var pointOperatorSettingsElement = document.getElementById('tab4PointOperatorSettings');
+    var pointOperatorSettingsElement = document.getElementById('tab4PointOperatorSettingsDiv');
     var pointOperatorSelectElement = document.getElementById('tab4PointOperatorSelect');
 
 	var pointOperator = new PointOperatorInverse();
@@ -96,9 +96,16 @@ window.addEventListener('load', function ()
     //-----------------------------------------------------------------------------
     var RedrawSrcImgHists = function() {
 		// Render source image histograms.
+        RedrawSrcImgHist();
+        srcImgCumHistRenderer.drawHist(true, true);
+    };
+    //-----------------------------------------------------------------------------
+    //! 
+    //-----------------------------------------------------------------------------
+    var RedrawSrcImgHist = function() {
+		// Render source image histogram.
         srcImgHistRenderer.drawHist(true, false);
         srcImgHistRenderer.drawTransformationCurve(pointOperator);
-        srcImgCumHistRenderer.drawHist(true, true);
     };
     //-----------------------------------------------------------------------------
     //! 
@@ -143,12 +150,16 @@ window.addEventListener('load', function ()
             pointOperator = new PointOperatorThreshold();
         }
 		
-		// TODO: clean settings div!
+		// Clean settings div
         pointOperatorSettingsElement.innerHTML = '';
 		
 		// Add current point operators settings to div.
 		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
 		
+		// The transformation curve has to be updated.
+		RedrawSrcImgHist();
+		
+		// Recalculate the transformed image.
 		RecalcTransformedImg();
     };
     //-----------------------------------------------------------------------------

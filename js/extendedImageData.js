@@ -1,44 +1,7 @@
 /**
  * Constructor.
  */
-function PixelData(_r,_g,_b,_a) {
-    this.r = _r;
-    this.g = _g;
-    this.b = _b;
-    if(_a == undefined) _a = 255;
-    this.a = _a;
-    this.l = Utils.calcYFromRgb(_r, _g, _b); //luminance
-}
-
-PixelData.prototype.luminance = function() {
-    return this.l;
-};
-
-PixelData.prototype.red = function() {
-    return this.r;
-};
-
-PixelData.prototype.green = function() {
-    return this.g;
-};
-
-PixelData.prototype.blue = function() {
-    return this.b;
-};
-
-PixelData.prototype.alpha = function() {
-    this.a;
-};
-
-PixelData.prototype.yrgba = function() {
-    return {"luminance": this.l, "red": this.r, "green": this.g, "blue": this.b, "alpha": this.a};
-};
-
-/**
- * Constructor.
- */
 function ExtendedImageData() {
-    this.channelValue = [[]];					//!< Two dimensional array with PixelData.
     this.channelHistogram = [[],[],[],[]];
     this.channelHistogramMax = [0,0,0,0];
     this.width = 0;
@@ -48,39 +11,24 @@ function ExtendedImageData() {
     this.minValues = [255,255,255];
 }
 
-/**
- *
- * @param _x width coordinate
- * @param _y height coordinate
- * @returns object {luminance, red, green, blue, alpha} or null if its out of range
- */
-ExtendedImageData.prototype.getPixelData = function(_x, _y) {
-    if(_y < this.channelValue.length) {
-        if(_x < this.channelValue[_y].length) {
-            return this.channelValue[_y][_x].yrgba();
-        }
+ExtendedImageData.prototype.updateMinMax = function(_r, _g, _b) {
+    if(_r > this.maxValues[0]) {
+        this.maxValues[0] = _r;
     }
-    return null;
-};
-
-ExtendedImageData.prototype.setMinMax = function(pixel) {
-    if(pixel.red > this.maxValues[0]) {
-        this.maxValues[0] = pixel.red;
+    if(_g > this.maxValues[1]) {
+        this.maxValues[1] = _g;
     }
-    if(pixel.green > this.maxValues[1]) {
-        this.maxValues[1] = pixel.green;
+    if(_b > this.maxValues[2]) {
+        this.maxValues[2] = _b;
     }
-    if(pixel.blue > this.maxValues[2]) {
-        this.maxValues[2] = pixel.blue;
+    if(_r < this.minValues[0]) {
+        this.minValues[0] = _r;
     }
-    if(pixel.red < this.minValues[0]) {
-        this.minValues[0] = pixel.red;
+    if(_g < this.minValues[1]) {
+        this.minValues[1] = _g;
     }
-    if(pixel.green < this.minValues[1]) {
-        this.minValues[1] = pixel.green;
-    }
-    if(pixel.blue < this.minValues[2]) {
-        this.minValues[2] = pixel.blue;
+    if(_b < this.minValues[2]) {
+        this.minValues[2] = _b;
     }
 };
 
@@ -134,32 +82,20 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 	this.channelHistogramMax = [0,0,0,0];
 
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
-    var x = 0;
-    var y = 0;
-    this.channelValue.push([]);
+
     for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
-        var pixel = new PixelData(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], this.srcImgData.data[i+3]);
-        this.setMinMax(pixel);
-        var value = [pixel.luminance(), pixel.red(), pixel.green(), pixel.blue()];
-        this.channelValue[y].push(pixel);
+        this.updateMinMax(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]);
+        var pixel = [Utils.calcYFromRgb(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]), this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]];
 
         for(var color = 0; color < 4; color++) {
-            if(value[color] in this.channelHistogram[color]) {
-                this.channelHistogram[color][value[color]]++;
+            if(pixel[color] in this.channelHistogram[color]) {
+                this.channelHistogram[color][pixel[color]]++;
             }else {
-                this.channelHistogram[color][value[color]] = 1;
+                this.channelHistogram[color][pixel[color]] = 1;
             }
-            if(this.channelHistogram[color][value[color]] > this.channelHistogramMax[color]) {
-                this.channelHistogramMax[color] = this.channelHistogram[color][value[color]];
+            if(this.channelHistogram[color][pixel[color]] > this.channelHistogramMax[color]) {
+                this.channelHistogramMax[color] = this.channelHistogram[color][pixel[color]];
             }
-        }
-
-        if(x == (this.width-1)) {
-            x = 0;
-            y++;
-            this.channelValue.push([]);
-        }else {
-            x++;
         }
     }
 }
@@ -170,7 +106,7 @@ ExtendedImageData.prototype.loadFromImageElement = function(_srcImgElement) {
     var srcImgTempCanvas = document.createElement('canvas');			//!< An invisible canvas for copying the image into.
     srcImgTempCanvas.width = _srcImgElement.width;
     srcImgTempCanvas.height = _srcImgElement.height;
-    var srcImgTempCtx = srcImgTempCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+    var srcImgTempCtx = srcImgTempCanvas.getContext('2d');				//!< The context of the invisible canvas for copying the image into.
 
     // Draw the image data onto the invisible image context.
     srcImgTempCtx.drawImage(_srcImgElement, 0, 0);
@@ -181,7 +117,7 @@ ExtendedImageData.prototype.loadFromImageElement = function(_srcImgElement) {
  * Load Data from the given image.
  */
 ExtendedImageData.prototype.loadFromCanvasElement = function(_srcImgCanvas) {
-    var srcImgCanvasContext = _srcImgCanvas.getContext('2d');		//!< The context of the invisible canvas for copying the image into.
+    var srcImgCanvasContext = _srcImgCanvas.getContext('2d');			//!< The context of the invisible canvas for copying the image into.
 	
     // Get the image data from the invisible image canvas context.
     // CHROME: If you get an error in the following line you are possibly running this site locally in google chrome. Its safety policy treats all local files as served by different domains and forbids some operations from a source different to the page itself.
