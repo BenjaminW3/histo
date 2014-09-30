@@ -52,7 +52,8 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
  * Transform the given image data.
  */
 PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
-	this.transformImageData(_extendedImageData.getImageData());
+    this.extendedImageData = _extendedImageData;
+	this.transformImageData(this.extendedImageData.getImageData());
 	_extendedImageData.recalculateImageDataDependencies();
 };
 
@@ -119,16 +120,163 @@ PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
  * Logarithm color transformation.
  */
 function PointOperatorLogarithm(){
-    this.sDescription = 'TODO';
+    this.sDescription = 'Die Logarithmustransformation ist eine monotone Transformation auf Basis des Logarithmus.' +
+                        'Die oberen Grauwerte werden komprimiert, während kleine Grauwerte auf eine größere Grauwertspanne abgebildet werden.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
+
     };
 }
 
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
 PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
-    var exp = this.sParameters.e.value();
-    return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
+    return [255 * (Utils.log2((_r+1)) / Utils.log2((255+1)), 255 * (Utils.log2((_g+1)) / Utils.log2((255+1)), 255 * (Utils.log2((_b+1)) / Utils.log2((255+1))]
 };
+
+/**
+ * Exponential color transformation.
+ */
+function PointOperatorExponential(){
+    this.sDescription = 'Die Exponentialtransformation ist eine monotone Transformation auf Basis der Exponentialfunktion.' +
+        'Die unteren Grauwerte werden komprimiert, während eine kleine Grauwertspanne im oberen Bereich auf eine größere Grauwertspanne im Ergebnisbild abgebildet wird.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+
+    };
+}
+
+PointOperatorExponential.inheritsFrom( PointOperator );
+
+PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b){
+    return [Math.pow((255+1),(_r/255)) -1, Math.pow((255+1),(_g/255)) -1, Math.pow((255+1),(_b/255)) -1];
+};
+
+/**
+ * Histogram shift
+ */
+function PointOperatorHistoShift(){
+    this.sDescription = 'Mit Hilfe der Histogrammverschiebung kann die Helligkeit eines Bildes reguliert werden.' +
+                        'Alle Grauwerte eines Bildes werden um eine feste Konstante in den hellen oder dunklen Bereich verschoben.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'c' : new PointOperatorParameter('Konstante', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 255, 'step' : 1})
+    };
+}
+
+PointOperatorHistoShift.inheritsFrom( PointOperator );
+
+PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b){
+    var transR = _r + this.sParameters.c.value();
+    var transG = _g + this.sParameters.c.value();
+    var transB = _b + this.sParameters.c.value();
+    if(transR < 0) {
+        transR = 0;
+    }else if(transR > 255) {
+        transR = 255;
+    }
+    if(transG < 0) {
+        transG = 0;
+    }else if(transG > 255) {
+        transG = 255;
+    }
+    if(transB < 0) {
+        transB = 0;
+    }else if(transB > 255) {
+        transB = 255;
+    }
+    return [transR, transG, transB];
+};
+
+
+/**
+ * Histogram spreading / compression
+ */
+function PointOperatorHistoSpread_Compression(){
+    this.sDescription = 'Histogrammspreizung wird häufig zur Kontrastverstärkung in kostrastarmen Bildern eingesetzt. ' +
+                        'Dabei passiert eine stückweiße lineare Transformation, die den benutzten Grauwertbereich auf den gesamten  abbildet.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+
+    };
+    /**
+     * TODO: add constraint gmin < gmax!!!
+     */
+}
+
+PointOperatorHistoSpread_Compression.inheritsFrom( PointOperator );
+
+PointOperatorHistoSpread_Compression.prototype.transformPixel = function(_r, _g, _b){
+    var minR = this.extendedImageData.getMin(0);
+    var minG = this.extendedImageData.getMin(1);
+    var minB = this.extendedImageData.getMin(2);
+    var maxR = this.extendedImageData.getMax(0);
+    var maxG = this.extendedImageData.getMax(1);
+    var maxB = this.extendedImageData.getMax(2);
+    var divR = maxR - minR;
+    var divG = maxG - minG;
+    var divB = maxB - minB;
+    return [(255* ((_r - minR) / divR)),(255* ((_g - minG) / divG)),(255* ((_b - minB) / divB))];
+};
+
+
+/**
+ * Histogram limitation
+ */
+function PointOperatorHistoLimitation(){
+    this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 254, 'step' : 1}),
+        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 200, 'min' : 1, 'max' : 255, 'step' : 1})
+    };
+    /**
+     * TODO: add constraint gmin < gmax!!!
+     */
+}
+
+PointOperatorHistoLimitation.inheritsFrom( PointOperator );
+
+PointOperatorHistoLimitation.prototype.clip = function(_x, _min, _max) {
+    if(_min <= _x && _x <= _max) {
+        return (255 * ((_x - _min) / (_max  - _min)));
+    }
+    if(0 <= _x && _x <= _min) {
+        return 0;
+    }
+    if(_max <= _x && _x <= 255) {
+        return 255;
+    }
+};
+
+PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b){
+    var min = this.sParameters.gmin.value();
+    var max = this.sParameters.gmax.value();
+    return [this.clip(_r, min, max), this.clip(_g, min, max), this.clip(_b, min, max)];
+
+};
+
+
+
+/**
+ * Histogram equalization
+ */
+function PointOperatorHistoEqualization(){
+    this.sDescription = 'Histogramequalisation ist ein wichtiges Verfahren zur Kontrastverbesserung. Es wird eine Gleichverteilung bei den Werten des Histogrammes berechnet ' +
+                        'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt werden kann.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 50, 'min' : 0, 'max' : 254, 'step' : 1}),
+        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'defaultValue' : 200, 'min' : 1, 'max' : 255, 'step' : 1})
+    };
+    /**
+     * TODO: add constraint gmin < gmax!!!
+     */
+}
+
+PointOperatorHistoEqualization.inheritsFrom( PointOperator );
+
+PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b){
+    var min = this.sParameters.gmin.value();
+    var max = this.sParameters.gmax.value();
+    return [this.clip(_r, min, max), this.clip(_g, min, max), this.clip(_b, min, max)];
