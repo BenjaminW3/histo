@@ -49,8 +49,8 @@ Utils.uploadImageFile = function (_dstImgElement, file) {
 /**
  * Logarithm with base 2.
  */
-Utils.log2 = function(x) {
-    return Math.log2(x);
+Utils.log = function(x, base) {
+    return Math.log(x) / Math.log(base);
 }
 
 /**

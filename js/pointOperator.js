@@ -132,7 +132,7 @@ function PointOperatorLogarithm(){
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
 PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
-    return [255 * (Utils.log2((_r+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_g+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_b+1)) / Utils.log2((255+1)))];
+    return [255 * (Utils.log((_r+1),2) / Utils.log((255+1),2)), 255 * (Utils.log((_g+1),2) / Utils.log((255+1),2)), 255 * (Utils.log((_b+1),2) / Utils.log((255+1),2))];
 };
 
 /**
