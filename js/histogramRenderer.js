@@ -63,35 +63,38 @@ HistogrammRenderer.prototype.setSourceExtendedImageData = function(_extendedImag
  * Draws a transformation.
  */
 HistogrammRenderer.prototype.drawTransformationCurve = function(_pointOperator) {
-    this.targetContext.lineWidth = 1;
-    this.targetContext.fillStyle = '#A00';
-    this.targetContext.strokeStyle = '#A00';
-    this.targetContext.font = 'italic 14pt sans-serif';
+	// Only render the transformation curve for brightness histogram because else its data is invalid.
+	if(this.histType === 'brightness')
+	{
+		this.targetContext.lineWidth = 1;
+		this.targetContext.fillStyle = '#A00';
+		this.targetContext.strokeStyle = '#A00';
+		this.targetContext.font = 'italic 14pt sans-serif';
 
-    // Draw some y-axis values.
-    this.targetContext.textAlign = "start";
-	var uiSteps = 5;
-    for(var i = 1; i < uiSteps; i++)
-    {
-		var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(uiSteps-1)));
+		// Draw some y-axis values.
+		this.targetContext.textAlign = "start";
+		var uiSteps = 5;
+		for(var i = 1; i < uiSteps; i++)
+		{
+			var yPosPx = this.uiHistBottomPx - Math.round(i * (this.uiHistHeightPx/(uiSteps-1)));
+			this.targetContext.beginPath();
+			this.targetContext.moveTo(this.uiHistLeftPx, yPosPx);
+			this.targetContext.lineTo(this.uiHistLeftPx+3, yPosPx);
+			this.targetContext.stroke();
+			var uiYAxisValue = Math.round(i * ((255)/(uiSteps-1)));
+			this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx + 5, yPosPx + 5);	// +5 for centering because position is bottom of text.
+		}
+		
 		this.targetContext.beginPath();
-		this.targetContext.moveTo(this.uiHistLeftPx, yPosPx);
-		this.targetContext.lineTo(this.uiHistLeftPx+3, yPosPx);
+		this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(0,0,0)[0])/255) * this.uiHistHeightPx));
+		for (var i = 1; i < 256; i++)
+		{
+			var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
+			var uiValueY = this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(i,i,i)[0])/255) * this.uiHistHeightPx);
+			this.targetContext.lineTo(uiValueX, uiValueY);
+		}
 		this.targetContext.stroke();
-        var uiYAxisValue = Math.round(i * ((255)/(uiSteps-1)));
-        this.targetContext.fillText(uiYAxisValue, this.uiHistLeftPx + 5, yPosPx + 5);	// +5 for centering because position is bottom of text.
-    }
-	
-	this.targetContext.beginPath();
-	this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(0,0,0)[0])/255) * this.uiHistHeightPx));
-	for (var i = 1; i < 256; i++)
-    {
-		_pointOperator.transformPixel(0,0,0);
-        var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
-        var uiValueY = this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(i,i,i)[0])/255) * this.uiHistHeightPx);
-		this.targetContext.lineTo(uiValueX, uiValueY);
 	}
-	this.targetContext.stroke();
 }
 
 /**

@@ -47,11 +47,24 @@ Utils.uploadImageFile = function (_dstImgElement, file) {
 };
 
 /**
- * Logarithm with base 2.
+ * Logarithm with given base.
  */
-Utils.log2 = function(x) {
-    return Math.log2(x);
+Utils.log = function(x, base) {
+    return Math.log(x) / Math.log(base);
 }
+
+/**
+ * Clips the given value.
+ */
+Utils.clip = function(_val, _min, _max) {
+    if(_val < _min) {
+        return _min;
+    }
+    if(_val > _max) {
+        return _max;
+    }
+	return _val;
+};
 
 /**
  * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
