@@ -48,36 +48,37 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
 		this.sParameters[param].addInputElementToElement(_parentElement);
 		_parentElement.innerHTML += "<br/>";
 	}
+	
+	// DEBUG
+	//this.sParameters.e.inputElement.value = "1.4";
 };
 /**
  * Transform the given image data.
  */
 PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
-    this.extendedImageData = _extendedImageData;
-	this.transformImageData(this.extendedImageData.getImageData());
-	_extendedImageData.recalculateImageDataDependencies();
-};
-
-/**
- * Transform the given image data.
- */
-PointOperator.prototype.transformImageData = function (_imageData) {
+	var imageData = _extendedImageData.getImageData();
+	
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
-    for (var i = 0, n = _imageData.data.length; i < n; i+= pixelStepWidth) {
-		var transformedPixel = this.transformPixel(_imageData.data[i], _imageData.data[i+1], _imageData.data[i+2]);
-		_imageData.data[i] = transformedPixel[0];
-		_imageData.data[i+1] = transformedPixel[1];
-		_imageData.data[i+2] = transformedPixel[2];
-		//_imageData.data[i+3] = _imageData.data[i+3];	// Do not change alpha value!
+    for (var i = 0, n = imageData.data.length; i < n; i+= pixelStepWidth) {
+		var transformedPixel = this.transformPixel(imageData.data[i], imageData.data[i+1], imageData.data[i+2], _extendedImageData);
+		imageData.data[i] = transformedPixel[0];
+		imageData.data[i+1] = transformedPixel[1];
+		imageData.data[i+2] = transformedPixel[2];
+		//imageData.data[i+3] = imageData.data[i+3];	// Do not change alpha value!
     }
+	
+	// The image has been changed so update the dependent data.
+	_extendedImageData.recalculateImageDataDependencies();
 };
 
 /**
  * Abstract method.
  */
-PointOperator.prototype.transformPixel = function (_r, _g, _b) {
+PointOperator.prototype.transformPixel = function (_r, _g, _b, _extendedImageData) {
     alert('This is the abstract base class method. This has to be implemented by derieved classes!');
 };
+
+
 
 /**
  * Inverse color transformation.
@@ -94,9 +95,11 @@ function PointOperatorInverse(){
 
 PointOperatorInverse.inheritsFrom( PointOperator );
 
-PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
 	return [255-_r, 255-_g, 255-_b];
 };
+
+
 
 /**
  * Potency color transformation.
@@ -106,16 +109,18 @@ function PointOperatorPotency(){
                         'Duch eine lineare Spreizung bei einem Teil der Grauwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = 'TODO';
     this.sParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'value' : 1.1, 'min' : 0, 'max' : 5, 'step' : 0.1})
+        'e' : new PointOperatorParameter('Exponent', 'BESCHREIBUNG', {'type' : 'number', 'value' : 1.2, 'min' : 0, 'max' : 5, 'step' : 0.1})
     };
 }
 
 PointOperatorPotency.inheritsFrom( PointOperator );
 
-PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var exp = this.sParameters.e.value();
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
+
+
 
 /**
  * Logarithm color transformation.
@@ -131,9 +136,11 @@ function PointOperatorLogarithm(){
 
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
-PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     return [255 * (Utils.log2((_r+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_g+1)) / Utils.log2((255+1))), 255 * (Utils.log2((_b+1)) / Utils.log2((255+1)))];
 };
+
+
 
 /**
  * Exponential color transformation.
@@ -149,9 +156,11 @@ function PointOperatorExponential(){
 
 PointOperatorExponential.inheritsFrom( PointOperator );
 
-PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     return [Math.pow((255+1),(_r/255)) -1, Math.pow((255+1),(_g/255)) -1, Math.pow((255+1),(_b/255)) -1];
 };
+
+
 
 /**
  * Histogram shift
@@ -167,7 +176,7 @@ function PointOperatorHistoShift(){
 
 PointOperatorHistoShift.inheritsFrom( PointOperator );
 
-PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var transR = _r + this.sParameters.c.value();
     var transG = _g + this.sParameters.c.value();
     var transB = _b + this.sParameters.c.value();
@@ -189,33 +198,6 @@ PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b){
     return [transR, transG, transB];
 };
 
-
-/**
- * Histogram spreading / compression
- */
-function PointOperatorHistoSpread_Compression(){
-    this.sDescription = 'Histogrammspreizung wird häufig zur Kontrastverstärkung in kostrastarmen Bildern eingesetzt. ' +
-                        'Dabei passiert eine stückweiße lineare Transformation, die den benutzten Grauwertbereich auf den gesamten  abbildet.';
-    this.sFormulaHtml = 'TODO';
-    this.sParameters = {
-
-    };
-}
-
-PointOperatorHistoSpread_Compression.inheritsFrom( PointOperator );
-
-PointOperatorHistoSpread_Compression.prototype.transformPixel = function(_r, _g, _b){
-    var minR = this.extendedImageData.getMin(0);
-    var minG = this.extendedImageData.getMin(1);
-    var minB = this.extendedImageData.getMin(2);
-    var maxR = this.extendedImageData.getMax(0);
-    var maxG = this.extendedImageData.getMax(1);
-    var maxB = this.extendedImageData.getMax(2);
-    var divR = maxR - minR;
-    var divG = maxG - minG;
-    var divB = maxB - minB;
-    return [(255* ((_r - minR) / divR)),(255* ((_g - minG) / divG)),(255* ((_b - minB) / divB))];
-};
 
 
 /**
@@ -247,10 +229,32 @@ PointOperatorHistoLimitation.prototype.clip = function(_x, _min, _max) {
     }
 };
 
-PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var min = this.sParameters.gmin.value();
     var max = this.sParameters.gmax.value();
     return [this.clip(_r, min, max), this.clip(_g, min, max), this.clip(_b, min, max)];
+};
+
+
+
+/**
+ * Histogram spreading / compression
+ */
+function PointOperatorHistoSpread(){
+    this.sDescription = 'Histogrammspreizung wird häufig zur Kontrastverstärkung in kostrastarmen Bildern eingesetzt. ' +
+                        'Dabei wird eine stückweiße lineare Transformation genutzt, die den gewählten Tonwertbereich auf den gesamten verfügbaren abbildet.';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'gmin' : new PointOperatorParameter('Untere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'value' : 25, 'min' : 0, 'max' : 254, 'step' : 1}),
+        'gmax' : new PointOperatorParameter('Obere Schranke', 'BESCHREIBUNG', {'type' : 'number', 'value' : 225, 'min' : 1, 'max' : 255, 'step' : 1})
+    };
+}
+
+PointOperatorHistoSpread.inheritsFrom( PointOperator );
+
+PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+    var diff = this.sParameters.gmax.value() - this.sParameters.gmin.value();
+    return [(255* ((_r - this.sParameters.gmin.value()) / diff)),(255* ((_g - this.sParameters.gmin.value()) / diff)),(255* ((_b - this.sParameters.gmin.value()) / diff))];
 };
 
 
@@ -270,9 +274,11 @@ function PointOperatorHistoEqualization(){
 
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
-PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
+PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
     return [0,0,0];
 };
+
+
 
 /**
  * Histogram equalization
@@ -288,7 +294,7 @@ function PointOperatorHistoHyperbolization(){
 
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
-PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
+PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
     /*
     var tAlpha = 0;
     if(this.sParameters.alpha.value() == 0) {
@@ -304,6 +310,27 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
 };
 
 
+
+/**
+ * Threshold
+ */
+function PointOperatorQuantization(){
+    this.sDescription = 'Art von Binarisierung. ';
+    this.sFormulaHtml = 'TODO';
+    this.sParameters = {
+        'threshold' : new PointOperatorParameter('Schwellwert', 'BESCHREIBUNG', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
+    };
+}
+
+PointOperatorQuantization.inheritsFrom( PointOperator );
+
+PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+	// TODO
+    return [0,0,0];
+};
+
+
+
 /**
  * Threshold
  */
@@ -315,25 +342,9 @@ function PointOperatorThreshold(){
     };
 }
 
-PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
+PointOperatorThreshold.inheritsFrom( PointOperator );
 
-PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
-    var t = this.sParameters.threshold.value();
-    var transR = 0;
-    var transG = 0;
-    var transB = 0;
-    if(_r >= t) {
-        transR = 255;
-    }
-    if(_g >= t) {
-        transG = 255;
-    }
-    if(_b >= t) {
-        transB = 255;
-    }
-    return [transR, transG, transB];
+PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+	// TODO
+    return [0,0,0];
 };
-
-/*
-TODO: QUANTISIERUNG
- */

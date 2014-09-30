@@ -32,12 +32,12 @@ ExtendedImageData.prototype.updateMinMax = function(_r, _g, _b) {
     }
 };
 
-ExtendedImageData.prototype.getMin = function(idx) {
-    return this.minValues[idx];
+ExtendedImageData.prototype.getMin = function(_channelNo) {
+    return this.minValues[_channelNo];
 };
 
-ExtendedImageData.prototype.getMax = function(idx) {
-    return this.maxValues[idx];
+ExtendedImageData.prototype.getMax = function(_channelNo) {
+    return this.maxValues[_channelNo];
 };
 
 ExtendedImageData.prototype.getWidth = function() {
@@ -85,7 +85,7 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 
     for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
         this.updateMinMax(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]);
-        var pixel = [Utils.calcYFromRgb(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]), this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]];
+        var pixel = [this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], Utils.calcYFromRgb(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2])];
 
         for(var color = 0; color < 4; color++) {
             if(pixel[color] in this.channelHistogram[color]) {

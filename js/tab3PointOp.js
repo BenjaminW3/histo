@@ -64,17 +64,14 @@ window.addEventListener('load', function ()
 				srcImgElement.classList.add('thumb');
 			}
 		
-		// Get the data of the source image (copied onto the target).
-		var transformData = transformedImgCanvasCtx.getImageData(0, 0, transformedImgCanvasElement.width, transformedImgCanvasElement.height);
-		
-		// Transform the data.
-		pointOperator.transformImageData(transformData);
-		
-		// Draw the transformed image data onto the transformed image canvas.
-		transformedImgCanvasCtx.putImageData(transformData, 0,0);
-		
 		// Load the extended image data from the transformed image canvas.
 		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
+		
+		// Transform the data.
+		pointOperator.transformExtendedImageData(transformedImgExtendedImageData);
+		
+		// Draw the transformed image data onto the transformed image canvas.
+		transformedImgCanvasCtx.putImageData(transformedImgExtendedImageData.getImageData(), 0,0);
 		
 		// Redraw the transformed image histograms.
         RedrawTransformedImgHists();

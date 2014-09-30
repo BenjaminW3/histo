@@ -18,6 +18,7 @@ window.addEventListener('load', function ()
 
     var histTypeElement = document.getElementById('tab4HistTypeSelect');						//!< The HTML histogram type selection element.
     var pointOperatorSettingsElement = document.getElementById('tab4PointOperatorSettingsDiv');
+    var pointOperatorSettingsApplyElement = document.getElementById('tab4PointOperatorSettingsApply');
     var pointOperatorSelectElement = document.getElementById('tab4PointOperatorSelect');
 
 	var pointOperator = new PointOperatorInverse();
@@ -74,17 +75,16 @@ window.addEventListener('load', function ()
 				srcImgElement.classList.add('pointOperatorThumb');
 			}
 		
-		// Get the data of the source image (copied onto the target).
-		var transformData = transformedImgCanvasCtx.getImageData(0, 0, transformedImgCanvasElement.width, transformedImgCanvasElement.height);
-		
-		// Transform the data.
-		pointOperator.transformImageData(transformData);
-		
-		// Draw the transformed image data onto the transformed image canvas.
-		transformedImgCanvasCtx.putImageData(transformData, 0,0);
-		
 		// Load the extended image data from the transformed image canvas.
 		transformedImgExtendedImageData.loadFromCanvasElement(transformedImgCanvasElement);
+		
+		// Transform the data.
+		pointOperator.transformExtendedImageData(transformedImgExtendedImageData);
+		
+		// Draw the transformed image data onto the transformed image canvas.
+		transformedImgCanvasCtx.putImageData(transformedImgExtendedImageData.getImageData(), 0,0);
+		
+		// Render the transformed image histograms.
         transformedImgHistRenderer.setSourceExtendedImageData(transformedImgExtendedImageData);
         transformedImgCumHistRenderer.setSourceExtendedImageData(transformedImgExtendedImageData);
 		
@@ -139,13 +139,13 @@ window.addEventListener('load', function ()
         }else if(this.value == 'limit') {
             pointOperator = new PointOperatorHistoLimitation();
         }else if(this.value == 'spread') {
-            pointOperator = new PointOperatorHistoSpread_Compression();
+            pointOperator = new PointOperatorHistoSpread();
         }else if(this.value == 'equal') {
             pointOperator = new PointOperatorHistoEqualization();
         }else if(this.value == 'hyperbol') {
             pointOperator = new PointOperatorHistoHyperbolization();
         }else if(this.value == 'quant') {
-
+            pointOperator = new PointOperatorQuantization();
         }else if(this.value == 'threshhold') {
             pointOperator = new PointOperatorThreshold();
         }
@@ -156,6 +156,26 @@ window.addEventListener('load', function ()
 		// Add current point operators settings to div.
 		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
 		
+		// If there are no settings, dont show the apply button.
+		if(pointOperatorSettingsElement.innerHTML == '')
+		{
+			pointOperatorSettingsApplyElement.style.display = 'none';
+		}
+		else
+		{
+			pointOperatorSettingsApplyElement.style.display = 'block';
+		}
+		
+		// The transformation curve has to be updated.
+		RedrawSrcImgHist();
+		
+		// Recalculate the transformed image.
+		RecalcTransformedImg();
+    };
+    //-----------------------------------------------------------------------------
+    //! Callback method which reacts on the point operator settings apply button.
+    //-----------------------------------------------------------------------------
+    var OnPointOperatorSettingsChanged = function() {
 		// The transformation curve has to be updated.
 		RedrawSrcImgHist();
 		
@@ -212,6 +232,11 @@ window.addEventListener('load', function ()
     //! Callback method which reacts on a changed point operator.
     //-----------------------------------------------------------------------------
     pointOperatorSelectElement.addEventListener('change', OnPointOperatorChanged, false);
+	
+    //-----------------------------------------------------------------------------
+    //! Callback method which reacts on the point operator settings apply button.
+    //-----------------------------------------------------------------------------
+	pointOperatorSettingsApplyElement.addEventListener('click', OnPointOperatorSettingsChanged, false);
 	
     // Disable upload if not supported.
     if(!Utils.supportsFileReader()) {

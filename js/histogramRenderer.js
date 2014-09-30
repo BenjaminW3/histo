@@ -233,10 +233,10 @@ HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
 
     // Select the color for the histogram channel.
     var colors = {
-        0: '#000',
-        1: '#f00',
-        2: '#0f0',
-        3: '#00f'
+        0: '#f00',
+        1: '#0f0',
+        2: '#00f',
+        3: '#000'
     };
 	
     // For RGB there are 3 channels.
@@ -253,7 +253,7 @@ HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
 		}
 		
 		// Draw the channels.
-        for (var i = 1; i < 4; i++) {
+        for (var i = 0; i < 3; i++) {
             //console.log("channel type "+ asChannelTypes[i] + " channelHistogram " + this.aauiChannelValueCounts[i]);
             this.drawHistChannel(colors[i], this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
         }
@@ -263,14 +263,14 @@ HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
 			this.targetContext.globalCompositeOperation = 'source-over';
 		}
     }else {
-        var i = 0;
-        if(this.histType === 'brightness') {
+        var i = 3;
+        if(this.histType === 'red') {
             i = 0;
-        }else if(this.histType === 'red') {
-            i = 1;
         }else if(this.histType === 'green') {
-            i = 2;
+            i = 1;
         }else if(this.histType === 'blue') {
+            i = 2;
+        }else if(this.histType === 'brightness') {
             i = 3;
         }
 		
