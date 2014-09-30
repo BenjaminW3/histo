@@ -44,6 +44,8 @@ function ExtendedImageData() {
     this.width = 0;
     this.height = 0;
     this.srcImgData = null;
+    this.maxValues = [0,0,0];
+    this.minValues = [255,255,255];
 }
 
 /**
@@ -59,6 +61,35 @@ ExtendedImageData.prototype.getPixelData = function(_x, _y) {
         }
     }
     return null;
+};
+
+ExtendedImageData.prototype.setMinMax = function(pixel) {
+    if(pixel.red > this.maxValues[0]) {
+        this.maxValues[0] = pixel.red;
+    }
+    if(pixel.green > this.maxValues[1]) {
+        this.maxValues[1] = pixel.green;
+    }
+    if(pixel.blue > this.maxValues[2]) {
+        this.maxValues[2] = pixel.blue;
+    }
+    if(pixel.red < this.minValues[0]) {
+        this.minValues[0] = pixel.red;
+    }
+    if(pixel.green < this.minValues[1]) {
+        this.minValues[1] = pixel.green;
+    }
+    if(pixel.blue < this.minValues[2]) {
+        this.minValues[2] = pixel.blue;
+    }
+};
+
+ExtendedImageData.prototype.getMin = function(idx) {
+    return this.minValues[idx];
+};
+
+ExtendedImageData.prototype.getMax = function(idx) {
+    return this.maxValues[idx];
 };
 
 ExtendedImageData.prototype.getWidth = function() {
@@ -80,6 +111,8 @@ ExtendedImageData.prototype.getChannelHistogramMax = function(_channelNo) {
 ExtendedImageData.prototype.getImageData = function() {
     return this.srcImgData;
 }
+
+
 
 /**
  * Returns the channelcount array for histogram
@@ -106,6 +139,7 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     this.channelValue.push([]);
     for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
         var pixel = new PixelData(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], this.srcImgData.data[i+3]);
+        this.setMinMax(pixel);
         var value = [pixel.luminance(), pixel.red(), pixel.green(), pixel.blue()];
         this.channelValue[y].push(pixel);
 
