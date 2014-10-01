@@ -39,6 +39,7 @@ function PointOperator() {
 	this.aParameters = { 
 		/*'unnamed' : new PointOperatorParameter('not available', 'inputElementId', {'type' : 'number', 'value' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
 	};													//!< The parameters of the point operator.
+    this.extendedImageData = null;
 }
 
 /**
@@ -68,11 +69,12 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
  * Transform the given image data.
  */
 PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
+    this.extImageData = _extendedImageData;
 	var imageData = _extendedImageData.getImageData();
 	
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
     for (var i = 0, n = imageData.data.length; i < n; i+= pixelStepWidth) {
-		var transformedPixel = this.transformPixel(imageData.data[i], imageData.data[i+1], imageData.data[i+2], _extendedImageData);
+        var transformedPixel = this.transformPixel(imageData.data[i], imageData.data[i+1], imageData.data[i+2]);
 		imageData.data[i] = transformedPixel[0];
 		imageData.data[i+1] = transformedPixel[1];
 		imageData.data[i+2] = transformedPixel[2];
@@ -81,12 +83,13 @@ PointOperator.prototype.transformExtendedImageData = function (_extendedImageDat
 	
 	// The image has been changed so update the dependent data.
 	_extendedImageData.recalculateImageDataDependencies();
+
 };
 
 /**
  * Abstract method.
  */
-PointOperator.prototype.transformPixel = function (_r, _g, _b, _extendedImageData) {
+PointOperator.prototype.transformPixel = function (_r, _g, _b) {
     alert('This is the abstract base class method. This has to be implemented by derieved classes!');
 };
 
@@ -107,7 +110,7 @@ function PointOperatorInverse(){
 
 PointOperatorInverse.inheritsFrom( PointOperator );
 
-PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, first){
 	return [255-_r, 255-_g, 255-_b];
 };
 
@@ -127,7 +130,7 @@ function PointOperatorPotency(){
 
 PointOperatorPotency.inheritsFrom( PointOperator );
 
-PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
     var exp = this.aParameters.e.getValue();
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
@@ -167,7 +170,7 @@ function PointOperatorExponential(){
 
 PointOperatorExponential.inheritsFrom( PointOperator );
 
-PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b){
     return [Math.pow((255+1),(_r/255)) -1, Math.pow((255+1),(_g/255)) -1, Math.pow((255+1),(_b/255)) -1];
 };
 
@@ -187,7 +190,7 @@ function PointOperatorHistoShift(){
 
 PointOperatorHistoShift.inheritsFrom( PointOperator );
 
-PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b){
     var transR = _r + this.aParameters.c.getValue();
     var transG = _g + this.aParameters.c.getValue();
     var transB = _b + this.aParameters.c.getValue();
@@ -240,7 +243,7 @@ PointOperatorHistoLimitation.prototype.clipByLumTo = function(_r, _g, _b, _minLu
 	return [_r, _g, _b];
 };
 
-PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b){
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
     return this.clipByLumTo(_r, _g, _b, min, max, [0,0,0], [255,255,255]);
@@ -270,7 +273,7 @@ PointOperatorHistoSpread.prototype.spread = function(_r, _g, _b){
     return [Utils.clip(_r+d*255,0,255), Utils.clip(_g+d*255,0,255), Utils.clip(_b+d*255,0,255)];
 };
 
-PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
+PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b){
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
 	var clipped = this.clipByLumTo(_r, _g, _b, min, max, [0,0,0], [255,255,255]);
@@ -294,15 +297,19 @@ function PointOperatorHistoEqualization(){
 
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
-PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
-    return [0,0,0];
+PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
+
+    var cumR = this.extendedImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
+    var cumG = this.extendedImageData.getCumulativeChannelHistogramValue(2,_g);
+    var cumB = this.extendedImageData.getCumulativeChannelHistogramValue(3,_b);
+
+    return [255*cumR,255*cumG,255*cumB];
 };
 
 
 
 /**
  * Histogram equalization
- * TODO!!! Need cummulative data: T(g) = [255 * Math.pow(H(g), (1/alpha+1)]   -->H(g) ... kummulativ
  */
 function PointOperatorHistoHyperbolization(){
     this.sDescription = 'Die Tonwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
@@ -314,9 +321,11 @@ function PointOperatorHistoHyperbolization(){
 
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
-PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
-	// TODO
-    /*
+PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
+	var cumR = this.extendedImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
+    var cumG = this.extendedImageData.getCumulativeChannelHistogramValue(2,_g);
+    var cumB = this.extendedImageData.getCumulativeChannelHistogramValue(3,_b);
+
     var tAlpha = 0;
     if(this.aParameters.alpha.getValue() == 0) {
         tAlpha = 1;
@@ -325,9 +334,8 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
     }else if(this.aParameters.alpha.getValue() == 2) {
         tAlpha = 3;
     }
-    return [ (255*Math.pow(H(_r), tAlpha),(255*Math.pow(H(_g), tAlpha),(255*Math.pow(H(_b), tAlpha)];
-    */
-    return [0,0,0];
+    return [ (255*Math.pow(cumR, tAlpha)),(255*Math.pow(cumG, tAlpha)),(255*Math.pow(cumB, tAlpha))];
+    //return [0,0,0];
 };
 
 
@@ -352,7 +360,7 @@ PointOperatorQuantization.prototype.quantValue = function(_val, _bits) {
     return 255 * d;
 };
 
-PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b) {
     var bits = this.aParameters.bits.getValue();
     return [this.quantValue(_r, bits), this.quantValue(_g, bits), this.quantValue(_b, bits)];
 };
@@ -373,7 +381,7 @@ function PointOperatorThreshold(){
 
 PointOperatorThreshold.inheritsFrom( PointOperator );
 
-PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b) {
 	var t = this.aParameters.threshold.getValue();
 	var lum = Utils.calcYFromRgb(_r, _g, _b);
     return (lum >= t) ? [255,255,255] : [0,0,0];

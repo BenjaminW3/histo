@@ -76,6 +76,32 @@ ExtendedImageData.prototype.getChannelHistogram = function(_channelNo) {
 };
 
 /**
+ * Returns the value of the cumulated histogram for histogram
+ * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
+ * @return array of the channel or null if the channel number is invalid
+ */
+ExtendedImageData.prototype.getCumulativeChannelHistogram = function(_channelNo) {
+    if((_channelNo >= 0) && (_channelNo < 4)) {
+        return this.channelCumulativeHistogram[_channelNo];
+    }
+    return null;
+};
+
+/**
+ * Returns the value of the cumulated histogram for histogram
+ * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
+ * @param _x value
+ * @return value of cumulated histo
+ */
+ExtendedImageData.prototype.getCumulativeChannelHistogramValue = function(_channelNo, _x) {
+    if((_channelNo >= 0) && (_channelNo < 4)) {
+        return this.channelCumulativeHistogram[_channelNo][_x];
+    }
+    return null;
+};
+
+
+/**
  *  Calculate channelvaluecount and maxCount for all channels
  */
 ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
@@ -102,12 +128,21 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     }
 
 	// Calculate the cumulative histograms.
+    var maxCum = 0;
     for(var color = 0; color < 4; color++) {
 		this.channelCumulativeHistogram[color][0] = this.channelHistogram[color][0];
 		for(var j = 1; j < 256; j++) {
 			this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1] + this.channelHistogram[color][j];
+            if(this.channelCumulativeHistogram[color][j] > maxCum) {
+                maxCum = this.channelCumulativeHistogram[color][j];
+            }
 		}
 	}
+    /*for(var color = 0; color < 4; color++) {
+        for(var j = 1; j < 256; j++) {
+            this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j] / maxCum;
+        }
+    }*/
 };
 
 /**
