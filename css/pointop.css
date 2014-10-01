@@ -1,6 +1,5 @@
 .pointOperatorHorizontalblock {
     width:100%;
-    display: block;
     position:relative;
 }
 
@@ -10,6 +9,7 @@
 }
 
 .pointOperatorDescription {
+	clear: both;
     border: 1px dashed #333;
     padding: 3px;
     display: inline-block;
@@ -26,7 +26,6 @@
 
 .pointOperatorResult {
     width:100%;
-    display: block;
     position:relative;
 }
 
