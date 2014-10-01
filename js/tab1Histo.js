@@ -6,7 +6,7 @@ window.addEventListener('load', function ()
     var srcImgElement = document.getElementById('tab1SrcImg');									//!< The HTML source image element.
     var srcImgSelectElement = document.getElementById('tab1SrcImgSelect');						//!< The HTML source image selection element.
     var srcImgSelectOptionUserUploadElement = document.getElementById('tab1SrcImgSelectOptionUserUpload');//!< The HTML source image user upload option element.
-    var srcImgInputElement = document.getElementById('tab1SrcImgInput');						//!< The HTML source image file input element.
+    var srcImgUploadInputElement = document.getElementById('tab1SrcImgInput');						//!< The HTML source image file input element.
     var srcImgLabelElement = document.getElementById('tab1SrcImgLabel');						//!< The HTML source image label element.
 	
     var srcImgHistCanvasElement = document.getElementById('tab1SrcImgHistCanvas');				//!< The HTML canvas element for the histogram.
@@ -62,7 +62,7 @@ window.addEventListener('load', function ()
 		if(this.value==='user_upload')
 		{
 			// Enable the file input and the drag and drop fields.
-			srcImgInputElement.style.visibility = 'visible';
+			srcImgUploadInputElement.style.visibility = 'visible';
 			srcImgElement.classList.add('drag_drop_area');
 			if(Utils.supportsDragAndDrop()) {
 				srcImgLabelElement.style.visibility = 'visible';
@@ -77,7 +77,7 @@ window.addEventListener('load', function ()
 		}
 		else{
 			// Disable the file input and the drag and drop fields.
-			srcImgInputElement.style.visibility = 'hidden';
+			srcImgUploadInputElement.style.visibility = 'hidden';
 			srcImgLabelElement.style.visibility = 'hidden';
 			srcImgElement.classList.remove('drag_drop_area');
 			
@@ -89,7 +89,7 @@ window.addEventListener('load', function ()
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image file from the input field.
 	//-----------------------------------------------------------------------------
-	srcImgInputElement.addEventListener('change', function () {Utils.uploadImageFile(srcImgElement, this.files[0]);}, false);
+	srcImgUploadInputElement.addEventListener('change', function () {Utils.uploadImageFile(srcImgElement, this.files[0]);}, false);
 	
 	//-----------------------------------------------------------------------------
 	//! Callback method which reacts on a changed source image.

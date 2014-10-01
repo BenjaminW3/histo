@@ -125,11 +125,11 @@
 							<label>Bild: 
 								<select id="tab2SrcImgSelect">
 									<option value="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg">Yosemite</option>
-									<option value="img/thermal-hot-spring_w725_h544.jpg" selected>Thermalquelle</option>
+									<option value="img/thermal-hot-spring_w725_h544.jpg">Thermalquelle</option>
 									<option value="img/rays-on-the-meadow_w725_h544.jpg">Aue</option>
 									<option value="img/autumn-big-maple-leaves_w725_h544.jpg">Blätter</option>
 									<option value="img/aircraft-ready-to-take-off-vintage-image_w725_h475.jpg">Flugzeug</option>
-									<option value="img/Blackbird-sunset-03.jpg">Sonnenuntergang</option>
+									<option value="img/Blackbird-sunset-03.jpg" selected>Sonnenuntergang</option>
 									<option value="img/orion-nebula-space-galaxy_w725_h490.jpg">Orion</option>
 									<option value="img/northern-lights-scenic-aurora-borealis_w725_h483.jpg">Nordlichter (unterbelichtet - mit Absicht)</option>
 									<option value="img/snow-wallpapers_w725_h544.png">Schneelandschaft (geringe Dynamik)</option>
@@ -159,7 +159,7 @@
 						
 						<div>
 							<div class="figure">
-								<img class="thumb image" id="tab2SrcImg" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle" />
+								<img class="thumb image" id="tab2SrcImg" src="img/Blackbird-sunset-03.jpg" alt="Sonnenuntergang" />
 								<div class="caption">Ausgangsbild</div>
 							</div>
 						</div>
@@ -284,9 +284,10 @@
                                             <option value="img/noise5nn.jpeg">Rauschen (Farbe, Normalverteilung)</option>
                                             <option value="user_upload" id="tab4SrcImgSelectOptionUserUpload">Datei öffnen...</option>
                                         </select>
-                                        <label id="tab4SrcImgLabel" style="visibility:hidden">Drag and Drop oder Datei-Auswahl-Dialog:
-											<input type="file" id="tab4SrcImgInput" style="visibility:hidden">
-										<label/>
+                                        <div id="tab4SrcImgUploadDiv" style="display:none">
+											<p id="tab4SrcImgUploadInputText" style="display:none">Drag and Drop oder Datei-Auswahl-Dialog:</p>
+											<input type="file" id="tab4SrcImgUploadInput">
+										</div>
                                     </label>
                                 </p>
 								<p class="clear_both">
@@ -302,7 +303,7 @@
 								</p>
 
                                 <div class="figure">
-                                    <img class="pointOperatorThumb image" id="tab4SrcImg" src="img/tuolumne-meadows-yosemite-streams_w725_h544.jpg" alt="Yosemite" />
+                                    <img class="pointOperatorThumb image" id="tab4SrcImg" src="img/thermal-hot-spring_w725_h544.jpg" alt="Thermalquelle" />
                                     <div class="caption">Ausgangsbild</div>
                                 </div>
                                 <div class="figure">

@@ -25,7 +25,6 @@ function PointOperatorParameter(_sName, _sDescription, _id, _inputAttributes) {
 }
 PointOperatorParameter.prototype.getValue = function() {
     return document.getElementById(this.id).valueAsNumber;
-    //return this.inputElement.valueAsNumber;
 };
 PointOperatorParameter.prototype.addInputElementToElement = function(_parentElement) {
 	_parentElement.appendChild(this.labelElement);
@@ -98,8 +97,8 @@ PointOperator.prototype.transformPixel = function (_r, _g, _b, _extendedImageDat
  */
 function PointOperatorInverse(){
 	this.sDescription = 'Bei der Negativtransformation wird eine Invertierung der Tonwerte eines Grauwertbildes durchgeführt. ' +
-                        'Dies kann zur besseren Wahrnehmung feiner Strukturen führen, da das menschliche Auge feine Unterschiede ' +
-                        'zwischen Grauwerten gut wahrnehmen kann.';
+                        'Da das menschliche visuelle System feine Unterschiede zwischen Grauwerten in verschiedenen Helligkeitsbereichen unterschiedlich gut wahrnimmt, ' +
+						'kann eine Negativtransformation zur besseren Wahrnehmung feiner Strukturen führen.';
 	this.sFormulaHtml = '<img src="img/pointOpInv.png">';
     this.aParameters = {
 
@@ -119,7 +118,7 @@ PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedIm
  */
 function PointOperatorPotency(){
     this.sDescription = 'Die Potenztransformation, oder auch Gammakorrektur, ist eine monotone Transformation auf Basis einer Potenzfunktion. ' +
-                        'Duch eine lineare Spreizung bei einem Teil der Tonwerte lässt sich die Helligkeit des Bildes verändern.';
+                        'Duch eine nichtlineare Spreizung bei einem Teil der Tonwerte und Stauchung bei einem anderen Teil der Tonwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = '<img src="img/pointOpPot.png">';
     this.aParameters = {
         'e' : new PointOperatorParameter('γ', 'Exponent für die Transformation.', 'potInp', {'type' : 'number', 'value' : 1.3, 'min' : 0.0, 'max' : 5.0, 'step' : 0.1})
@@ -140,7 +139,7 @@ PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b, _extendedIm
  */
 function PointOperatorLogarithm(){
     this.sDescription = 'Die Logarithmustransformation ist eine monotone Transformation auf Basis des Logarithmus.' +
-                        'Die oberen Tonwerte werden komprimiert, während kleine Tonwerte auf eine größere Tonwertspanne abgebildet werden.';
+                        'Die oberen Tonwerte werden komprimiert, während kleine Tonwerte auf eine größere Tonwertspanne abgebildet werden. Dadurch wird das Bild insgesamt aufgehellt.';
     this.sFormulaHtml = '<img src="img/pointOpLog.png">';
     this.aParameters = {
     };
@@ -159,7 +158,7 @@ PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
  */
 function PointOperatorExponential(){
     this.sDescription = 'Die Exponentialtransformation ist eine monotone Transformation auf Basis der Exponentialfunktion.' +
-        'Die unteren Tonwerte werden komprimiert, während eine kleine Tonwertspanne im oberen Bereich auf eine größere Tonwertspanne im Ergebnisbild abgebildet wird.';
+						'Die unteren Tonwerte werden komprimiert, während eine kleine Tonwertspanne im oberen Bereich auf eine größere Tonwertspanne im Ergebnisbild abgebildet wird. Dadurch wird das Bild insgesamt abgedunkelt.';
     this.sFormulaHtml = '<img src="img/pointOpExp.png">';
     this.aParameters = {
 
@@ -216,7 +215,7 @@ PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extende
  * Histogram limitation
  */
 function PointOperatorHistoLimitation(){
-    this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten.';
+    this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten und auf den Tonwert 0 oder G abgebildet.';
     this.sFormulaHtml = '<img src="img/pointOpLimit.png">';
     this.aParameters = {
         'min' : new PointOperatorParameter('gmin', 'Untere Schranke der einzubeziehenden Werte.',  'limLowInp', {'type' : 'number', 'value' : 20.0, 'min' : 0.0, 'max' : 254.0, 'step' : 1.0}),

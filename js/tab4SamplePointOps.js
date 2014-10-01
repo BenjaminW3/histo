@@ -6,8 +6,9 @@ window.addEventListener('load', function ()
     var srcImgElement = document.getElementById('tab4SrcImg');									//!< The HTML source image element.
     var srcImgSelectElement = document.getElementById('tab4SrcImgSelect');						//!< The HTML source image selection element.
     var srcImgSelectOptionUserUploadElement = document.getElementById('tab4SrcImgSelectOptionUserUpload');//!< The HTML source image user upload option element.
-    var srcImgInputElement = document.getElementById('tab4SrcImgInput');						//!< The HTML source image file input element.
-    var srcImgLabelElement = document.getElementById('tab4SrcImgLabel');						//!< The HTML source image label element.
+    var srcImgUploadDivElement = document.getElementById('tab4SrcImgUploadDiv');				//!< The HTML source image upload div element.
+    var srcImgUploadInputTextElement = document.getElementById('tab4SrcImgUploadInputText');	//!< The HTML text element for dnd and upload.
+    var srcImgUploadInputElement = document.getElementById('tab4SrcImgUploadInput');			//!< The HTML source image file input element.
     var srcImgHistCanvasElement = document.getElementById('tab4SrcImgHistCanvas');				//!< The HTML canvas element for the histogram.
     var srcImgCumHistCanvasElement = document.getElementById('tab4SrcImgCumHistCanvas');		//!< The HTML canvas element for the cumulative histogram.
 
@@ -201,10 +202,9 @@ window.addEventListener('load', function ()
         if(this.value==='user_upload')
         {
             // Enable the file input and the drag and drop fields.
-            srcImgInputElement.style.visibility = 'visible';
+            srcImgUploadDivElement.style.display = 'block';
             srcImgElement.classList.add('drag_drop_area');
             if(Utils.supportsDragAndDrop()) {
-                srcImgLabelElement.style.visibility = 'visible';
                 srcImgElement.ondragover = function () { srcImgElement.classList.add('drag_drop'); return false; };
                 srcImgElement.ondragend = function () { srcImgElement.classList.remove('drag_drop'); return false; };
                 srcImgElement.ondrop = function (e) {
@@ -216,8 +216,7 @@ window.addEventListener('load', function ()
         }
         else{
             // Disable the file input and the drag and drop fields.
-            srcImgInputElement.style.visibility = 'hidden';
-            srcImgLabelElement.style.visibility = 'hidden';
+            srcImgUploadDivElement.style.display = 'none';
             srcImgElement.classList.remove('drag_drop_area');
 
             // Directly set the new image.
@@ -228,7 +227,7 @@ window.addEventListener('load', function ()
     //-----------------------------------------------------------------------------
     //! Callback method which reacts on a changed source image file from the input field.
     //-----------------------------------------------------------------------------
-    srcImgInputElement.addEventListener('change', function () {Utils.uploadImageFile(srcImgElement, this.files[0]);}, false);
+    srcImgUploadInputElement.addEventListener('change', function () {Utils.uploadImageFile(srcImgElement, this.files[0]);}, false);
 
     //-----------------------------------------------------------------------------
     //! Callback method which reacts on a changed source image.
@@ -250,6 +249,11 @@ window.addEventListener('load', function ()
         srcImgSelectOptionUserUploadElement.disabled = true;
         srcImgSelectOptionUserUploadElement.label += ' (not supported)';
     }
+	else{
+		if(Utils.supportsDragAndDrop()) {
+			srcImgUploadInputTextElement.style.display = 'block';
+		}
+	}
 
     OnSrcImgChanged();
 }, false);
