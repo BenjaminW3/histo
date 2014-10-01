@@ -16,7 +16,7 @@ window.addEventListener('load', function ()
 
     var srcImgExtendedImageData = new ExtendedImageData();
     var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
-    var pointOperator = new PointOperatorInverse();
+    var pointOperator = new PointOperatorLogarithm();
     var transformedImgExtendedImageData = new ExtendedImageData();
     var transformedImgHistRenderer = new HistogrammRenderer(transformedImgExtendedImageData, transformedImgHistCanvasElement, '2d', histTypeElement);
 
