@@ -368,13 +368,9 @@ PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _exten
  * Threshold
  */
 function PointOperatorThreshold(){
-<<<<<<< HEAD
-    this.sDescription = 'Art von Binarisierung. ';
-    this.sFormulaHtml = '<img src="img/pointOpThresh.png">';
-=======
     this.sDescription = 'Jedes Pixel wird anhand seiner Helligkeit in eine der beiden Klassen, dargestellt durch schwarz und weiß, einsortiert.';
-    this.sFormulaHtml = 'TODO';
->>>>>>> 8598b6f48ccfe785cdee318fc0985dd54837a422
+    this.sFormulaHtml = '<img src="img/pointOpThresh.png">';
+
     this.aParameters = {
         'threshold' : new PointOperatorParameter('Schwellwert', 'Schwellwert an dem Binarisiert werden soll.', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
     };
