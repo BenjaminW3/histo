@@ -119,7 +119,7 @@ function PointOperatorPotency(){
                         'Duch eine lineare Spreizung bei einem Teil der Tonwerte lässt sich die Helligkeit des Bildes verändern.';
     this.sFormulaHtml = '<img src="img/pointOpPot.png">';
     this.aParameters = {
-        'e' : new PointOperatorParameter('Exponent', 'Exponent für Transformation', {'type' : 'number', 'value' : 1.2, 'min' : 0.0, 'max' : 5.0, 'step' : 0.1})
+        'e' : new PointOperatorParameter('γ', 'Exponent für die Transformation.', {'type' : 'number', 'value' : 1.3, 'min' : 0.0, 'max' : 5.0, 'step' : 0.1})
     };
 }
 
@@ -179,7 +179,7 @@ function PointOperatorHistoShift(){
                         'Alle Farbwerte eines Bildes werden um eine feste Konstante in den helleren oder dunkleren Bereich verschoben.';
     this.sFormulaHtml = '<img src="img/pointOpShift.png">';
     this.aParameters = {
-        'c' : new PointOperatorParameter('Verschiebung', 'Konstante um die verschoben werden soll', {'type' : 'number', 'value' : 20.0, 'min' : -255.0, 'max' : 255.0, 'step' : 1.0})
+        'c' : new PointOperatorParameter('c', 'Konstante um die verschoben werden soll', {'type' : 'number', 'value' : 35.0, 'min' : -255.0, 'max' : 255.0, 'step' : 1.0})
     };
 }
 
@@ -216,8 +216,8 @@ function PointOperatorHistoLimitation(){
     this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten.';
     this.sFormulaHtml = '<img src="img/pointOpLimit.png">';
     this.aParameters = {
-        'min' : new PointOperatorParameter('Untere Schranke', 'kleinster Wert', {'type' : 'number', 'value' : 10.0, 'min' : 0.0, 'max' : 254.0, 'step' : 1.0}),
-        'max' : new PointOperatorParameter('Obere Schranke', 'größter Wert', {'type' : 'number', 'value' : 220.0, 'min' : 1.0, 'max' : 255.0, 'step' : 1.0})
+        'min' : new PointOperatorParameter('gmin', 'Untere Schranke der einzubeziehenden Werte.', {'type' : 'number', 'value' : 20.0, 'min' : 0.0, 'max' : 254.0, 'step' : 1.0}),
+        'max' : new PointOperatorParameter('gmax', 'Obere Schranke der einzubeziehenden Werte.', {'type' : 'number', 'value' : 210.0, 'min' : 1.0, 'max' : 255.0, 'step' : 1.0})
     };
     /**
      * TODO: add constraint min < max!!!
@@ -307,7 +307,7 @@ function PointOperatorHistoHyperbolization(){
     this.sDescription = 'Die Tonwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
     this.sFormulaHtml = '<img src="img/pointOpHyper.png">';
     this.aParameters = {
-        'alpha' : new PointOperatorParameter('Alpha (-x/3)', 'Exponent ', {'type' : 'number', 'value' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
+        'alpha' : new PointOperatorParameter('α (-x/3)', 'Exponent ', {'type' : 'number', 'value' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
     };
 }
 
@@ -336,9 +336,9 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
  */
 function PointOperatorQuantization(){
     this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf <i>2^b</i>.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpQuant.png">';
     this.aParameters = {
-        'bits' : new PointOperatorParameter('B', 'Anzahl der Bits pro Farbkanal', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})
+        'bits' : new PointOperatorParameter('B', 'Anzahl der Bits pro Farbkanal.', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})
     };
 }
 

@@ -15,7 +15,7 @@
 
 .pointOperatorDescription {
     display: inline-block;
-    width:40%;
+    width:50%;
     position: absolute;
     left: 50%;
 }
@@ -35,22 +35,25 @@
 
 .pointOperatorSource {
     display: inline-block;
-    width:36%;
+    width:45%;
 }
 
 .pointOperatorTarget {
     display: inline-block;
-    width:42%;
+    width:45%;
     position: relative;
 }
 
-.pointOperatorFormula {
+.pointOperatorArrow {
     display: inline-block;
-    width:13%;
+    width:8%;
+	text-align:center;
+	font: 6em "Lucida Sans Unicode", "Lucida Grande", sans-serif;
     position: relative;
+	/*vertical-align: middle;*/
 }
 
 .pointOperatorThumb {
-    max-width: 350px;
+    max-width: 420px;
     max-height: 300px;
 }

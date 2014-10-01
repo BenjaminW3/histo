@@ -159,9 +159,10 @@ window.addEventListener('load', function ()
 		// Add current point operators settings to div.
 		pointOperator.addPropertyInputElementsToElement(pointOperatorSettingsElement);
 		
-		// If there are no settings, dont show the apply button.
+		// If there are no settings, don`t show the apply button.
 		if(pointOperatorSettingsElement.innerHTML == '')
 		{
+			pointOperatorSettingsElement.innerHTML += 'keine Parameter vorhanden';
 			pointOperatorSettingsApplyElement.style.display = 'none';
 		}
 		else
