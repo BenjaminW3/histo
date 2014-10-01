@@ -24,7 +24,7 @@ function PointOperatorParameter(_sName, _sDescription, _id, _inputAttributes) {
 	this.labelElement.innerHTML += ' ' + this.sDescription;
 }
 PointOperatorParameter.prototype.getValue = function() {
-    return document.getElementById(this.id).value;
+    return document.getElementById(this.id).valueAsNumber;
     //return this.inputElement.valueAsNumber;
 };
 PointOperatorParameter.prototype.addInputElementToElement = function(_parentElement) {
