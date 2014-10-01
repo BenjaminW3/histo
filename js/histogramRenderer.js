@@ -86,11 +86,11 @@ HistogrammRenderer.prototype.drawTransformationCurve = function(_pointOperator) 
 		}
 		
 		this.targetContext.beginPath();
-		this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(0,0,0)[0])/255) * this.uiHistHeightPx));
+		this.targetContext.moveTo(this.uiHistLeftPx, this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(0,0,0,this.extendedImageData)[0])/255) * this.uiHistHeightPx));
 		for (var i = 1; i < 256; i++)
 		{
 			var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
-			var uiValueY = this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(i,i,i)[0])/255) * this.uiHistHeightPx);
+			var uiValueY = this.uiHistBottomPx - Math.round(((_pointOperator.transformPixel(i,i,i,this.extendedImageData)[0])/255) * this.uiHistHeightPx);
 			this.targetContext.lineTo(uiValueX, uiValueY);
 		}
 		this.targetContext.stroke();
@@ -162,9 +162,8 @@ HistogrammRenderer.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
  * @param auiValueCounts An Array of occurance counts of color values.
  * @param uiValueCountMax The maximum vertical value.
  * @param bFill If the diagram should be filled or only dots.
- * @param bCumulative If the channel should be drawn cumulative.
  */
-HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill, bCumulative) {
+HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill) {
     var ctxStyle;
     if (bFill)
     {
@@ -184,21 +183,11 @@ HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, 
 		
     for (var i = 0; i < 256; i++)
     {
-		if(bCumulative) {
-			if (!(i in auiValueCounts)) {
-				uiCurrentValue += 0;
-			}
-			else {
-				uiCurrentValue += auiValueCounts[i];
-			}
+		if (!(i in auiValueCounts)) {
+			continue;
 		}
 		else {
-			if (!(i in auiValueCounts)) {
-				continue;
-			}
-			else {
-				uiCurrentValue = auiValueCounts[i];
-			}
+			uiCurrentValue = auiValueCounts[i];
 		}
 		
         //console.log ("#i = " + auiValueCounts[i])
@@ -258,7 +247,7 @@ HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
 		// Draw the channels.
         for (var i = 0; i < 3; i++) {
             //console.log("channel type "+ asChannelTypes[i] + " channelHistogram " + this.aauiChannelValueCounts[i]);
-            this.drawHistChannel(colors[i], this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+            this.drawHistChannel(colors[i], (bCumulative===true) ? this.extendedImageData.getChannelCumulativeHistogram(i) : this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
         }
 
 		if (bFill)
@@ -285,6 +274,6 @@ HistogrammRenderer.prototype.drawHist = function(bFill, bCumulative) {
 		
 		// Draw the channel.
         //console.log("index = " + i);
-        this.drawHistChannel(colors[i], this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
+        this.drawHistChannel(colors[i], (bCumulative===true) ? this.extendedImageData.getChannelCumulativeHistogram(i) : this.extendedImageData.getChannelHistogram(i), uiMaxCount, bFill, bCumulative);
     }
 };

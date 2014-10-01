@@ -65,7 +65,7 @@ ExtendedImageData.prototype.getImageData = function() {
 
 /**
  * Returns the channelcount array for histogram
- * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
+ * @param _channelNo 1: red, 2: green, 3: blue, 0: luminance
  * @returns array of the channel or null if the channel number is invalid
  */
 ExtendedImageData.prototype.getChannelHistogram = function(_channelNo) {
@@ -77,10 +77,10 @@ ExtendedImageData.prototype.getChannelHistogram = function(_channelNo) {
 
 /**
  * Returns the value of the cumulated histogram for histogram
- * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
+ * @param _channelNo1: red, 2: green, 3: blue, 0: luminance
  * @return array of the channel or null if the channel number is invalid
  */
-ExtendedImageData.prototype.getCumulativeChannelHistogram = function(_channelNo) {
+ExtendedImageData.prototype.getChannelCumulativeHistogram = function(_channelNo) {
     if((_channelNo >= 0) && (_channelNo < 4)) {
         return this.channelCumulativeHistogram[_channelNo];
     }
@@ -88,12 +88,12 @@ ExtendedImageData.prototype.getCumulativeChannelHistogram = function(_channelNo)
 };
 
 /**
- * Returns the value of the cumulated histogram for histogram
- * @param _channelNo 0: luminance, 1: red, 2: green, 3: blue
+ * Returns the value of the cumulated histogram
+ * @param _channelNo 1: red, 2: green, 3: blue, 0: luminance
  * @param _x value
  * @return value of cumulated histo
  */
-ExtendedImageData.prototype.getCumulativeChannelHistogramValue = function(_channelNo, _x) {
+ExtendedImageData.prototype.getChannelCumulativeHistogramValue = function(_channelNo, _x) {
     if((_channelNo >= 0) && (_channelNo < 4)) {
         return this.channelCumulativeHistogram[_channelNo][_x];
     }
@@ -128,26 +128,16 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     }
 
 	// Calculate the cumulative histograms.
-    var maxCum = [0,0,0,0];
     for(var color = 0; color < 4; color++) {
 		this.channelCumulativeHistogram[color][0] = this.channelHistogram[color][0];
 		for(var j = 1; j < 256; j++) {
-            if(isNaN(this.channelHistogram[color][j])) {    //there are values that dont appear in the img
+            if(isNaN(this.channelHistogram[color][j])) {    //there are values that don`t appear in the img
                 this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1];
             }else {
                 this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j - 1] + this.channelHistogram[color][j];
             }
-
-            if(this.channelCumulativeHistogram[color][j] > maxCum[color]) {
-                maxCum[color] = this.channelCumulativeHistogram[color][j];
-            }
 		}
 	}
-    for(var color = 0; color < 4; color++) {
-        for(var j = 0; j < 256; j++) {
-            this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j] / maxCum[color];
-        }
-    }
 };
 
 /**

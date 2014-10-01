@@ -67,6 +67,15 @@ Utils.clip = function(_val, _min, _max) {
 };
 
 /**
+ * Normalizes the given 3 dimensional vector.
+ */
+Utils.normalizeVector3 = function(_v3){
+	var length = Math.sqrt(_v3[0]*_v3[0] + _v3[1]*_v3[1] + _v3[2]*_v3[2]);
+	var invLength = 1.0 / length;
+    return [_v3[0]*invLength, _v3[1]*invLength, _v3[2]*invLength];
+};
+
+/**
  * Inheritance helper see: http://phrogz.net/JS/classes/OOPinJS2.html
  */
 Function.prototype.inheritsFrom = function( parentClassOrObject ){

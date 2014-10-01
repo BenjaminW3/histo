@@ -69,12 +69,11 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
  * Transform the given image data.
  */
 PointOperator.prototype.transformExtendedImageData = function (_extendedImageData) {
-    this.extImageData = _extendedImageData;
 	var imageData = _extendedImageData.getImageData();
 	
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
     for (var i = 0, n = imageData.data.length; i < n; i+= pixelStepWidth) {
-        var transformedPixel = this.transformPixel(imageData.data[i], imageData.data[i+1], imageData.data[i+2]);
+        var transformedPixel = this.transformPixel(imageData.data[i], imageData.data[i+1], imageData.data[i+2], _extendedImageData);
 		imageData.data[i] = transformedPixel[0];
 		imageData.data[i+1] = transformedPixel[1];
 		imageData.data[i+2] = transformedPixel[2];
@@ -89,7 +88,7 @@ PointOperator.prototype.transformExtendedImageData = function (_extendedImageDat
 /**
  * Abstract method.
  */
-PointOperator.prototype.transformPixel = function (_r, _g, _b) {
+PointOperator.prototype.transformPixel = function (_r, _g, _b, _extendedImageData) {
     alert('This is the abstract base class method. This has to be implemented by derieved classes!');
 };
 
@@ -110,7 +109,7 @@ function PointOperatorInverse(){
 
 PointOperatorInverse.inheritsFrom( PointOperator );
 
-PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, first){
+PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
 	return [255-_r, 255-_g, 255-_b];
 };
 
@@ -130,7 +129,7 @@ function PointOperatorPotency(){
 
 PointOperatorPotency.inheritsFrom( PointOperator );
 
-PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var exp = this.aParameters.e.getValue();
     return [255 * (Math.pow((_r/255), exp )), 255 * (Math.pow((_g/255),  exp)), 255 * (Math.pow((_b/255), exp))];
 };
@@ -150,7 +149,7 @@ function PointOperatorLogarithm(){
 
 PointOperatorLogarithm.inheritsFrom( PointOperator );
 
-PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     return [255 * (Utils.log((_r+1),(255+1))), 255 * (Utils.log((_g+1),(255+1))), 255 * (Utils.log((_b+1),(255+1)))];
 };
 
@@ -170,7 +169,7 @@ function PointOperatorExponential(){
 
 PointOperatorExponential.inheritsFrom( PointOperator );
 
-PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     return [Math.pow((255+1),(_r/255)) -1, Math.pow((255+1),(_g/255)) -1, Math.pow((255+1),(_b/255)) -1];
 };
 
@@ -190,7 +189,7 @@ function PointOperatorHistoShift(){
 
 PointOperatorHistoShift.inheritsFrom( PointOperator );
 
-PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var transR = _r + this.aParameters.c.getValue();
     var transG = _g + this.aParameters.c.getValue();
     var transB = _b + this.aParameters.c.getValue();
@@ -243,7 +242,7 @@ PointOperatorHistoLimitation.prototype.clipByLumTo = function(_r, _g, _b, _minLu
 	return [_r, _g, _b];
 };
 
-PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
     return this.clipByLumTo(_r, _g, _b, min, max, [0,0,0], [255,255,255]);
@@ -262,18 +261,23 @@ function PointOperatorHistoSpread(){
 
 PointOperatorHistoSpread.inheritsFrom( PointOperatorHistoLimitation );
 
+
+
 PointOperatorHistoSpread.prototype.spread = function(_r, _g, _b){
 	var lum = Utils.calcYFromRgb(_r, _g, _b);
+	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
 	
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
+	var mul = (255/(max - min));
 	var d = ((lum - min) / (max - min));
 	
+	
 	// FIXME: Color. This should result in a linear transformation curve from [min,0] to [max,255]
-    return [Utils.clip(_r+d*255,0,255), Utils.clip(_g+d*255,0,255), Utils.clip(_b+d*255,0,255)];
+    return [Utils.clip(255 * rgbNormalized[0]*d*mul,0,255), Utils.clip(255 * rgbNormalized[1]*d*mul,0,255), Utils.clip(255 * rgbNormalized[2]*d*mul,0,255)];
 };
 
-PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b){
+PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
 	var clipped = this.clipByLumTo(_r, _g, _b, min, max, [0,0,0], [255,255,255]);
@@ -297,17 +301,13 @@ function PointOperatorHistoEqualization(){
 
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
-PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
-    //console.log(this.extImageData)
-    if(this.extImageData) {
-        var cumR = this.extImageData.getCumulativeChannelHistogramValue(1, _r); //start with 1 cause 0 is grey
-        var cumG = this.extImageData.getCumulativeChannelHistogramValue(2, _g);
-        var cumB = this.extImageData.getCumulativeChannelHistogramValue(3, _b);
+PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+	var lum = Utils.calcYFromRgb(_r, _g, _b);
+	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
+	
+    var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, lum) / _extendedImageData.getNumPixels();
 
-        return [255 * cumR, 255 * cumG, 255 * cumB];
-    }else {
-        return [0, 0, 0];
-    }
+    return [255 * rgbNormalized[0]*cumLum, 255 * rgbNormalized[1]*cumLum, 255 * rgbNormalized[2]*cumLum];
 };
 
 
@@ -319,30 +319,21 @@ function PointOperatorHistoHyperbolization(){
     this.sDescription = 'Die Tonwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
     this.sFormulaHtml = '<img src="img/pointOpHyper.png">';
     this.aParameters = {
-        'alpha' : new PointOperatorParameter('α (-x/3)', 'Exponent ', 'expInp', {'type' : 'number', 'value' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
+        'alpha' : new PointOperatorParameter('α', 'Exponent', 'expInp', {'type' : 'number', 'value' : -0.25, 'min' : -0.99, 'max' : 0, 'step' : 0.01})
     };
 }
 
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
-PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
-    if(this.extImageData) {
-        var cumR = this.extImageData.getCumulativeChannelHistogramValue(1, _r); //start with 1 cause 0 is grey
-        var cumG = this.extImageData.getCumulativeChannelHistogramValue(2, _g);
-        var cumB = this.extImageData.getCumulativeChannelHistogramValue(3, _b);
+PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
+	var lum = Utils.calcYFromRgb(_r, _g, _b);
+	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
+	
+    var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, lum) / _extendedImageData.getNumPixels();
 
-        var tAlpha = 0;
-        if (this.aParameters.alpha.getValue() == 0) {
-            tAlpha = 1;
-        } else if (this.aParameters.alpha.getValue() == 1) {
-            tAlpha = 1.5;   //1 / -1/3 + 1 = 1 / (2/3) = 3/2 = 1.5
-        } else if (this.aParameters.alpha.getValue() == 2) {
-            tAlpha = 3;
-        }
-        return [ (255 * Math.pow(cumR, tAlpha)), (255 * Math.pow(cumG, tAlpha)), (255 * Math.pow(cumB, tAlpha))];
-    }else {
-        return [0,0,0];
-    }
+	var alpha = this.aParameters.alpha.getValue();
+	var exp = 1.0 / (alpha+1.0);
+	return [ (255 * Math.pow(rgbNormalized[0]*cumLum, exp)), (255 * Math.pow(rgbNormalized[1]*cumLum, exp)), (Math.pow(255 * rgbNormalized[2]*cumLum, exp))];
 };
 
 
@@ -351,7 +342,7 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
  * Quantization
  */
 function PointOperatorQuantization(){
-    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf <i>2^b</i>.';
+    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf die b-te Potenz von 2. In der folgenden Formel steht <i>g>>x</i> für eine Verschiebung der Bits von g um x Stellen nach rechts.';
     this.sFormulaHtml = '<img src="img/pointOpQuant.png">';
     this.aParameters = {
         'bits' : new PointOperatorParameter('b', 'Anzahl der Bits pro Farbkanal.', 'quantInp', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})
@@ -367,7 +358,7 @@ PointOperatorQuantization.prototype.quantValue = function(_val, _bits) {
     return 255 * d;
 };
 
-PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b) {
+PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
     var bits = this.aParameters.bits.getValue();
     return [this.quantValue(_r, bits), this.quantValue(_g, bits), this.quantValue(_b, bits)];
 };
@@ -388,7 +379,7 @@ function PointOperatorThreshold(){
 
 PointOperatorThreshold.inheritsFrom( PointOperator );
 
-PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b) {
+PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
 	var t = this.aParameters.threshold.getValue();
 	var lum = Utils.calcYFromRgb(_r, _g, _b);
     return (lum >= t) ? [255,255,255] : [0,0,0];
