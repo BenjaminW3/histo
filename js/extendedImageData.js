@@ -3,6 +3,7 @@
  */
 function ExtendedImageData() {
     this.channelHistogram = [[],[],[],[]];
+    this.channelCumulativeHistogram = [[],[],[],[]];
     this.channelHistogramMax = [0,0,0,0];
     this.width = 0;
     this.height = 0;
@@ -42,23 +43,23 @@ ExtendedImageData.prototype.getMax = function(_channelNo) {
 
 ExtendedImageData.prototype.getWidth = function() {
     return this.srcImgData.width;
-}
+};
 
 ExtendedImageData.prototype.getHeight = function() {
     return this.srcImgData.height;
-}
+};
 
 ExtendedImageData.prototype.getNumPixels = function() {
     return this.srcImgData.width * this.srcImgData.height;
-}
+};
 
 ExtendedImageData.prototype.getChannelHistogramMax = function(_channelNo) {
     return this.channelHistogramMax[_channelNo];
-}
+};
 
 ExtendedImageData.prototype.getImageData = function() {
     return this.srcImgData;
-}
+};
 
 
 
@@ -72,7 +73,7 @@ ExtendedImageData.prototype.getChannelHistogram = function(_channelNo) {
         return this.channelHistogram[_channelNo];
     }
     return null;
-}
+};
 
 /**
  *  Calculate channelvaluecount and maxCount for all channels
@@ -98,7 +99,19 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
             }
         }
     }
-}
+
+    this.channelCumulativeHistogram[0][0] = this.channelHistogram[0][0];
+    this.channelCumulativeHistogram[1][0] = this.channelHistogram[1][0];
+    this.channelCumulativeHistogram[2][0] = this.channelHistogram[2][0];
+    this.channelCumulativeHistogram[3][0] = this.channelHistogram[3][0];
+    for(var j = 1; j < 256; j++) {
+        this.channelCumulativeHistogram[0][j] = this.channelCumulativeHistogram[0][j-1] + this.channelHistogram[0][j];
+        this.channelCumulativeHistogram[1][j] = this.channelCumulativeHistogram[1][j-1] + this.channelHistogram[1][j];
+        this.channelCumulativeHistogram[2][j] = this.channelCumulativeHistogram[2][j-1] + this.channelHistogram[2][j];
+        this.channelCumulativeHistogram[3][j] = this.channelCumulativeHistogram[3][j-1] + this.channelHistogram[3][j];
+    }
+};
+
 /**
  * Load Data from the given image.
  */
