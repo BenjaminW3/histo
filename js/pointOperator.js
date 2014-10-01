@@ -44,6 +44,15 @@ function PointOperator() {
  */
 PointOperator.prototype.writeDescription = function(_descriptionElement) {
     _descriptionElement.innerHTML = this.sDescription;
+    _descriptionElement.innerHTML += "<br/>";
+    _descriptionElement.innerHTML += this.sFormulaHtml;
+};
+
+/**
+ * Writes the formula of the pointOperator to the element
+ */
+PointOperator.prototype.writeFormula = function(_formulaElement) {
+    _formulaElement.innerHTML = this.sFormulaHtml;
 };
 
 /**
@@ -94,7 +103,7 @@ function PointOperatorInverse(){
 	this.sDescription = 'Bei der Negativtransformation wird eine Invertierung der Tonwerte eines Grauwertbildes durchgeführt. ' +
                         'Dies kann zur besseren Wahrnehmung feiner Strukturen führen, da das menschliche Auge feine Unterschiede ' +
                         'zwischen Grauwerten gut wahrnehmen kann.';
-	this.sFormulaHtml = 'TODO';
+	this.sFormulaHtml = '<img src="img/pointOpInv.png">';
     this.aParameters = {
 
     };
@@ -114,7 +123,7 @@ PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedIm
 function PointOperatorPotency(){
     this.sDescription = 'Die Potenztransformation, oder auch Gammakorrektur, ist eine monotone Transformation auf Basis einer Potenzfunktion. ' +
                         'Duch eine lineare Spreizung bei einem Teil der Tonwerte lässt sich die Helligkeit des Bildes verändern.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpPot.png">';
     this.aParameters = {
         'e' : new PointOperatorParameter('Exponent', 'Exponent für Transformation', {'type' : 'number', 'value' : 1.2, 'min' : 0.0, 'max' : 5.0, 'step' : 0.1})
     };
@@ -135,7 +144,7 @@ PointOperatorPotency.prototype.transformPixel = function(_r, _g, _b, _extendedIm
 function PointOperatorLogarithm(){
     this.sDescription = 'Die Logarithmustransformation ist eine monotone Transformation auf Basis des Logarithmus.' +
                         'Die oberen Tonwerte werden komprimiert, während kleine Tonwerte auf eine größere Tonwertspanne abgebildet werden.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpLog.png">';
     this.aParameters = {
     };
 }
@@ -154,7 +163,7 @@ PointOperatorLogarithm.prototype.transformPixel = function(_r, _g, _b){
 function PointOperatorExponential(){
     this.sDescription = 'Die Exponentialtransformation ist eine monotone Transformation auf Basis der Exponentialfunktion.' +
         'Die unteren Tonwerte werden komprimiert, während eine kleine Tonwertspanne im oberen Bereich auf eine größere Tonwertspanne im Ergebnisbild abgebildet wird.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpExp.png">';
     this.aParameters = {
 
     };
@@ -174,7 +183,7 @@ PointOperatorExponential.prototype.transformPixel = function(_r, _g, _b, _extend
 function PointOperatorHistoShift(){
     this.sDescription = 'Mit Hilfe der Histogrammverschiebung kann die Helligkeit eines Bildes reguliert werden.' +
                         'Alle Farbwerte eines Bildes werden um eine feste Konstante in den helleren oder dunkleren Bereich verschoben.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpShift.png">';
     this.aParameters = {
         'c' : new PointOperatorParameter('Verschiebung', 'Konstante um die verschoben werden soll', {'type' : 'number', 'value' : 20.0, 'min' : -255.0, 'max' : 255.0, 'step' : 1.0})
     };
@@ -211,7 +220,7 @@ PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extende
  */
 function PointOperatorHistoLimitation(){
     this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpLimit.png">';
     this.aParameters = {
         'min' : new PointOperatorParameter('Untere Schranke', 'kleinster Wert', {'type' : 'number', 'value' : 10.0, 'min' : 0.0, 'max' : 254.0, 'step' : 1.0}),
         'max' : new PointOperatorParameter('Obere Schranke', 'größter Wert', {'type' : 'number', 'value' : 220.0, 'min' : 1.0, 'max' : 255.0, 'step' : 1.0})
@@ -249,7 +258,7 @@ PointOperatorHistoLimitation.prototype.transformPixel = function(_r, _g, _b, _ex
 function PointOperatorHistoSpread(){
     this.sDescription = 'Histogrammspreizung wird häufig zur Kontrastverstärkung in kostrastarmen Bildern eingesetzt. ' +
                         'Dabei wird eine stückweiße lineare Transformation genutzt, die den gewählten Tonwertbereich auf den gesamten verfügbaren abbildet.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpSpread.png">';
 }
 
 PointOperatorHistoSpread.inheritsFrom( PointOperatorHistoLimitation );
@@ -282,7 +291,7 @@ PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extend
 function PointOperatorHistoEqualization(){
     this.sDescription = 'Histogramequalisation ist ein wichtiges Verfahren zur Kontrastverbesserung. Es wird eine Gleichverteilung bei den Werten des Histogrammes berechnet ' +
                         'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt werden kann.';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpEqu.png">';
     this.aParameters = {
 
     };
@@ -302,7 +311,7 @@ PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _
  */
 function PointOperatorHistoHyperbolization(){
     this.sDescription = 'Die Tonwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpHyper.png">';
     this.aParameters = {
         'alpha' : new PointOperatorParameter('Alpha (-x/3)', 'Exponent ', {'type' : 'number', 'value' : 1, 'min' : 0, 'max' : 2, 'step' : 1})
     };
@@ -359,7 +368,7 @@ PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _exten
  */
 function PointOperatorThreshold(){
     this.sDescription = 'Art von Binarisierung. ';
-    this.sFormulaHtml = 'TODO';
+    this.sFormulaHtml = '<img src="img/pointOpThresh.png">';
     this.aParameters = {
         'threshold' : new PointOperatorParameter('Schwellwert', 'Schwellwert an dem Binarisiert werden soll.', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
     };

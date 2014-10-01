@@ -22,9 +22,11 @@ window.addEventListener('load', function ()
     var pointOperatorSelectElement = document.getElementById('tab4PointOperatorSelect');
 
     var pointOperatorDescriptionElement = document.getElementById('tab4PointOperatorDescription');
+    var pointOperatorFormulaElement = document.getElementById('tab4PointOperatorFormula');
 
 	var pointOperator = new PointOperatorInverse();
     pointOperator.writeDescription(pointOperatorDescriptionElement);
+    pointOperator.writeFormula(pointOperatorFormulaElement);
 	
     var srcImgExtendedImageData = new ExtendedImageData();
     var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
@@ -171,6 +173,9 @@ window.addEventListener('load', function ()
 
         // Write the description
         pointOperator.writeDescription(pointOperatorDescriptionElement);
+
+        // Write the formula
+        pointOperator.writeFormula(pointOperatorFormulaElement);
 
 		// The transformation curve has to be updated.
 		RedrawSrcImgHist();
