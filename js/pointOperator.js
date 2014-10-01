@@ -264,11 +264,10 @@ PointOperatorHistoSpread.prototype.spread = function(_r, _g, _b){
 	
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
-    var diff = max - min;
-	var d = ((lum - min) / diff);
+	var d = ((lum - min) / (max - min));
 	
-	// FIXME: Wrong. This should result in a linear transformation curve from [min,0] to [max,255]
-    return [Utils.clip(_r+d*diff,0,255), Utils.clip(_g+d*diff,0,255), Utils.clip(_b+d*diff,0,255)];
+	// FIXME: Color. This should result in a linear transformation curve from [min,0] to [max,255]
+    return [Utils.clip(_r+d*255,0,255), Utils.clip(_g+d*255,0,255), Utils.clip(_b+d*255,0,255)];
 };
 
 PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
