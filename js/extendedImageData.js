@@ -84,6 +84,7 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
 
+	// Calculate the histograms.
     for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
         this.updateMinMax(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]);
         var pixel = [this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], Utils.calcYFromRgb(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2])];
@@ -100,16 +101,13 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
         }
     }
 
-    this.channelCumulativeHistogram[0][0] = this.channelHistogram[0][0];
-    this.channelCumulativeHistogram[1][0] = this.channelHistogram[1][0];
-    this.channelCumulativeHistogram[2][0] = this.channelHistogram[2][0];
-    this.channelCumulativeHistogram[3][0] = this.channelHistogram[3][0];
-    for(var j = 1; j < 256; j++) {
-        this.channelCumulativeHistogram[0][j] = this.channelCumulativeHistogram[0][j-1] + this.channelHistogram[0][j];
-        this.channelCumulativeHistogram[1][j] = this.channelCumulativeHistogram[1][j-1] + this.channelHistogram[1][j];
-        this.channelCumulativeHistogram[2][j] = this.channelCumulativeHistogram[2][j-1] + this.channelHistogram[2][j];
-        this.channelCumulativeHistogram[3][j] = this.channelCumulativeHistogram[3][j-1] + this.channelHistogram[3][j];
-    }
+	// Calculate the cumulative histograms.
+    for(var color = 0; color < 4; color++) {
+		this.channelCumulativeHistogram[color][0] = this.channelHistogram[color][0];
+		for(var j = 1; j < 256; j++) {
+			this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1] + this.channelHistogram[color][j];
+		}
+	}
 };
 
 /**
