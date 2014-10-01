@@ -341,24 +341,25 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
  * Quantization
  */
 function PointOperatorQuantization(){
-    this.sDescription = 'Art von Binarisierung. ';
+    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf <i>2^b</i>.';
     this.sFormulaHtml = 'TODO';
     this.aParameters = {
-        'bits' : new PointOperatorParameter('B', 'Anzahl der Bits pro Farbkanal', {'type' : 'number', 'value' : 4, 'min' : 1, 'max' : 8, 'step' : 1})
+        'bits' : new PointOperatorParameter('B', 'Anzahl der Bits pro Farbkanal', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})
     };
 }
 
 PointOperatorQuantization.inheritsFrom( PointOperator );
 
-PointOperatorQuantization.prototype.quantValue = function(_val, _bitsShift) {
-    return Utils.clip((_val >> _bitsShift) << _bitsShift, 0, 255);
+PointOperatorQuantization.prototype.quantValue = function(_val, _bits) {
+    var bitsShift = 8-_bits;
+	var shifted = (_val >> bitsShift);
+	var d = (shifted / (Math.pow(2,_bits)-1));
+    return 255 * d;
 };
 
 PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
     var bits = this.aParameters.bits.getValue();
-    var bitsShift = 8-bits;
-	var mul = 255 / this.quantValue(255, bitsShift);
-    return [this.quantValue(mul*_r, bitsShift), this.quantValue(mul*_g, bitsShift), this.quantValue(mul*_b, bitsShift)];
+    return [this.quantValue(_r, bits), this.quantValue(_g, bits), this.quantValue(_b, bits)];
 };
 
 
@@ -367,8 +368,13 @@ PointOperatorQuantization.prototype.transformPixel = function(_r, _g, _b, _exten
  * Threshold
  */
 function PointOperatorThreshold(){
+<<<<<<< HEAD
     this.sDescription = 'Art von Binarisierung. ';
     this.sFormulaHtml = '<img src="img/pointOpThresh.png">';
+=======
+    this.sDescription = 'Jedes Pixel wird anhand seiner Helligkeit in eine der beiden Klassen, dargestellt durch schwarz und weiß, einsortiert.';
+    this.sFormulaHtml = 'TODO';
+>>>>>>> 8598b6f48ccfe785cdee318fc0985dd54837a422
     this.aParameters = {
         'threshold' : new PointOperatorParameter('Schwellwert', 'Schwellwert an dem Binarisiert werden soll.', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
     };
@@ -377,6 +383,7 @@ function PointOperatorThreshold(){
 PointOperatorThreshold.inheritsFrom( PointOperator );
 
 PointOperatorThreshold.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
-	// TODO
-    return [0,0,0];
+	var t = this.aParameters.threshold.getValue();
+	var lum = Utils.calcYFromRgb(_r, _g, _b);
+    return (lum >= t) ? [255,255,255] : [0,0,0];
 };

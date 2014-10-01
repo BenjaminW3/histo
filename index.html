@@ -177,9 +177,9 @@
 					</div>
 					<div class="tabpage" id="tabpage_3">
 						<h3>Allgemein</h3>
-						<p>Als Punktoperatoren bezeichnet man Bildverarbeitungsoperationen, welche sich dadurch auszeichnen, dass ein neuer Farb- oder Grauwert eines Pixels allein in Abhängigkeit von seinem eigenen bisherigen Farb- oder Grauwert und seiner eigenen bisherigen Position im Bild berechnet wird, ohne sich dabei um seine Nachbarschaft zu kümmern.</p>
-						<p>Neben den Punktoperatoren, die jedes Pixel eines Bildes einzeln transformieren, gibt es mit den lokalen Operatoren und den globalen Operatoren zwei weitere Klassen von Bildverarbeitungsoperationen. Lokale Operatoren berechnen einen neuen Farb- oder Grauwert eines Pixels immer auf Basis einer Nachbarschaft oder einer örtlich begrenzten Region um das Pixel. Hier seien als Beispiele Rangordnungsoperatoren oder morphologische Operatoren genannt. Globale Operatoren betrachten für die Transformation eines jeden Pixels immer das gesamte Bild, was beispielsweise bei der Fourier-Transformation der Fall ist.</p>
+						<p>Als Punktoperatoren bezeichnet man Bildverarbeitungsoperationen, welche sich dadurch auszeichnen, dass ein neuer Farb- oder Grauwert eines Pixels allein in Abhängigkeit von seinem eigenen bisherigen Farb- oder Grauwert und seiner eigenen bisherigen Position im Bild berechnet wird, ohne dabei von seiner Nachbarschaft abzuhängen.</p>
 						<p><img src="img/799px-Punkttransformation.png" alt="Punkttransformation" height="140"></p>
+						<p>Neben den Punktoperatoren, die jedes Pixel eines Bildes einzeln transformieren, gibt es mit den lokalen Operatoren und den globalen Operatoren zwei weitere Klassen von Bildverarbeitungsoperationen. Lokale Operatoren berechnen einen neuen Farb- oder Grauwert eines Pixels immer auf Basis einer Nachbarschaft oder einer örtlich begrenzten Region um das Pixel. Hier seien als Beispiele Rangordnungsoperatoren oder morphologische Operatoren genannt. Globale Operatoren betrachten für die Transformation eines jeden Pixels immer das gesamte Bild, was beispielsweise bei der Fourier-Transformation der Fall ist.</p>
 						<br/>
 						<h3>Definition</h3>
 						<p>Ein Punktoperator <i>T</i> ordnet einem Eingabebild <i>f</i> durch Transformation der Farbwerte der einzelnen Pixel ein Ergebnisbild <i>f*</i> zu. Der Farbwert <i>f(x,y)</i> eines Pixels <i>(x,y)</i> wird dabei nur in Abhängigkeit vom Farbwert selbst und eventuell von der Position des Pixels im Bild modifiziert. Ist die Transformation von der Position des Pixels im Bild abhängig, so heißt sie inhomogen:</p>
@@ -190,13 +190,13 @@
 						<br/>
 						<h3>Anwendung</h3>
 						<p>Bei Verwendung von diskreten Farbwerten <i>[0,n]</i> kann eine homogene Transformation durch das Nachschlagen in einer Look-up-Tabelle der Größe <i>n</i> implementiert werden.
-						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren ist dies inpraktikabel und die Transformation muss auf jedem Pixel einzeln angewendet werden.</p>
+						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren ist dies inpraktikabel und die Transformation muss für jedes Pixel neu berechnet werden.</p>
 						<br/>
 						<h3>Transformationskennlinie</h3>
 						<p>Homogene Punktoperatoren können durch eine Transformationskennline (Gradationskurve) beschrieben werden. 
 						Sie zeigt, welche Farbwerte des Ausgangsbildes zu welchen Farbwerten im Ergebnisbild transformiert werden.
 						Wertebereich als auch Definitionsbereich sind somit die Farbwerte des Bildes.
-						Zum besseren Verständnis des Abbildungsverhaltens eines Punktoperators können Histogram und Transformationskennlinie überlagert werden.</p>
+						Zum besseren Verständnis des Abbildungsverhaltens eines Punktoperators können Histogram und Transformationskennlinie überlagert werden. Dies ist im folgenden anhand einer Logarithmustransformation illustriert.</p>
 						<br/>
 						
 						<p>
@@ -212,7 +212,7 @@
 						</p>
 						<div>
 							<div class="figure">
-								<img class="thumb image" id="SrcImg" src="img/800px-C-130J_formation_low-level.jpg" alt="C-130J (geringer Kontrast)" />
+								<img class="thumb image" id="SrcImg" src="img/orion-nebula-space-galaxy_w725_h490.jpg" alt="Orion" />
 								<div class="caption">Ausgangsbild</div>
 							</div>
 							<div class="figure">
