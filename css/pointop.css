@@ -1,6 +1,7 @@
 .pointOperatorHorizontalblock {
-    width:100%;
-    position:relative;
+    width: 100%;
+    position: relative;
+    min-height: 165px;
 }
 
 .pointOperatorSelectionBlock {
