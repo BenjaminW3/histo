@@ -48,12 +48,6 @@ PointOperator.prototype.writeDescription = function(_descriptionElement) {
     _descriptionElement.innerHTML += this.sFormulaHtml;
 };
 
-/**
- * Writes the formula of the pointOperator to the element
- */
-PointOperator.prototype.writeFormula = function(_formulaElement) {
-    _formulaElement.innerHTML = this.sFormulaHtml;
-};
 
 /**
  * Adds all the parameter input elements to the given element.

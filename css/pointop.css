@@ -35,7 +35,7 @@
 
 .pointOperatorSource {
     display: inline-block;
-    width:40%;
+    width:36%;
 }
 
 .pointOperatorTarget {
@@ -46,7 +46,7 @@
 
 .pointOperatorFormula {
     display: inline-block;
-    width:17%;
+    width:13%;
     position: relative;
 }
 
