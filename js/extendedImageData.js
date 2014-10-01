@@ -128,21 +128,26 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     }
 
 	// Calculate the cumulative histograms.
-    var maxCum = 0;
+    var maxCum = [0,0,0,0];
     for(var color = 0; color < 4; color++) {
 		this.channelCumulativeHistogram[color][0] = this.channelHistogram[color][0];
 		for(var j = 1; j < 256; j++) {
-			this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1] + this.channelHistogram[color][j];
-            if(this.channelCumulativeHistogram[color][j] > maxCum) {
-                maxCum = this.channelCumulativeHistogram[color][j];
+            if(isNaN(this.channelHistogram[color][j])) {    //there are values that dont appear in the img
+                this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1];
+            }else {
+                this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j - 1] + this.channelHistogram[color][j];
+            }
+
+            if(this.channelCumulativeHistogram[color][j] > maxCum[color]) {
+                maxCum[color] = this.channelCumulativeHistogram[color][j];
             }
 		}
 	}
-    /*for(var color = 0; color < 4; color++) {
-        for(var j = 1; j < 256; j++) {
-            this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j] / maxCum;
+    for(var color = 0; color < 4; color++) {
+        for(var j = 0; j < 256; j++) {
+            this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j] / maxCum[color];
         }
-    }*/
+    }
 };
 
 /**

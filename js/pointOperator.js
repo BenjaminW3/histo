@@ -39,7 +39,7 @@ function PointOperator() {
 	this.aParameters = { 
 		/*'unnamed' : new PointOperatorParameter('not available', 'inputElementId', {'type' : 'number', 'value' : 0, 'min' : 0, 'max' : 255, 'step' : 1})*/
 	};													//!< The parameters of the point operator.
-    this.extendedImageData = null;
+    this.extImageData = null;
 }
 
 /**
@@ -298,12 +298,16 @@ function PointOperatorHistoEqualization(){
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
 PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
+    //console.log(this.extImageData)
+    if(this.extImageData) {
+        var cumR = this.extImageData.getCumulativeChannelHistogramValue(1, _r); //start with 1 cause 0 is grey
+        var cumG = this.extImageData.getCumulativeChannelHistogramValue(2, _g);
+        var cumB = this.extImageData.getCumulativeChannelHistogramValue(3, _b);
 
-    var cumR = this.extImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
-    var cumG = this.extImageData.getCumulativeChannelHistogramValue(2,_g);
-    var cumB = this.extImageData.getCumulativeChannelHistogramValue(3,_b);
-
-    return [255*cumR,255*cumG,255*cumB];
+        return [255 * cumR, 255 * cumG, 255 * cumB];
+    }else {
+        return [0, 0, 0];
+    }
 };
 
 
@@ -322,20 +326,23 @@ function PointOperatorHistoHyperbolization(){
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
 PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
-	var cumR = this.extImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
-    var cumG = this.extImageData.getCumulativeChannelHistogramValue(2,_g);
-    var cumB = this.extImageData.getCumulativeChannelHistogramValue(3,_b);
+    if(this.extImageData) {
+        var cumR = this.extImageData.getCumulativeChannelHistogramValue(1, _r); //start with 1 cause 0 is grey
+        var cumG = this.extImageData.getCumulativeChannelHistogramValue(2, _g);
+        var cumB = this.extImageData.getCumulativeChannelHistogramValue(3, _b);
 
-    var tAlpha = 0;
-    if(this.aParameters.alpha.getValue() == 0) {
-        tAlpha = 1;
-    }else if(this.aParameters.alpha.getValue() == 1) {
-        tAlpha = 1.5;   //1 / -1/3 + 1 = 1 / (2/3) = 3/2 = 1.5
-    }else if(this.aParameters.alpha.getValue() == 2) {
-        tAlpha = 3;
+        var tAlpha = 0;
+        if (this.aParameters.alpha.getValue() == 0) {
+            tAlpha = 1;
+        } else if (this.aParameters.alpha.getValue() == 1) {
+            tAlpha = 1.5;   //1 / -1/3 + 1 = 1 / (2/3) = 3/2 = 1.5
+        } else if (this.aParameters.alpha.getValue() == 2) {
+            tAlpha = 3;
+        }
+        return [ (255 * Math.pow(cumR, tAlpha)), (255 * Math.pow(cumG, tAlpha)), (255 * Math.pow(cumB, tAlpha))];
+    }else {
+        return [0,0,0];
     }
-    return [ (255*Math.pow(cumR, tAlpha)),(255*Math.pow(cumG, tAlpha)),(255*Math.pow(cumB, tAlpha))];
-    //return [0,0,0];
 };
 
 
