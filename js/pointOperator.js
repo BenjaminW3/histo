@@ -284,7 +284,7 @@ PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b){
 
 /**
  * Histogram equalization
- * TODO!!! Need cummulative data: T(g) = [255 * H(g)]   -->H(g) ... kummulativ
+ * TODO: Cumulative should be normalized (wikipedia)
  */
 function PointOperatorHistoEqualization(){
     this.sDescription = 'Histogramequalisation ist ein wichtiges Verfahren zur Kontrastverbesserung. Es wird eine Gleichverteilung bei den Werten des Histogrammes berechnet ' +
@@ -299,9 +299,9 @@ PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
 PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b) {
 
-    var cumR = this.extendedImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
-    var cumG = this.extendedImageData.getCumulativeChannelHistogramValue(2,_g);
-    var cumB = this.extendedImageData.getCumulativeChannelHistogramValue(3,_b);
+    var cumR = this.extImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
+    var cumG = this.extImageData.getCumulativeChannelHistogramValue(2,_g);
+    var cumB = this.extImageData.getCumulativeChannelHistogramValue(3,_b);
 
     return [255*cumR,255*cumG,255*cumB];
 };
@@ -322,9 +322,9 @@ function PointOperatorHistoHyperbolization(){
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
 PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b) {
-	var cumR = this.extendedImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
-    var cumG = this.extendedImageData.getCumulativeChannelHistogramValue(2,_g);
-    var cumB = this.extendedImageData.getCumulativeChannelHistogramValue(3,_b);
+	var cumR = this.extImageData.getCumulativeChannelHistogramValue(1,_r); //start with 1 cause 0 is grey
+    var cumG = this.extImageData.getCumulativeChannelHistogramValue(2,_g);
+    var cumB = this.extImageData.getCumulativeChannelHistogramValue(3,_b);
 
     var tAlpha = 0;
     if(this.aParameters.alpha.getValue() == 0) {
