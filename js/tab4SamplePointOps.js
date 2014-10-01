@@ -21,7 +21,10 @@ window.addEventListener('load', function ()
     var pointOperatorSettingsApplyElement = document.getElementById('tab4PointOperatorSettingsApply');
     var pointOperatorSelectElement = document.getElementById('tab4PointOperatorSelect');
 
+    var pointOperatorDescriptionElement = document.getElementById('tab4PointOperatorDescription');
+
 	var pointOperator = new PointOperatorInverse();
+    pointOperator.writeDescription(pointOperatorDescriptionElement);
 	
     var srcImgExtendedImageData = new ExtendedImageData();
     var srcImgHistRenderer = new HistogrammRenderer(srcImgExtendedImageData, srcImgHistCanvasElement, '2d', histTypeElement);
@@ -165,7 +168,10 @@ window.addEventListener('load', function ()
 		{
 			pointOperatorSettingsApplyElement.style.display = 'block';
 		}
-		
+
+        // Write the description
+        pointOperator.writeDescription(pointOperatorDescriptionElement);
+
 		// The transformation curve has to be updated.
 		RedrawSrcImgHist();
 		
@@ -236,7 +242,7 @@ window.addEventListener('load', function ()
     //-----------------------------------------------------------------------------
     //! Callback method which reacts on the point operator settings apply button.
     //-----------------------------------------------------------------------------
-	pointOperatorSettingsApplyElement.addEventListener('click', OnPointOperatorSettingsChanged, false);
+    pointOperatorSettingsApplyElement.addEventListener('click', OnPointOperatorSettingsChanged, false);
 	
     // Disable upload if not supported.
     if(!Utils.supportsFileReader()) {
