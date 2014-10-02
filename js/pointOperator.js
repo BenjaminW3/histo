@@ -272,7 +272,6 @@ PointOperatorHistoSpread.prototype.spread = function(_r, _g, _b){
 	var mul = (255/(max - min));
 	var d = ((lum - min) / (max - min));
 	
-	
 	// FIXME: Color. This should result in a linear transformation curve from [min,0] to [max,255]
     return [Utils.clip(255 * rgbNormalized[0]*d*mul,0,255), Utils.clip(255 * rgbNormalized[1]*d*mul,0,255), Utils.clip(255 * rgbNormalized[2]*d*mul,0,255)];
 };
@@ -291,8 +290,8 @@ PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extend
  * TODO: Cumulative should be normalized (wikipedia)
  */
 function PointOperatorHistoEqualization(){
-    this.sDescription = 'Histogramequalisation ist ein wichtiges Verfahren zur Kontrastverbesserung. Es wird eine Gleichverteilung bei den Werten des Histogrammes berechnet ' +
-                        'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt werden kann.';
+    this.sDescription = 'Histogrammequalisierung ist ein wichtiges Verfahren zur Kontrastverbesserung. Es erzeugt eine Gleichverteilung der Tonwerte des Histogrammes, ' +
+                        'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt wird.';
     this.sFormulaHtml = '<img src="img/pointOpEqu.png">';
     this.aParameters = {
 
@@ -316,10 +315,11 @@ PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _
  * Histogram equalization
  */
 function PointOperatorHistoHyperbolization(){
-    this.sDescription = 'Die Tonwerte werden dem subjektiven menschlichen Empfinden angepasst. ';
+    this.sDescription = 'Da die Helligkeitsempfindung unseres visuellen Systems nicht linear, sondern logarithmisch ist, wirkt die Histogrammequalisierung auf einen menschlichen Betrachter oft zu hell.' +
+						'Bei der Histogrammhyperbolisation werden die Tonwerte besser dem subjektiven menschlichen Empfinden angepasst.';
     this.sFormulaHtml = '<img src="img/pointOpHyper.png">';
     this.aParameters = {
-        'alpha' : new PointOperatorParameter('α', 'Exponent', 'expInp', {'type' : 'number', 'value' : -0.25, 'min' : -0.99, 'max' : 0, 'step' : 0.01})
+        'alpha' : new PointOperatorParameter('α', 'Exponent', 'expInp', {'type' : 'number', 'value' : -0.10, 'min' : -0.99, 'max' : 0, 'step' : 0.01})
     };
 }
 
@@ -342,7 +342,7 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
  * Quantization
  */
 function PointOperatorQuantization(){
-    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf die b-te Potenz von 2. In der folgenden Formel steht <i>g>>x</i> für eine Verschiebung der Bits von g um x Stellen nach rechts.';
+    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf die b-te Potenz von 2. Alle Werte werden auf den nahesten vorhandenen Wert abgebildet. Durch die Quantisierung lassen sich Bilder oder auch nur einzelne Kanäle komprimieren. In der folgenden Formel steht <i>g>>x</i> für eine Verschiebung der Bits von g um x Stellen nach rechts.';
     this.sFormulaHtml = '<img src="img/pointOpQuant.png">';
     this.aParameters = {
         'bits' : new PointOperatorParameter('b', 'Anzahl der Bits pro Farbkanal.', 'quantInp', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})
@@ -373,7 +373,7 @@ function PointOperatorThreshold(){
     this.sFormulaHtml = '<img src="img/pointOpThresh.png">';
 
     this.aParameters = {
-        'threshold' : new PointOperatorParameter('Schwellwert', 'Schwellwert an dem Binarisiert werden soll.', 'threshInp', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
+        'threshold' : new PointOperatorParameter('t', 'Schwellwert an dem Binarisiert werden soll.', 'threshInp', {'type' : 'number', 'value' : 100, 'min' : 0, 'max' : 255, 'step' : 1})
     };
 }
 
