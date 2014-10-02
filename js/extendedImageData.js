@@ -110,17 +110,21 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
 
     var pixelStepWidth = 4; // 4 because the image data is always RGBA.
 
+	// Initialize channel histograms.
+    for(var color = 0; color < 4; color++) {
+		for(var j = 0; j < 256; j++) {
+			this.channelHistogram[color][j] = 0;
+		}
+	}
+	
 	// Calculate the histograms.
     for (var i = 0, n = this.srcImgData.data.length; i < n; i+= pixelStepWidth) {
         this.updateMinMax(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2]);
         var pixel = [this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2], Utils.calcYFromRgb(this.srcImgData.data[i], this.srcImgData.data[i+1], this.srcImgData.data[i+2])];
 
         for(var color = 0; color < 4; color++) {
-            if(pixel[color] in this.channelHistogram[color]) {
-                this.channelHistogram[color][pixel[color]]++;
-            }else {
-                this.channelHistogram[color][pixel[color]] = 1;
-            }
+            this.channelHistogram[color][pixel[color]]++;
+			
             if(this.channelHistogram[color][pixel[color]] > this.channelHistogramMax[color]) {
                 this.channelHistogramMax[color] = this.channelHistogram[color][pixel[color]];
             }
@@ -131,11 +135,7 @@ ExtendedImageData.prototype.recalculateImageDataDependencies = function() {
     for(var color = 0; color < 4; color++) {
 		this.channelCumulativeHistogram[color][0] = this.channelHistogram[color][0];
 		for(var j = 1; j < 256; j++) {
-            if(isNaN(this.channelHistogram[color][j])) {    //there are values that don`t appear in the img
-                this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1];
-            }else {
-                this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j - 1] + this.channelHistogram[color][j];
-            }
+            this.channelCumulativeHistogram[color][j] = this.channelCumulativeHistogram[color][j-1] + this.channelHistogram[color][j];
 		}
 	}
 };

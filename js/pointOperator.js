@@ -1,5 +1,5 @@
 /**
- * Constructor.
+ * Constructor of a point operator parameter.
  */
 function PointOperatorParameter(_sName, _sDescription, _id, _inputAttributes) {
     this.sName = _sName;
@@ -30,8 +30,11 @@ PointOperatorParameter.prototype.addInputElementToElement = function(_parentElem
 	_parentElement.appendChild(this.labelElement);
 };
 
+
+
 /**
- * Constructor.
+ * Constructor of a point operator.
+ * This is an abstract base class. Real operators inherit from this object.
  */
 function PointOperator() {
 	this.sDescription = 'No description available!';	//!< The desription of the point operator.
@@ -41,17 +44,14 @@ function PointOperator() {
 	};													//!< The parameters of the point operator.
     this.extImageData = null;
 }
-
 /**
- * Writes the description of the operator to the div element
+ * Writes the description of the operator to the div element.
  */
 PointOperator.prototype.writeDescription = function(_descriptionElement) {
     _descriptionElement.innerHTML = this.sDescription;
     _descriptionElement.innerHTML += "<br/>";
     _descriptionElement.innerHTML += this.sFormulaHtml;
 };
-
-
 /**
  * Adds all the parameter input elements to the given element.
  */
@@ -61,9 +61,6 @@ PointOperator.prototype.addPropertyInputElementsToElement = function (_parentEle
 		this.aParameters[param].addInputElementToElement(_parentElement);
 		_parentElement.innerHTML += "<br/>";
 	}
-	
-	// DEBUG
-	//this.aParameters.e.inputElement.value = "1.4";
 };
 /**
  * Transform the given image data.
@@ -84,7 +81,6 @@ PointOperator.prototype.transformExtendedImageData = function (_extendedImageDat
 	_extendedImageData.recalculateImageDataDependencies();
 
 };
-
 /**
  * Abstract method.
  */
@@ -106,7 +102,6 @@ function PointOperatorInverse(){
 
     };
 }
-
 PointOperatorInverse.inheritsFrom( PointOperator );
 
 PointOperatorInverse.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
@@ -217,7 +212,7 @@ PointOperatorHistoShift.prototype.transformPixel = function(_r, _g, _b, _extende
  * Histogram limitation
  */
 function PointOperatorHistoLimitation(){
-    this.sDescription = 'Grauwerte ausserhalb eines bestimmten Bereiches werden abgeschnitten und auf den Tonwert 0 oder G abgebildet.';
+    this.sDescription = 'Pixel mit einer Helligkeit ausserhalb eines bestimmten Bereiches werden abgeschnitten und auf den Tonwert 0 oder G abgebildet.';
     this.sFormulaHtml = '<img src="img/pointOpLimit.png">';
     this.aParameters = {
         'min' : new PointOperatorParameter('gmin', 'Untere Schranke der einzubeziehenden Werte.',  'limLowInp', {'type' : 'number', 'value' : 20.0, 'min' : 0.0, 'max' : 254.0, 'step' : 1.0}),
@@ -261,19 +256,15 @@ function PointOperatorHistoSpread(){
 
 PointOperatorHistoSpread.inheritsFrom( PointOperatorHistoLimitation );
 
-
-
 PointOperatorHistoSpread.prototype.spread = function(_r, _g, _b){
-	var lum = Utils.calcYFromRgb(_r, _g, _b);
-	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
-	
+	var ycbcr = Utils.rgbToYCbCr(_r, _g, _b);
     var min = this.aParameters.min.getValue();
     var max = this.aParameters.max.getValue();
 	var mul = (255/(max - min));
-	var d = ((lum - min) / (max - min));
-	
-	// FIXME: Color. This should result in a linear transformation curve from [min,0] to [max,255]
-    return [Utils.clip(255 * rgbNormalized[0]*d*mul,0,255), Utils.clip(255 * rgbNormalized[1]*d*mul,0,255), Utils.clip(255 * rgbNormalized[2]*d*mul,0,255)];
+	var d = ((ycbcr[0] - min) / (max - min));
+	ycbcr[0] = d * 255;
+	var rgb = Utils.yCbCrToRgb(ycbcr[0], ycbcr[1], ycbcr[2]);
+    return [Utils.clip(rgb[0],0,255), Utils.clip(rgb[1],0,255), Utils.clip(rgb[2],0,255)];
 };
 
 PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extendedImageData){
@@ -301,12 +292,11 @@ function PointOperatorHistoEqualization(){
 PointOperatorHistoEqualization.inheritsFrom( PointOperator );
 
 PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
-	var lum = Utils.calcYFromRgb(_r, _g, _b);
-	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
-	
-    var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, lum) / _extendedImageData.getNumPixels();
-
-    return [255 * rgbNormalized[0]*cumLum, 255 * rgbNormalized[1]*cumLum, 255 * rgbNormalized[2]*cumLum];
+	var ycbcr = Utils.rgbToYCbCr(_r, _g, _b);
+	var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, ycbcr[0]);
+	ycbcr[0] = 255 * (cumLum / _extendedImageData.getNumPixels());
+	var rgb = Utils.yCbCrToRgb(ycbcr[0], ycbcr[1], ycbcr[2]);
+    return [rgb[0], rgb[1], rgb[2]];
 };
 
 
@@ -315,7 +305,7 @@ PointOperatorHistoEqualization.prototype.transformPixel = function(_r, _g, _b, _
  * Histogram equalization
  */
 function PointOperatorHistoHyperbolization(){
-    this.sDescription = 'Da die Helligkeitsempfindung unseres visuellen Systems nicht linear, sondern logarithmisch ist, wirkt die Histogrammequalisierung auf einen menschlichen Betrachter oft zu hell.' +
+    this.sDescription = 'Da die Helligkeitsempfindung unseres visuellen Systems nicht linear, sondern logarithmisch ist, wirkt die Histogrammequalisierung auf einen menschlichen Betrachter oft zu hell. ' +
 						'Bei der Histogrammhyperbolisation werden die Tonwerte besser dem subjektiven menschlichen Empfinden angepasst.';
     this.sFormulaHtml = '<img src="img/pointOpHyper.png">';
     this.aParameters = {
@@ -326,14 +316,12 @@ function PointOperatorHistoHyperbolization(){
 PointOperatorHistoHyperbolization.inheritsFrom( PointOperator );
 
 PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b, _extendedImageData) {
-	var lum = Utils.calcYFromRgb(_r, _g, _b);
-	var rgbNormalized = Utils.normalizeVector3([_r, _g, _b]);
-	
-    var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, lum) / _extendedImageData.getNumPixels();
-
-	var alpha = this.aParameters.alpha.getValue();
-	var exp = 1.0 / (alpha+1.0);
-	return [ (255 * Math.pow(rgbNormalized[0]*cumLum, exp)), (255 * Math.pow(rgbNormalized[1]*cumLum, exp)), (Math.pow(255 * rgbNormalized[2]*cumLum, exp))];
+	var ycbcr = Utils.rgbToYCbCr(_r, _g, _b);
+	var cumLum = _extendedImageData.getChannelCumulativeHistogramValue(3, ycbcr[0]);
+    ycbcr[0] = 255 * (cumLum / _extendedImageData.getNumPixels());
+	var rgb = Utils.yCbCrToRgb(ycbcr[0], ycbcr[1], ycbcr[2]);
+	var exp = 1.0 / (this.aParameters.alpha.getValue()+1.0);
+	return [ 255 * Math.pow(rgb[0]/255, exp), 255 * Math.pow(rgb[1]/255, exp), 255 * Math.pow(rgb[2]/255, exp)];
 };
 
 
@@ -342,7 +330,8 @@ PointOperatorHistoHyperbolization.prototype.transformPixel = function(_r, _g, _b
  * Quantization
  */
 function PointOperatorQuantization(){
-    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf die b-te Potenz von 2. Alle Werte werden auf den nahesten vorhandenen Wert abgebildet. Durch die Quantisierung lassen sich Bilder oder auch nur einzelne Kanäle komprimieren. In der folgenden Formel steht <i>g>>x</i> für eine Verschiebung der Bits von g um x Stellen nach rechts.';
+    this.sDescription = 'Begrenzt die Anzahl der möglichen Werte pro Farbkanal auf die b-te Potenz von 2. Alle Werte werden auf den nahesten vorhandenen Wert abgebildet. ' +
+						'Durch die Quantisierung lassen sich Bilder oder auch nur einzelne Kanäle komprimieren. In der folgenden Formel steht <i>g>>x</i> für eine Verschiebung der Bits von g um x Stellen nach rechts.';
     this.sFormulaHtml = '<img src="img/pointOpQuant.png">';
     this.aParameters = {
         'bits' : new PointOperatorParameter('b', 'Anzahl der Bits pro Farbkanal.', 'quantInp', {'type' : 'number', 'value' : 2, 'min' : 1, 'max' : 8, 'step' : 1})

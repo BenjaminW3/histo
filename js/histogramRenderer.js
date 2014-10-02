@@ -159,11 +159,11 @@ HistogrammRenderer.prototype.drawHistAxis = function(uiMaxValY, bCumulative) {
 /**
  * Draws a channel of the histogram.
  * @param _color The color the channel is drawn.
- * @param auiValueCounts An Array of occurance counts of color values.
+ * @param channelHistogram An Array of occurance counts of color values (histogram).
  * @param uiValueCountMax The maximum vertical value.
  * @param bFill If the diagram should be filled or only dots.
  */
-HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, uiValueCountMax, bFill) {
+HistogrammRenderer.prototype.drawHistChannel = function(_color, channelHistogram, uiValueCountMax, bFill) {
     var ctxStyle;
     if (bFill)
     {
@@ -183,14 +183,9 @@ HistogrammRenderer.prototype.drawHistChannel = function(_color, auiValueCounts, 
 		
     for (var i = 0; i < 256; i++)
     {
-		if (!(i in auiValueCounts)) {
-			continue;
-		}
-		else {
-			uiCurrentValue = auiValueCounts[i];
-		}
+		uiCurrentValue = channelHistogram[i];
 		
-        //console.log ("#i = " + auiValueCounts[i])
+        //console.log ("#i = " + uiCurrentValue)
         var uiValueHeight = Math.round((uiCurrentValue/uiValueCountMax) * this.uiHistHeightPx);
         var uiValueX = this.uiHistLeftPx + Math.round((i/255) * this.uiHistWidthPx);
         var uiValueY = this.uiHistTopPx + this.uiHistHeightPx - uiValueHeight;

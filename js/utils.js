@@ -2,14 +2,37 @@ function Utils() {}
 
 /**
  * The luminance Y calculated from the RGB values.
- * @param R float red
- * @param G float green
- * @param B float blue
+ * @param _r red
+ * @param _g green
+ * @param _b blue
  * @returns luminance
  */
-Utils.calcYFromRgb = function(R, G, B) {
-    return Math.round(0.299 * R + 0.587 * G + 0.114 * B);
+Utils.calcYFromRgb = function(_r, _g, _b) {
+    return Math.round(0.299 * _r + 0.587 * _g + 0.114 * _b);
 };
+
+/**
+ * Converts a RGB color to a YCbCr color.
+ * @param _r red
+ * @param _g green
+ * @param _b blue
+ */
+Utils.rgbToYCbCr = function(_r, _g, _b) {
+  return [	Math.round(( 0.299 * _r + 0.587 * _g  +  0.114 * _b) + 0),
+			Math.round(( -0.169 * _r + -0.331 * _g +  0.500 * _b) + 128),
+			Math.round(( 0.500 * _r + -0.419 * _g +  -0.081 * _b) + 128)];
+}
+/**
+ * Converts a YCbCr color to a Rgb color.
+ * @param _y The luminance.
+ * @param _cb The blue chroma.
+ * @param _cr The red chroma.
+ */
+Utils.yCbCrToRgb = function(_y, _cb, _cr) {
+  return [	Math.round(1.0 * _y +  0 * (_cb-128)      +  1.4 * (_cr-128)),
+			Math.round(1.0 * _y +  -0.343 * (_cb-128)  +  -0.711 * (_cr-128)),
+			Math.round(1.0 * _y +  1.765 * (_cb-128)  +  0 * (_cr-128))];
+}
 
 /**
  * @returns If the browser supports drag and drop.
