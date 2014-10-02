@@ -281,7 +281,7 @@ PointOperatorHistoSpread.prototype.transformPixel = function(_r, _g, _b, _extend
  * TODO: Cumulative should be normalized (wikipedia)
  */
 function PointOperatorHistoEqualization(){
-    this.sDescription = 'Histogrammequalisierung ist ein wichtiges Verfahren zur Kontrastverbesserung. Es erzeugt eine Gleichverteilung der Tonwerte des Histogrammes, ' +
+    this.sDescription = 'Histogrammequalisierung ist ein wichtiges Verfahren zur Kontrastverbesserung. Es erzeugt eine (bestmöglich angenäherte) Gleichverteilung der Tonwerte des Histogrammes, ' +
                         'damit der gesamte zur Verfügung stehende Wertebereich optimal ausgenutzt wird.';
     this.sFormulaHtml = '<img src="img/pointOpEqu.png">';
     this.aParameters = {
