@@ -190,8 +190,8 @@
 						<p>Im Allgemeinen sind Punktoperatoren nicht umkehrbar. In manchen Fällen wie zum Beispiel bei der Invertierung kann dies trotzdem möglich sein.</p>
 						<br/>
 						<h3>Anwendung</h3>
-						<p>Bei Verwendung von diskreten Farbwerten <i>[0,n]</i> kann eine homogene Transformation durch das Nachschlagen in einer Look-up-Tabelle der Größe <i>n</i> implementiert werden.
-						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren ist dies inpraktikabel und die Transformation muss für jedes Pixel neu berechnet werden.</p>
+						<p>Bei Verwendung von diskreten Farbwerten <i>[0,n]</i> kann eine homogene Transformation durch das Nachschlagen in einer Look-up-Tabelle der Größe <i>n</i> implementiert werden. Bei 8 Bit Pro Farbwert sind dies nur <i>2^8 = 256</i> vorzuberechnende Einträge.
+						Bei kontinuierlichen Farbwerten oder inhomogenen Punktoperatoren ist dies inpraktikabel und die Transformation muss für jedes Pixel neu berechnet werden, da die entstehende Tabelle durch die unendlich vielen möglichen Farbwerte praktisch nicht mehr berechnet werden kann.</p>
 						<br/>
 						<h3>Transformationskennlinie</h3>
 						<p>Homogene Punktoperatoren können durch eine Transformationskennline (Gradationskurve) beschrieben werden. 
